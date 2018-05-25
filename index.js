@@ -3,7 +3,6 @@ const { ipcRenderer } = require('electron');
 
 const body = document.body;
 body.style.backgroundColor = 'darkred';
-// const MBTA_KEY = `in4xyhrvYECHsY5SU1oGBw`;
 
 // const cache = new Map();
 
