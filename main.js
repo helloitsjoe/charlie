@@ -1,8 +1,8 @@
-const { app, BrowserWindow, Tray, ipcMain } = require('electron');
-const axios = require('axios');
 const path = require('path');
-const { harvard, southStation } = require('./routes.json');
-const { MBTA_KEY } = require('credentials.json');
+const axios = require('axios');
+const { app, BrowserWindow, Tray, ipcMain } = require('electron');
+const { harvard, southStation } = require('./resources/routes.json');
+const { MBTA_KEY } = require('./resources/credentials.json');
 
 const assetsDir = path.join(__dirname, 'assets');
 const cache = new Map();
@@ -26,15 +26,13 @@ app.on('ready', () => {
         toggleWindow();
     });
 
-    tray.on('double-click', (event) => {
-        window.openDevTools({ mode: 'detach' })
-    });
+    tray.on('double-click', (event) => { window.openDevTools({ mode: 'detach' }); });
 
     window.loadURL(`file://${path.join(__dirname, 'index.html')}`);
     window.on('blur', () => { window.hide(); });
 });
 
-ipcMain.on('new-route', (sender, data) => {
+ipcMain.on('new-route', (sender) => {
     prevRoute = route;
     route = (prevRoute === southStation) ? harvard : southStation;
     fetchAndSend(route);
@@ -51,12 +49,12 @@ const fetchAndSend = (route) => {
 const fetchData = (route) => {
     const destUrl = `http://realtime.mbta.com/developer/api/v2/predictionsbystop?api_key=${MBTA_KEY}&stop=${route.code}&format=json`;
     const cached = cache.get(route.name);
-    const withinTTL = (ts) => (Date.now() - ts) < (50 * 1000);
-    return (cached && withinTTL(cached.ts)) ? Promise.resolve(cached)
+    const withinTTL = cached && (Date.now() - cached.ts) < (50 * 1000);
+    return withinTTL ? Promise.resolve(cached)
         : axios.get(destUrl)
             .then(res => {
                 const data = res.data;
-                console.log(`Fetching live data...`);
+                console.log(`Fetched live data`);
                 cache.set(route.name, Object.assign(data, { ts: Date.now() }));
                 return data;
             }).catch(err => {
