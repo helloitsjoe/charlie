@@ -1,0 +1,17 @@
+{
+    "harvard": {
+        "name": "Harvard",
+        "mode": "buses",
+        "code": "2056",
+        "tooClose": 3,
+        "tooFar": 12,
+        "trafficUrl": "https://server-rthfsibjjo.now.sh/traffic"
+    },
+    "southStation": {
+        "name": "South Station",
+        "code": "70080",
+        "mode": "trains",
+        "tooClose": 4,
+        "tooFar": 10
+    }
+}
