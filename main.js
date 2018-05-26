@@ -7,7 +7,7 @@ let mbtaKey;
 try {
     mbtaKey = require('./resources/credentials.json').mbtaKey;
 } catch (err) {
-    console.log('Error getting API key, using public test key provided by MBTA...');
+    console.log('Missing API key, using public test key provided by MBTA...');
     mbtaKey = 'wX9NwuHnZU2ToO7GmGR9uw';
 }
 
