@@ -5,14 +5,14 @@ const body = document.body;
 body.addEventListener('click', (event) => ipcRenderer.send('new-route'));
 body.style.backgroundColor = 'darkred';
 
-ipcRenderer.on('clicked', (sender, data) => {
-    console.log(`data:`, data);
-    const route = data.route;
-    if (!data || !data.mode) {
+ipcRenderer.on('update', (sender, data) => {
+
+    if (!data || !data.mode || !data.route) {
         body.innerHTML = '<center><h1>No data</h1></center>';
         return;
     }
-
+    
+    const route = data.route;
     const stopName = data.stop_name;
     const buses = data.mode[0].route[0].direction[0].trip;
     if (!buses || !buses.length) {
@@ -45,4 +45,7 @@ function style(route, times) {
         
     const isWalkable = (mins) => mins > route.tooClose && mins < route.tooFar;
     body.style.backgroundColor = times.some(isWalkable) ? 'darkgreen' : 'darkred';
+
+    // Send event to main process to change icon color
+    ipcRenderer.send(body.style.backgroundColor);
 }
