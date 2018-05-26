@@ -12,7 +12,7 @@ let window;
 let route = southStation;
 
 app.on('ready', () => {
-    tray = new Tray(path.join(__dirname, 'assets/icon.png'));
+    tray = new Tray(path.join(assetsDir, 'icon.png'));
     window = new BrowserWindow({
         width: 260,
         height: 400,
