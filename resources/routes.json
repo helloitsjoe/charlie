@@ -1,4 +1,11 @@
 {
+    "central": {
+        "name": "Central",
+        "mode": "trains",
+        "code": "70069",
+        "tooClose": 3,
+        "tooFar": 12
+    },
     "harvard": {
         "name": "Harvard",
         "mode": "buses",

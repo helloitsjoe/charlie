@@ -1,7 +1,7 @@
 const path = require('path');
 const axios = require('axios');
 const { app, BrowserWindow, Tray, ipcMain } = require('electron');
-const { harvard, southStation } = require('./resources/routes.json');
+const { central, harvard, southStation } = require('./resources/routes.json');
 
 let mbtaKey;
 try {
@@ -17,7 +17,7 @@ const cache = new Map();
 let tray;
 let window;
 let timeout;
-let route = southStation;
+let route = central;
 
 app.on('ready', () => {
     tray = new Tray(path.join(assetsDir, 'icon.png'));
