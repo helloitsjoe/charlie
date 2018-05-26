@@ -65,7 +65,7 @@ const fetchAndSend = (route) => {
 }
 
 const fetchData = (route) => {
-    const destUrl = `http://realtime.mbta.com/developer/api/v2/predictionsbystop?api_key=${mbtaKey}&stop=${route.code}&format=json`;
+    const destUrl = `https://realtime.mbta.com/developer/api/v2/predictionsbystop?api_key=${mbtaKey}&stop=${route.code}&format=json`;
     const cached = cache.get(route.name);
     const withinTTL = cached && (Date.now() - cached.ts) < (60 * 1000);
 
