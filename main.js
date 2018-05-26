@@ -2,7 +2,14 @@ const path = require('path');
 const axios = require('axios');
 const { app, BrowserWindow, Tray, ipcMain } = require('electron');
 const { harvard, southStation } = require('./resources/routes.json');
-const { MBTA_KEY } = require('./resources/credentials.json');
+
+let mbtaKey;
+try {
+    mbtaKey = require('./resources/credentials.json').mbtaKey;
+} catch (err) {
+    console.log('Missing API key, using public test key...');
+    mbtaKey = 'wX9NwuHnZU2ToO7GmGR9uw';
+}
 
 const assetsDir = path.join(__dirname, 'assets');
 const cache = new Map();
@@ -47,7 +54,7 @@ const fetchAndSend = (route) => {
 }
 
 const fetchData = (route) => {
-    const destUrl = `http://realtime.mbta.com/developer/api/v2/predictionsbystop?api_key=${MBTA_KEY}&stop=${route.code}&format=json`;
+    const destUrl = `http://realtime.mbta.com/developer/api/v2/predictionsbystop?api_key=${mbtaKey}&stop=${route.code}&format=json`;
     const cached = cache.get(route.name);
     const withinTTL = cached && (Date.now() - cached.ts) < (50 * 1000);
     return withinTTL ? Promise.resolve(cached)
