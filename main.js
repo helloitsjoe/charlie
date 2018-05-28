@@ -7,10 +7,10 @@ let mbtaKey;
 try {
     mbtaKey = require('./resources/credentials.json').mbtaKey;
 } catch (err) {
-    console.log('Missing API key, using public test key provided by MBTA...');
-    mbtaKey = 'wX9NwuHnZU2ToO7GmGR9uw';
+    console.warn('Missing API key, making call without key...');
 }
 
+const CACHE_TTL = 60 * 1000;
 const assetsDir = path.join(__dirname, 'assets');
 const cache = new Map();
 
@@ -65,9 +65,11 @@ const fetchAndSend = (route) => {
 }
 
 const fetchData = (route) => {
-    const destUrl = `https://realtime.mbta.com/developer/api/v2/predictionsbystop?api_key=${mbtaKey}&stop=${route.code}&format=json`;
+    // const apiKey = mbtaKey ? `&api_key=${mbtaKey}` : '';
+    apiKey = '';
+    const destUrl = `https://api-v3.mbta.com/predictions?filter[stop]=${route.code}&sort=arrival_time${apiKey}`;
     const cached = cache.get(route.name);
-    const withinTTL = cached && (Date.now() - cached.ts) < (60 * 1000);
+    const withinTTL = cached && (Date.now() - cached.ts) < CACHE_TTL;
 
     // Use cache if within TTL, otherwise fetch live data.
     // Click to your heart's delight and this will only fetch once a minute

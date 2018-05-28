@@ -7,25 +7,25 @@ body.style.backgroundColor = 'darkred';
 
 ipcRenderer.on('update', (sender, data) => {
 
-    if (!data || !data.mode || !data.route) {
+    if (!data || !data.data || !data.route) {
         body.innerHTML = '<center><h1>No data</h1></center>';
         return;
     }
-    
+
     const route = data.route;
-    const stopName = data.stop_name;
-    const buses = data.mode[0].route[0].direction[0].trip;
+    const buses = data.data;
     if (!buses || !buses.length) {
         body.innerHTML = `<center><h3>No ${route.mode}</h3></center>`;
         return;
     }
-    const times = buses
-        .map(bus => Math.floor(bus.pre_away / 60))
-        .filter(mins => mins > 1)
-        .slice(0, 4)
-        .sort((a, b) => a - b);
+    const arrivalMins = buses
+        .map(bus => {
+            const msUntilArrival = new Date(bus.attributes.arrival_time) - Date.now();
+            return Math.floor(msUntilArrival / 1000 / 60);
+        }).filter(mins => mins > 1)
+        .slice(0, 4);
 
-    style(route, times);
+    style(route, arrivalMins);
 });
 
 function style(route, times) {
