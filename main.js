@@ -42,7 +42,7 @@ app.on('ready', () => {
 
 ipcMain.on('new-route', (sender) => {
     prevRoute = route;
-    route = (prevRoute === southStation) ? harvard : southStation;
+    route = (prevRoute === southStation) ? central : southStation;
     fetchAndSend(route);
 });
 
