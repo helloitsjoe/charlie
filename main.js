@@ -65,9 +65,9 @@ const fetchAndSend = (route) => {
 }
 
 const fetchData = (route) => {
-    // const apiKey = mbtaKey ? `&api_key=${mbtaKey}` : '';
-    apiKey = '';
-    const destUrl = `https://api-v3.mbta.com/predictions?filter[stop]=${route.code}&sort=arrival_time${apiKey}`;
+    const apiKey = mbtaKey ? `&api_key=${mbtaKey}` : '';
+    const destUrl = `http://api-v3.mbta.com/predictions?filter[stop]=${route.code}&sort=arrival_time${apiKey}`;
+    console.log(`destUrl:`, destUrl);
     const cached = cache.get(route.name);
     const withinTTL = cached && (Date.now() - cached.ts) < CACHE_TTL;
 
