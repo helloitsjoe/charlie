@@ -3,15 +3,15 @@
         "name": "Harvard",
         "mode": "buses",
         "code": "2056",
-        "tooClose": 3,
-        "tooFar": 12,
+        "waitStart": 3,
+        "waitLength": 6,
         "trafficUrl": "https://server-rthfsibjjo.now.sh/traffic"
     },
     "southStation": {
         "name": "South Station",
-        "code": "70080",
         "mode": "trains",
-        "tooClose": 4,
-        "tooFar": 10
+        "code": "70080",
+        "waitStart": 4,
+        "waitLength": 6
     }
 }

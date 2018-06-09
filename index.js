@@ -2,11 +2,10 @@ const { ipcRenderer } = require('electron');
 
 const body = document.body;
 
-body.addEventListener('click', (event) => ipcRenderer.send('new-route'));
+body.addEventListener('click', (event) => { ipcRenderer.send('new-route'); });
 body.style.backgroundColor = 'darkred';
 
 ipcRenderer.on('update', (sender, data) => {
-
     if (!data || !data.data || !data.route) {
         body.innerHTML = '<center><h1>No data</h1></center>';
         return;
@@ -22,15 +21,16 @@ ipcRenderer.on('update', (sender, data) => {
         .map(bus => {
             const msUntilArrival = new Date(bus.attributes.arrival_time) - Date.now();
             return Math.floor(msUntilArrival / 1000 / 60);
-        }).filter(mins => mins > 1)
+        })
+        .filter(mins => mins > 1)
         .slice(0, 4);
 
-    style(route, arrivalMins);
+    render(route, arrivalMins);
 });
 
-function style(route, times) {
+function render(route, times) {
 
-    const styleEach = (min) => `<h2><span class="bold">${min} </span><span class="small">mins</span></h2>`
+    const renderEachTime = (min) => `<h2><span class="bold">${min} </span><span class="small">mins</span></h2>`
 
     body.innerHTML = `
         <center>
@@ -39,13 +39,14 @@ function style(route, times) {
             <h5 class="short light">Next ${route.mode} in:</h5>
         </div>
         <div class="${(times.length < 4) ? "pad" : ""}">
-        ${times.map(styleEach).join('')}
+            ${times.map(renderEachTime).join('')}
         </div>
         </center>`;
-        
-    const isWalkable = (mins) => mins > route.tooClose && mins < route.tooFar;
+
+    const { waitStart, waitLength } = route;
+    const isWalkable = (mins) => mins >= waitStart && mins <= (waitStart + waitLength);
     body.style.backgroundColor = times.some(isWalkable) ? 'darkgreen' : 'darkred';
 
     // Send event to main process to change icon color
-    ipcRenderer.send(body.style.backgroundColor);
+    ipcRenderer.send('change-icon', body.style.backgroundColor);
 }

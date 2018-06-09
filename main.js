@@ -29,14 +29,15 @@ app.on('ready', () => {
         resizable: false,
     });
 
+    fetchAndSend(route);
+
     tray.on('click', (event) => {
         fetchAndSend(route);
         toggleWindow();
     });
-
     tray.on('double-click', (event) => { window.openDevTools({ mode: 'detach' }); });
 
-    window.loadURL(`file://${path.join(__dirname, 'index.html')}`);
+    window.loadURL(`file://${path.join(__dirname, 'index.html')}`);    
     window.on('blur', () => { window.hide(); });
 });
 
@@ -46,8 +47,10 @@ ipcMain.on('new-route', (sender) => {
     fetchAndSend(route);
 });
 
-ipcMain.on('darkgreen', (sender) => tray.setImage(path.join(assetsDir, 'greenIcon.png')));
-ipcMain.on('darkred', (sender) => tray.setImage(path.join(assetsDir, 'icon.png')));
+ipcMain.on('change-icon', (sender, data) => {
+    const icon = data === 'darkred' ? 'icon' : 'greenIcon';
+    tray.setImage(path.join(assetsDir, `${icon}.png`))
+});
 
 const fetchAndSend = (route) => {
     clearTimeout(timeout);
@@ -66,8 +69,7 @@ const fetchAndSend = (route) => {
 
 const fetchData = (route) => {
     const apiKey = mbtaKey ? `&api_key=${mbtaKey}` : '';
-    const destUrl = `http://api-v3.mbta.com/predictions?filter[stop]=${route.code}&sort=arrival_time${apiKey}`;
-    console.log(`destUrl:`, destUrl);
+    const destUrl = `https://api-v3.mbta.com/predictions?filter[stop]=${route.code}&sort=arrival_time${apiKey}`;
     const cached = cache.get(route.name);
     const withinTTL = cached && (Date.now() - cached.ts) < CACHE_TTL;
 
