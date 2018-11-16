@@ -1,8 +1,12 @@
-const { ipcRenderer } = require('electron');
+const {
+    ipcRenderer
+} = require('electron');
 
 const body = document.body;
 
-body.addEventListener('click', (event) => { ipcRenderer.send('new-route'); });
+body.addEventListener('click', (event) => {
+    ipcRenderer.send('new-route');
+});
 body.style.backgroundColor = 'darkred';
 
 ipcRenderer.on('update', (sender, data) => {
@@ -43,7 +47,10 @@ function render(route, times) {
         </div>
         </center>`;
 
-    const { waitStart, waitLength } = route;
+    const {
+        waitStart,
+        waitLength
+    } = route;
     const isWalkable = (mins) => mins >= waitStart && mins <= (waitStart + waitLength);
     body.style.backgroundColor = times.some(isWalkable) ? 'darkgreen' : 'darkred';
 

@@ -1,7 +1,7 @@
 const path = require('path');
 const axios = require('axios');
 const { app, BrowserWindow, Tray, ipcMain } = require('electron');
-const { harvard, southStation } = require('./resources/routes.json');
+const { clearway, backBayOrange, backBayCR, harvard, southStation } = require('./resources/routes.json');
 
 let mbtaKey;
 try {
@@ -17,7 +17,8 @@ const cache = new Map();
 let tray;
 let window;
 let timeout;
-let route = southStation;
+const routes = [backBayOrange, backBayCR, southStation, clearway];
+let currentIndex = 0;
 
 app.on('ready', () => {
     tray = new Tray(path.join(assetsDir, 'icon.png'));
@@ -29,22 +30,28 @@ app.on('ready', () => {
         resizable: false,
     });
 
-    fetchAndSend(route);
+    fetchAndSend(routes[currentIndex]);
 
     tray.on('click', (event) => {
-        fetchAndSend(route);
+        fetchAndSend(routes[currentIndex]);
         toggleWindow();
     });
-    tray.on('double-click', (event) => { window.openDevTools({ mode: 'detach' }); });
+    tray.on('double-click', (event) => {
+        window.openDevTools({
+            mode: 'detach'
+        });
+    });
 
-    window.loadURL(`file://${path.join(__dirname, 'index.html')}`);    
-    window.on('blur', () => { window.hide(); });
+    window.loadURL(`file://${path.join(__dirname, 'index.html')}`);
+    window.on('blur', () => {
+        window.hide();
+    });
 });
 
 ipcMain.on('new-route', (sender) => {
-    prevRoute = route;
-    route = (prevRoute === southStation) ? harvard : southStation;
-    fetchAndSend(route);
+    const newIndex = getNextIndex(routes, currentIndex);
+    currentIndex = newIndex;
+    fetchAndSend(routes[newIndex]);
 });
 
 ipcMain.on('change-icon', (sender, data) => {
@@ -52,13 +59,17 @@ ipcMain.on('change-icon', (sender, data) => {
     tray.setImage(path.join(assetsDir, `${icon}.png`))
 });
 
+const getNextIndex = (arr, i) => i < arr.length - 1 ? i + 1 : 0;
+
 const fetchAndSend = (route) => {
     clearTimeout(timeout);
 
     return fetchData(route)
         .then(data => {
             // Send update event to browser window
-            window.webContents.send('update', Object.assign({}, data, { route }));
+            window.webContents.send('update', Object.assign({}, data, {
+                route
+            }));
 
             // Kick off check every 60 seconds
             timeout = setTimeout(() => {
@@ -69,23 +80,26 @@ const fetchAndSend = (route) => {
 
 const fetchData = (route) => {
     const apiKey = mbtaKey ? `&api_key=${mbtaKey}` : '';
-    const destUrl = `https://api-v3.mbta.com/predictions?filter[stop]=${route.code}&sort=arrival_time${apiKey}`;
+    const direction = route.direction != null ? `&filter[direction_id]=${route.direction}` : '';
+    const destUrl = `https://api-v3.mbta.com/predictions?filter[stop]=${route.code}&sort=arrival_time${direction}${apiKey}`;
     const cached = cache.get(route.name);
     const withinTTL = cached && (Date.now() - cached.ts) < CACHE_TTL;
 
     // Use cache if within TTL, otherwise fetch live data.
     // Click to your heart's delight and this will only fetch once a minute
-    return withinTTL ? Promise.resolve(cached)
-        : axios.get(destUrl)
-            .then(res => {
-                const data = res.data;
-                console.log(`Fetched live data`);
-                cache.set(route.name, Object.assign(data, { ts: Date.now() }));
-                return data;
-            }).catch(err => {
-                console.error('Error during fetch:', err);
-                return null;
-            });
+    return withinTTL ? Promise.resolve(cached) :
+        axios.get(destUrl)
+        .then(res => {
+            const data = res.data;
+            console.log(`Fetched live data`);
+            cache.set(route.name, Object.assign(data, {
+                ts: Date.now()
+            }));
+            return data;
+        }).catch(err => {
+            console.error('Error during fetch:', err);
+            return null;
+        });
 }
 
 const toggleWindow = () => {

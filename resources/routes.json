@@ -7,11 +7,33 @@
         "waitLength": 6,
         "trafficUrl": "https://server-rthfsibjjo.now.sh/traffic"
     },
+    "clearway": {
+        "name": "Clearway St.",
+        "mode": "buses",
+        "code": "91",
+        "waitStart": 12,
+        "waitLength": 6
+    },
+    "backBayOrange": {
+        "name": "Orange Line",
+        "mode": "trains",
+        "code": "70015",
+        "waitStart": 5,
+        "waitLength": 6
+    },
+    "backBayCR": {
+        "name": "Commuter Rail",
+        "mode": "trains",
+        "code": "Back Bay",
+        "direction": 1,
+        "waitStart": 5,
+        "waitLength": 6
+    },
     "southStation": {
         "name": "South Station",
         "mode": "trains",
         "code": "70080",
-        "waitStart": 4,
-        "waitLength": 6
+        "waitStart": 20,
+        "waitLength": 10
     }
 }
