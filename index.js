@@ -1,12 +1,21 @@
-const {
-    ipcRenderer
-} = require('electron');
+const { ipcRenderer } = require('electron');
+
+document.addEventListener('keydown', e => {
+    const { key } = e;
+    if (key === 'Escape') {
+        ipcRenderer.send('hide-window');
+    } else {
+        // For now, get new route on any key.
+        // Left arrow will get previous route.
+        ipcRenderer.send('new-route', { key });
+    }
+});
+document.addEventListener('click', e => {
+    ipcRenderer.send('new-route');
+});
 
 const body = document.body;
 
-body.addEventListener('click', (event) => {
-    ipcRenderer.send('new-route');
-});
 body.style.backgroundColor = 'darkred';
 
 ipcRenderer.on('update', (sender, data) => {
