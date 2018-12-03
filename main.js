@@ -21,7 +21,7 @@ const routes = [backBayOrange, backBayCR, southStation, clearway];
 let currentIndex = 0;
 
 app.on('ready', () => {
-    tray = new Tray(path.join(assetsDir, 'icon.png'));
+    tray = new Tray(path.join(assetsDir, 'mbta-logo-black.png'));
     window = new BrowserWindow({
         width: 260,
         height: 400,
@@ -55,8 +55,8 @@ ipcMain.on('new-route', (sender) => {
 });
 
 ipcMain.on('change-icon', (sender, data) => {
-    const icon = data === 'darkred' ? 'icon' : 'greenIcon';
-    tray.setImage(path.join(assetsDir, `${icon}.png`))
+    const color = data === 'darkred' ? 'black' : 'green';
+    tray.setImage(path.join(assetsDir, `mbta-logo-${color}.png`))
 });
 
 const getNextIndex = (arr, i) => i < arr.length - 1 ? i + 1 : 0;
@@ -87,14 +87,13 @@ const fetchData = (route) => {
 
     // Use cache if within TTL, otherwise fetch live data.
     // Click to your heart's delight and this will only fetch once a minute
-    return withinTTL ? Promise.resolve(cached) :
-        axios.get(destUrl)
+    if (withinTTL) return Promise.resolve(cached);
+
+    return axios.get(destUrl)
         .then(res => {
-            const data = res.data;
+            const { data } = res;
             console.log(`Fetched live data`);
-            cache.set(route.name, Object.assign(data, {
-                ts: Date.now()
-            }));
+            cache.set(route.name, { ...data, ts: Date.now() });
             return data;
         }).catch(err => {
             console.error('Error during fetch:', err);
