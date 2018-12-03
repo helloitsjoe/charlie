@@ -22,7 +22,7 @@ const routes = [backBayOrange, backBayCR, southStation, clearway];
 let currentIndex = 0;
 
 app.on('ready', () => {
-    tray = new Tray(path.join(assetsDir, 'icon.png'));
+    tray = new Tray(path.join(assetsDir, 'mbta-logo-black.png'));
     window = new BrowserWindow({
         width: 260,
         height: 400,
@@ -49,18 +49,26 @@ app.on('ready', () => {
     });
 });
 
-ipcMain.on('new-route', (sender) => {
-    const newIndex = getNextIndex(routes, currentIndex);
+ipcMain.on('new-route', (sender, data) => {
+    const newIndex = data && data.key === 'ArrowLeft'
+        ? getPrevIndex(routes, currentIndex)
+        : getNextIndex(routes, currentIndex);
+
     currentIndex = newIndex;
     fetchAndSend(routes[newIndex]);
 });
 
 ipcMain.on('change-icon', (sender, data) => {
-    const icon = data === 'darkred' ? 'icon' : 'greenIcon';
-    tray.setImage(path.join(assetsDir, `${icon}.png`))
+    const color = data === 'darkred' ? 'black' : 'green';
+    tray.setImage(path.join(assetsDir, `mbta-logo-${color}.png`))
+});
+
+ipcMain.on('hide-window', (sender, data) => {
+    window.hide();
 });
 
 const getNextIndex = (arr, i) => i < arr.length - 1 ? i + 1 : 0;
+const getPrevIndex = (arr, i) => i < 1 ? arr.length - 1 : i - 1;
 
 const fetchAndSend = (route) => {
     clearTimeout(timeout);
@@ -68,9 +76,7 @@ const fetchAndSend = (route) => {
     return fetchData(route)
         .then(data => {
             // Send update event to browser window
-            window.webContents.send('update', Object.assign({}, data, {
-                route
-            }));
+            window.webContents.send('update', { ...data, route });
 
             // Kick off check every 60 seconds
             timeout = setTimeout(() => {
@@ -85,7 +91,7 @@ const fetchData = (route) => {
 
     // Use cache if within TTL, otherwise fetch live data.
     // Click to your heart's delight and this will only fetch once a minute
-    if (withinTTL) return Promise.resolved(cached);
+    if (withinTTL) return Promise.resolve(cached);
 
     return mbta
         .predict({
@@ -95,10 +101,11 @@ const fetchData = (route) => {
         })
         .then(prediction => {
             console.log(`Fetched live data`);
-            const cachedPrediction = Object.assign(prediction, {
+            const extra = {
                 ts: Date.now(),
                 arrivalMins: mbta.arrivals({ limit: 4, timeUnits: 'MINUTES' }),
-            });
+            };
+            const cachedPrediction = { ...prediction, ...extra };
             cache.set(route.name, cachedPrediction);
             return cachedPrediction;
         }).catch(err => {
