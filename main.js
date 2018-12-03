@@ -67,6 +67,7 @@ ipcMain.on('hide-window', (sender, data) => {
     window.hide();
 });
 
+
 const getNextIndex = (arr, i) => i < arr.length - 1 ? i + 1 : 0;
 const getPrevIndex = (arr, i) => i < 1 ? arr.length - 1 : i - 1;
 
