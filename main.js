@@ -1,5 +1,5 @@
 const path = require('path');
-const axios = require('axios');
+const MBTA = require('../mbta-client');
 const { app, BrowserWindow, Tray, ipcMain } = require('electron');
 const { clearway, backBayOrange, backBayCR, harvard, southStation } = require('./resources/routes.json');
 
@@ -13,6 +13,7 @@ try {
 const CACHE_TTL = 60 * 1000;
 const assetsDir = path.join(__dirname, 'assets');
 const cache = new Map();
+const mbta = new MBTA(mbtaKey);
 
 let tray;
 let window;
@@ -79,23 +80,27 @@ const fetchAndSend = (route) => {
 }
 
 const fetchData = (route) => {
-    const apiKey = mbtaKey ? `&api_key=${mbtaKey}` : '';
-    const direction = route.direction != null ? `&filter[direction_id]=${route.direction}` : '';
-    const destUrl = `https://api-v3.mbta.com/predictions?filter[stop]=${route.code}&sort=arrival_time${direction}${apiKey}`;
     const cached = cache.get(route.name);
     const withinTTL = cached && (Date.now() - cached.ts) < CACHE_TTL;
 
     // Use cache if within TTL, otherwise fetch live data.
     // Click to your heart's delight and this will only fetch once a minute
-    return withinTTL ? Promise.resolve(cached) :
-        axios.get(destUrl)
-        .then(res => {
-            const data = res.data;
+    if (withinTTL) return Promise.resolved(cached);
+
+    return mbta
+        .predict({
+            stopID: route.code,
+            directionID: route.direction,
+            sort: 'arrival_time',
+        })
+        .then(prediction => {
             console.log(`Fetched live data`);
-            cache.set(route.name, Object.assign(data, {
-                ts: Date.now()
-            }));
-            return data;
+            const cachedPrediction = Object.assign(prediction, {
+                ts: Date.now(),
+                arrivalMins: mbta.arrivals({ limit: 4, timeUnits: 'MINUTES' }),
+            });
+            cache.set(route.name, cachedPrediction);
+            return cachedPrediction;
         }).catch(err => {
             console.error('Error during fetch:', err);
             return null;
