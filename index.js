@@ -34,23 +34,26 @@ ipcRenderer.on('update', (sender, data) => {
 
 function render(route, times) {
 
-    const renderEachTime = (min) => `<h2><span class="bold">${min} </span><span class="small">mins</span></h2>`
-
     body.innerHTML = `
         <center>
-        <div class="header">
-            <h4 class="short">${route.name.toUpperCase()}</h4>
-            <h5 class="short light">Next ${route.mode} in:</h5>
-        </div>
-        <div class="${(times.length < 4) ? "pad" : ""}">
-            ${times.map(renderEachTime).join('')}
-        </div>
+            <div class="header">
+                <h4 class="short">${route.name.toUpperCase()}</h4>
+                <h5 class="short light">Next ${route.mode} in:</h5>
+            </div>
+            <div class="${(times.length < 4) ? "pad" : ""}">
+                ${times.map(min =>
+                    `<h2>
+                        <span class="bold">${min} </span>
+                        <span class="small">mins</span>
+                    </h2>`).join('')}
+            </div>
         </center>`;
 
     const {
         waitStart,
         waitLength
     } = route;
+
     const isWalkable = (mins) => mins >= waitStart && mins <= (waitStart + waitLength);
     body.style.backgroundColor = times.some(isWalkable) ? 'darkgreen' : 'darkred';
 
