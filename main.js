@@ -48,8 +48,11 @@ app.on('ready', () => {
     });
 });
 
-ipcMain.on('new-route', (sender) => {
-    const newIndex = getNextIndex(routes, currentIndex);
+ipcMain.on('new-route', (sender, data) => {
+    const newIndex = data && data.key === 'ArrowLeft'
+        ? getPrevIndex(routes, currentIndex)
+        : getNextIndex(routes, currentIndex);
+
     currentIndex = newIndex;
     fetchAndSend(routes[newIndex]);
 });
@@ -59,7 +62,13 @@ ipcMain.on('change-icon', (sender, data) => {
     tray.setImage(path.join(assetsDir, `mbta-logo-${color}.png`))
 });
 
+ipcMain.on('hide-window', (sender, data) => {
+    window.hide();
+});
+
+
 const getNextIndex = (arr, i) => i < arr.length - 1 ? i + 1 : 0;
+const getPrevIndex = (arr, i) => i < 1 ? arr.length - 1 : i - 1;
 
 const fetchAndSend = (route) => {
     clearTimeout(timeout);
