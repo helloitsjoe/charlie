@@ -1,17 +1,17 @@
 const path = require('path');
 const axios = require('axios');
 const { app, BrowserWindow, Tray, ipcMain } = require('electron');
-const { clearway, backBayOrange, backBayCR, harvard, southStation } = require('./resources/routes.json');
+const { clearway, backBayOrange, backBayCR, harvard, southStation } = require('../resources/routes.json');
 
 let mbtaKey;
 try {
-    mbtaKey = require('./resources/credentials.json').mbtaKey;
+    mbtaKey = require('../resources/credentials.json').mbtaKey;
 } catch (err) {
     console.warn('Missing API key, making call without key...');
 }
 
 const CACHE_TTL = 60 * 1000;
-const assetsDir = path.join(__dirname, 'assets');
+const assetsDir = path.join(__dirname, '../assets');
 const cache = new Map();
 
 let tray;
@@ -42,7 +42,7 @@ app.on('ready', () => {
         });
     });
 
-    window.loadURL(`file://${path.join(__dirname, 'index.html')}`);
+    window.loadURL(`file://${path.join(__dirname, '../index.html')}`);
     window.on('blur', () => {
         window.hide();
     });
