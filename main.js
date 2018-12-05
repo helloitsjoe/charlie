@@ -1,6 +1,5 @@
 const path = require('path');
-// const MBTA = require('mbta-client');
-const MBTA = require('../mbta-client');
+const MBTA = require('mbta-client');
 const { app, BrowserWindow, Tray, ipcMain } = require('electron');
 const { clearway, backBayOrange, backBayCR, harvard, southStation } = require('./resources/routes.json');
 
