@@ -11,9 +11,10 @@
   "author": "Joe Boyle",
   "license": "ISC",
   "devDependencies": {
-    "electron-prebuilt": "^1.4.13"
+    "electron": "^3.0.10"
   },
   "dependencies": {
-    "axios": "^0.18.0"
+    "axios": "^0.18.0",
+    "mbta-client": "git+https://github.com/helloitsjoe/mbta-client.git"
   }
 }

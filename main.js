@@ -1,4 +1,5 @@
 const path = require('path');
+// const MBTA = require('mbta-client');
 const MBTA = require('../mbta-client');
 const { app, BrowserWindow, Tray, ipcMain } = require('electron');
 const { clearway, backBayOrange, backBayCR, harvard, southStation } = require('./resources/routes.json');
@@ -95,22 +96,23 @@ const fetchData = (route) => {
     if (withinTTL) return Promise.resolve(cached);
 
     return mbta
-        .predict({
+        .fetchPredictions({
             stopID: route.code,
             directionID: route.direction,
             sort: 'arrival_time',
         })
         .then(prediction => {
             console.log(`Fetched live data`);
+            const arrivalMins = mbta.arrivals({ maxArrivals: 4 });
             const extra = {
                 ts: Date.now(),
-                arrivalMins: mbta.arrivals({ limit: 4, timeUnits: 'MINUTES' }),
+                arrivalMins: arrivalMins.filter(arrival => arrival > 2)
             };
             const cachedPrediction = { ...prediction, ...extra };
             cache.set(route.name, cachedPrediction);
             return cachedPrediction;
         }).catch(err => {
-            console.error('Error during fetch:', err);
+            console.error('Error during fetch:', err.message);
             return null;
         });
 }
