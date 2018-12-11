@@ -96,13 +96,14 @@ const fetchData = (route) => {
 
     return mbta
         .fetchPredictions({
-            stopID: route.code,
-            directionID: route.direction,
+            limit: 4,
+            stop: route.code,
+            direction_id: route.direction,
             sort: 'arrival_time',
         })
         .then(prediction => {
             console.log(`Fetched live data`);
-            const arrivalMins = mbta.arrivals({ maxArrivals: 4 });
+            const arrivalMins = mbta.arrivals({ convertTo: 'MINUTES' });
             const extra = {
                 ts: Date.now(),
                 arrivalMins: arrivalMins.filter(arrival => arrival > 2)
