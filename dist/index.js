@@ -81,15 +81,15 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./renderer/index.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/index.js");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./renderer/index.js":
-/*!***************************!*\
-  !*** ./renderer/index.js ***!
-  \***************************/
+/***/ "./src/index.js":
+/*!**********************!*\
+  !*** ./src/index.js ***!
+  \**********************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -129,7 +129,7 @@ function render(route, times) {
     return "<h2><span class=\"bold\">".concat(min, " </span><span class=\"small\">mins</span></h2>");
   };
 
-  body.innerHTML = "\n        <center>\n        <div class=\"header\">\n            <h4 class=\"short\">".concat(route.name.toUpperCase(), "</h4>\n            <h5 class=\"short light\">Next ").concat(route.mode, " in:</h5>\n        </div>\n        <div class=\"").concat(times.length < 4 ? "pad" : "", "\">\n            ").concat(times.map(renderEachTime).join(''), "\n        </div>\n        </center>");
+  body.innerHTML = "\n        <center>\n        <div class=\"header\">\n            <h4 class=\"short\">".concat(route.name.toUpperCase(), "</h4>\n            <h5 class=\"short light\">Next ").concat(route.mode, " in:</h5>\n        </div>\n        <div class=\"").concat(times.length < 4 ? 'pad' : '', "\">\n            ").concat(times.map(renderEachTime).join(''), "\n        </div>\n        </center>");
   var waitStart = route.waitStart,
       waitLength = route.waitLength;
 
