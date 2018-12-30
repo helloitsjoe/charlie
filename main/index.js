@@ -39,37 +39,33 @@ app.on('ready', () => {
 
   fetchAndSend(routes[currentIndex]);
 
+  tray.on('double-click', () => window.openDevTools({ mode: 'detach' }));
   tray.on('click', event => {
     fetchAndSend(routes[currentIndex]);
     toggleWindow();
   });
-  tray.on('double-click', event => {
-    window.openDevTools({ mode: 'detach' });
-  });
 
   window.loadURL(`file://${path.join(__dirname, '../index.html')}`);
-  window.on('blur', () => {
+  window.on('blur', window.hide);
+
+  ipcMain.on('new-route', (sender, data) => {
+    const newIndex =
+      data && data.key === 'ArrowLeft'
+        ? getPrevIndex(routes, currentIndex)
+        : getNextIndex(routes, currentIndex);
+
+    currentIndex = newIndex;
+    fetchAndSend(routes[newIndex]);
+  });
+
+  ipcMain.on('change-icon', (sender, data) => {
+    const color = data === 'red' ? 'black' : 'green';
+    tray.setImage(path.join(assetsDir, `mbta-logo-${color}.png`));
+  });
+
+  ipcMain.on('hide-window', (sender, data) => {
     window.hide();
   });
-});
-
-ipcMain.on('new-route', (sender, data) => {
-  const newIndex =
-    data && data.key === 'ArrowLeft'
-      ? getPrevIndex(routes, currentIndex)
-      : getNextIndex(routes, currentIndex);
-
-  currentIndex = newIndex;
-  fetchAndSend(routes[newIndex]);
-});
-
-ipcMain.on('change-icon', (sender, data) => {
-  const color = data === 'darkred' ? 'black' : 'green';
-  tray.setImage(path.join(assetsDir, `mbta-logo-${color}.png`));
-});
-
-ipcMain.on('hide-window', (sender, data) => {
-  window.hide();
 });
 
 const getNextIndex = (arr, i) => (i < arr.length - 1 ? i + 1 : 0);
@@ -106,10 +102,10 @@ const fetchData = route => {
     })
     .then(result => {
       console.log(`Fetched live data`);
-      const arrivalMins = mbta.selectArrivals(result, { convertTo: 'min' });
+      const minsToArrival = mbta.selectArrivals(result, { convertTo: 'min' });
       const extra = {
         ts: Date.now(),
-        arrivalMins: arrivalMins.filter(arrival => arrival > 2),
+        minsToArrival: minsToArrival.filter(arrival => arrival > 2),
       };
       const cachedPrediction = { ...result, ...extra };
       cache.set(route.name, cachedPrediction);
