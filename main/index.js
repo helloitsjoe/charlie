@@ -1,5 +1,5 @@
 const path = require('path');
-const axios = require('axios');
+const MBTA = require('mbta-client');
 const { app, BrowserWindow, Tray, ipcMain } = require('electron');
 const {
   clearway,
@@ -19,6 +19,7 @@ try {
 const CACHE_TTL = 60 * 1000;
 const assetsDir = path.join(__dirname, '../assets');
 const cache = new Map();
+const mbta = new MBTA(mbtaKey);
 
 let tray;
 let window;
@@ -27,7 +28,7 @@ const routes = [backBayOrange, backBayCR, southStation, clearway];
 let currentIndex = 0;
 
 app.on('ready', () => {
-  tray = new Tray(path.join(assetsDir, 'icon.png'));
+  tray = new Tray(path.join(assetsDir, 'mbta-logo-black.png'));
   window = new BrowserWindow({
     width: 260,
     height: 400,
@@ -43,9 +44,7 @@ app.on('ready', () => {
     toggleWindow();
   });
   tray.on('double-click', event => {
-    window.openDevTools({
-      mode: 'detach',
-    });
+    window.openDevTools({ mode: 'detach' });
   });
 
   window.loadURL(`file://${path.join(__dirname, '../index.html')}`);
@@ -54,30 +53,34 @@ app.on('ready', () => {
   });
 });
 
-ipcMain.on('new-route', sender => {
-  const newIndex = getNextIndex(routes, currentIndex);
+ipcMain.on('new-route', (sender, data) => {
+  const newIndex =
+    data && data.key === 'ArrowLeft'
+      ? getPrevIndex(routes, currentIndex)
+      : getNextIndex(routes, currentIndex);
+
   currentIndex = newIndex;
   fetchAndSend(routes[newIndex]);
 });
 
 ipcMain.on('change-icon', (sender, data) => {
-  const icon = data === 'darkred' ? 'icon' : 'greenIcon';
-  tray.setImage(path.join(assetsDir, `${icon}.png`));
+  const color = data === 'darkred' ? 'black' : 'green';
+  tray.setImage(path.join(assetsDir, `mbta-logo-${color}.png`));
+});
+
+ipcMain.on('hide-window', (sender, data) => {
+  window.hide();
 });
 
 const getNextIndex = (arr, i) => (i < arr.length - 1 ? i + 1 : 0);
+const getPrevIndex = (arr, i) => (i < 1 ? arr.length - 1 : i - 1);
 
 const fetchAndSend = route => {
   clearTimeout(timeout);
 
   return fetchData(route).then(data => {
     // Send update event to browser window
-    window.webContents.send(
-      'update',
-      Object.assign({}, data, {
-        route,
-      })
-    );
+    window.webContents.send('update', { ...data, route });
 
     // Kick off check every 60 seconds
     timeout = setTimeout(() => {
@@ -87,36 +90,35 @@ const fetchAndSend = route => {
 };
 
 const fetchData = route => {
-  const apiKey = mbtaKey ? `&api_key=${mbtaKey}` : '';
-  const direction =
-    route.direction != null ? `&filter[direction_id]=${route.direction}` : '';
-  const destUrl = `https://api-v3.mbta.com/predictions?filter[stop]=${
-    route.code
-  }&sort=arrival_time${direction}${apiKey}`;
   const cached = cache.get(route.name);
   const withinTTL = cached && Date.now() - cached.ts < CACHE_TTL;
 
   // Use cache if within TTL, otherwise fetch live data.
   // Click to your heart's delight and this will only fetch once a minute
-  return withinTTL
-    ? Promise.resolve(cached)
-    : axios
-        .get(destUrl)
-        .then(res => {
-          const data = res.data;
-          console.log(`Fetched live data`);
-          cache.set(
-            route.name,
-            Object.assign(data, {
-              ts: Date.now(),
-            })
-          );
-          return data;
-        })
-        .catch(err => {
-          console.error('Error during fetch:', err);
-          return null;
-        });
+  if (withinTTL) return Promise.resolve(cached);
+
+  return mbta
+    .fetchPredictions({
+      limit: 4,
+      stop: route.code,
+      direction_id: route.direction,
+      sort: 'arrival_time',
+    })
+    .then(result => {
+      console.log(`Fetched live data`);
+      const arrivalMins = mbta.selectArrivals(result, { convertTo: 'min' });
+      const extra = {
+        ts: Date.now(),
+        arrivalMins: arrivalMins.filter(arrival => arrival > 2),
+      };
+      const cachedPrediction = { ...result, ...extra };
+      cache.set(route.name, cachedPrediction);
+      return cachedPrediction;
+    })
+    .catch(err => {
+      console.error('Error during fetch:', err.message);
+      return null;
+    });
 };
 
 const toggleWindow = () => {
