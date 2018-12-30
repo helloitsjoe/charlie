@@ -21,9 +21,10 @@ module.exports = {
               '@babel/preset-env',
               ['@babel/preset-react', { pragma: 'h' }],
             ],
-            // plugins: [
-            // ['transform-react-jsx', { pragma: 'h' }],
-            // ]
+            plugins: [
+              '@babel/plugin-proposal-class-properties',
+              ['transform-react-jsx', { pragma: 'h' }],
+            ]
           },
         },
       },
