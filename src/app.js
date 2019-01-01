@@ -1,10 +1,11 @@
 import { h, Component } from 'preact';
 import { ipcRenderer } from 'electron';
-import { Title } from './title';
-import { Arrivals } from './arrivals';
-import { Footer } from './footer';
+import { Title } from './components/title';
+import { Arrivals } from './components/arrivals';
+import { Footer } from './components/footer';
+import { Fallback } from './components/fallback';
 
-const LOADING_THRESHOLD = 100;
+const LOADING_THRESHOLD = 150;
 const GREEN = 'green';
 const RED = 'red';
 
@@ -76,10 +77,7 @@ export default class App extends Component {
     ipcRenderer.send('change-icon', color);
 
     return error || loading ? (
-      <center className={color}>
-        <h3 className="header">{error ? 'No data!' : 'Loading...'}</h3>
-        <Footer color={color} />
-      </center>
+      <Fallback color={color} error={error} />
     ) : (
       <center className={color}>
         <Title route={route} />
