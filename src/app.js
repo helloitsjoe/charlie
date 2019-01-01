@@ -4,6 +4,7 @@ import { Title } from './title';
 import { Arrivals } from './arrivals';
 import { Footer } from './footer';
 
+const LOADING_THRESHOLD = 100;
 const GREEN = 'green';
 const RED = 'red';
 
@@ -16,11 +17,15 @@ export default class App extends Component {
     color: GREEN,
   };
 
+  waitForLoad = null;
+
   componentDidMount() {
     document.body.addEventListener('click', this.handleClick);
     document.body.addEventListener('keydown', this.handleKeyDown);
 
     ipcRenderer.on('update', (sender, data) => {
+      clearTimeout(this.waitForLoad);
+
       if (!data || !data.data || !data.route) {
         return this.setState({ loading: false, error: true });
       }
@@ -46,7 +51,12 @@ export default class App extends Component {
     document.body.removeEventListener('keydown', this.handleKeyDown);
   }
 
-  handleClick = () => ipcRenderer.send('new-route');
+  handleClick = () => {
+    ipcRenderer.send('new-route');
+    this.waitForLoad = setTimeout(() => {
+      this.setState({ loading: true });
+    }, LOADING_THRESHOLD);
+  };
 
   handleKeyDown = e => {
     const { key } = e;
