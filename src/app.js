@@ -11,78 +11,80 @@ const RED = 'red';
 
 export default class App extends Component {
   state = {
-    route: null,
-    minsToArrival: [],
+    routes: {},
+    // minsToArrival: [],
     error: null,
     loading: true,
-    color: GREEN,
+    // color: GREEN,
   };
 
   waitForLoad = null;
 
   componentDidMount() {
     document.body.addEventListener('click', this.handleClick);
-    document.body.addEventListener('keydown', this.handleKeyDown);
+    // document.body.addEventListener('keydown', this.handleKeyDown);
+    ipcRenderer.send('fetch');
 
     ipcRenderer.on('update', (sender, data) => {
+      console.log(`data`, data);
       clearTimeout(this.waitForLoad);
 
-      if (!data || !data.data || !data.route) {
+      if (!data) {
         return this.setState({ loading: false, error: true });
       }
 
-      const { route, minsToArrival } = data;
+      // const { routes } = data;
 
-      const { waitStart, waitLength } = route;
-      const isWalkable = mins =>
-        mins >= waitStart && mins <= waitStart + waitLength;
+      // const { waitStart, waitLength } = route;
+      // const isWalkable = mins =>
+      //   mins >= waitStart && mins <= waitStart + waitLength;
 
       this.setState({
-        route,
-        minsToArrival,
+        routes: data,
+        // minsToArrival,
         error: false,
         loading: false,
-        color: minsToArrival.some(isWalkable) ? GREEN : RED,
+        // color: minsToArrival.some(isWalkable) ? GREEN : RED,
       });
     });
   }
 
   componentWillUnmount() {
     document.body.removeEventListener('click', this.handleClick);
-    document.body.removeEventListener('keydown', this.handleKeyDown);
+    // document.body.removeEventListener('keydown', this.handleKeyDown);
   }
 
   handleClick = () => {
-    ipcRenderer.send('new-route');
+    ipcRenderer.send('fetch');
     this.waitForLoad = setTimeout(() => {
       this.setState({ loading: true });
     }, LOADING_THRESHOLD);
   };
 
-  handleKeyDown = e => {
-    const { key } = e;
-    if (key === 'Escape') {
-      ipcRenderer.send('hide-window');
-    } else {
-      // For now, get new route on any key.
-      // Left arrow will get previous route.
-      ipcRenderer.send('new-route', { key });
-    }
-  };
+  // handleKeyDown = e => {
+  //   const { key } = e;
+  //   if (key === 'Escape') {
+  //     ipcRenderer.send('hide-window');
+  //   } else {
+  //     // For now, get new route on any key.
+  //     // Left arrow will get previous route.
+  //     ipcRenderer.send('new-route', { key });
+  //   }
+  // };
 
   render() {
-    const { route, minsToArrival, color, error, loading } = this.state;
-
+    const { routes, color, error, loading } = this.state;
+    console.log(`this.state:`, this.state);
     // Send event to main process to change icon color
-    ipcRenderer.send('change-icon', color);
+    // ipcRenderer.send('change-icon', color);
 
     return error || loading ? (
-      <Fallback color={color} error={error} />
+      <Fallback error={error} />
     ) : (
-      <center className={color}>
-        <Title route={route} />
-        <Arrivals minsToArrival={minsToArrival} route={route} />
-        <Footer color={color} />
+      <center>
+        <Title />
+        <Arrivals routes={routes} />
+        <Footer />
       </center>
     );
   }

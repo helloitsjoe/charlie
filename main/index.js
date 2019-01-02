@@ -16,6 +16,7 @@ try {
   console.warn('Missing API key, making call without key...');
 }
 
+const PREDICTIONS_LIMIT = 4;
 const CACHE_TTL = 60 * 1000;
 const assetsDir = path.join(__dirname, '../assets');
 const cache = new Map();
@@ -48,14 +49,15 @@ app.on('ready', () => {
   window.loadURL(`file://${path.join(__dirname, '../index.html')}`);
   window.on('blur', window.hide);
 
-  ipcMain.on('new-route', (sender, data) => {
-    const newIndex =
-      data && data.key === 'ArrowLeft'
-        ? getPrevIndex(routes, currentIndex)
-        : getNextIndex(routes, currentIndex);
+  ipcMain.on('fetch', (sender, data) => {
+    // const newIndex =
+    //   data && data.key === 'ArrowLeft'
+    //     ? getPrevIndex(routes, currentIndex)
+    //     : getNextIndex(routes, currentIndex);
 
-    currentIndex = newIndex;
-    fetchAndSend(routes[newIndex]);
+    // currentIndex = newIndex;
+    // fetchAndSend(routes[newIndex]);
+    fetchAndSend();
   });
 
   ipcMain.on('change-icon', (sender, data) => {
@@ -68,15 +70,15 @@ app.on('ready', () => {
   });
 });
 
-const getNextIndex = (arr, i) => (i < arr.length - 1 ? i + 1 : 0);
-const getPrevIndex = (arr, i) => (i < 1 ? arr.length - 1 : i - 1);
+// const getNextIndex = (arr, i) => (i < arr.length - 1 ? i + 1 : 0);
+// const getPrevIndex = (arr, i) => (i < 1 ? arr.length - 1 : i - 1);
 
 const fetchAndSend = route => {
   clearTimeout(timeout);
 
   return fetchData(route).then(data => {
     // Send update event to browser window
-    window.webContents.send('update', { ...data, route });
+    window.webContents.send('update', { ...data /* , route */ });
 
     // Kick off check every 60 seconds
     timeout = setTimeout(() => {
@@ -86,18 +88,18 @@ const fetchAndSend = route => {
 };
 
 const fetchData = route => {
-  const cached = cache.get(route.name);
-  const withinTTL = cached && Date.now() - cached.ts < CACHE_TTL;
+  // const cached = cache.get(route.name);
+  // const withinTTL = cached && Date.now() - cached.ts < CACHE_TTL;
 
   // Use cache if within TTL, otherwise fetch live data.
   // Click to your heart's delight and this will only fetch once a minute
-  if (withinTTL) return Promise.resolve(cached);
+  // if (withinTTL) return Promise.resolve(cached);
 
   return mbta
     .fetchPredictions({
-      limit: 4,
-      stop: route.code,
-      direction_id: route.direction,
+      // limit: 4,
+      stop: routes.map(route => route.code),
+      // direction_id: route.direction,
       sort: 'arrival_time',
     })
     .then(result => {
@@ -107,9 +109,20 @@ const fetchData = route => {
         ts: Date.now(),
         minsToArrival: minsToArrival.filter(arrival => arrival > 2),
       };
-      const cachedPrediction = { ...result, ...extra };
-      cache.set(route.name, cachedPrediction);
-      return cachedPrediction;
+      // const cachedPrediction = { ...result, ...extra };
+      // cache.set(route.name, cachedPrediction);
+      // return cachedPrediction;
+
+      // Create object of prediction arrays based on ID
+      return result.data.reduce((predictions, curr) => {
+        const { id: stopID } = curr.relationships.stop.data;
+        if (predictions[stopID] == null) {
+          predictions[stopID] = [curr];
+        } else if (predictions[stopID].length < PREDICTIONS_LIMIT) {
+          predictions[stopID].push(curr);
+        }
+        return predictions;
+      }, {});
     })
     .catch(err => {
       console.error('Error during fetch:', err.message);
