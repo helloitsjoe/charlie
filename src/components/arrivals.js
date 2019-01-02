@@ -1,10 +1,10 @@
 import { h } from 'preact';
-import { RouteDisplay } from './route-display';
+import { RouteItem } from './route-item';
 
 export const Arrivals = ({ routes }) => (
   <div>
-    {Object.keys(routes).map(route => (
-      <RouteDisplay route={routes[route]} />
+    {routes.map(route => (
+      <RouteItem route={route} />
     ))}
   </div>
 );

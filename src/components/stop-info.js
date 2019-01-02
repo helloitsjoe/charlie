@@ -5,11 +5,11 @@ const StyledColorPill = styled.div`
   height: 40px;
   text-align: center;
   border-radius: 20px;
-  color: ${props => (props.color === 'yellow' ? 'black' : 'white')}
-  background-color: ${props => props.color};
+  background-color: #${props => props.color};
 `;
 
 const StyledStopName = styled.h3`
+  color: #${props => props.textColor};
   font-weight: bold;
 `;
 
@@ -19,14 +19,14 @@ const StyledDirection = styled.div`
   font-weight: 300;
 `;
 
-export const Stop = ({ color, id, headSign }) => {
-  console.log(`color`, color);
+export const StopInfo = ({ color, textColor, name, direction }) => {
+  const cleanName = name.replace('Massachusetts Ave @ ', '');
   return (
     <div>
       <StyledColorPill color={color}>
-        <StyledStopName>{id}</StyledStopName>
+        <StyledStopName textColor={textColor}>{cleanName}</StyledStopName>
       </StyledColorPill>
-      <StyledDirection>Towards Alewife</StyledDirection>
+      <StyledDirection>Direction: {direction}</StyledDirection>
     </div>
   );
 };
