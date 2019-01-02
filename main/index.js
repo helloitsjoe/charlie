@@ -7,17 +7,17 @@ const {
   backBayCR,
   harvard,
   southStation,
-} = require('./resources/routes.json');
+} = require('../resources/routes.json');
 
 let mbtaKey;
 try {
-  mbtaKey = require('./resources/credentials.json').mbtaKey;
+  mbtaKey = require('../resources/credentials.json').mbtaKey;
 } catch (err) {
   console.warn('Missing API key, making call without key...');
 }
 
 const CACHE_TTL = 60 * 1000;
-const assetsDir = path.join(__dirname, 'assets');
+const assetsDir = path.join(__dirname, '../assets');
 const cache = new Map();
 const mbta = new MBTA(mbtaKey);
 
@@ -39,37 +39,33 @@ app.on('ready', () => {
 
   fetchAndSend(routes[currentIndex]);
 
+  tray.on('double-click', () => window.openDevTools({ mode: 'detach' }));
   tray.on('click', event => {
     fetchAndSend(routes[currentIndex]);
     toggleWindow();
   });
-  tray.on('double-click', event => {
-    window.openDevTools({ mode: 'detach' });
+
+  window.loadURL(`file://${path.join(__dirname, '../index.html')}`);
+  window.on('blur', window.hide);
+
+  ipcMain.on('new-route', (sender, data) => {
+    const newIndex =
+      data && data.key === 'ArrowLeft'
+        ? getPrevIndex(routes, currentIndex)
+        : getNextIndex(routes, currentIndex);
+
+    currentIndex = newIndex;
+    fetchAndSend(routes[newIndex]);
   });
 
-  window.loadURL(`file://${path.join(__dirname, 'index.html')}`);
-  window.on('blur', () => {
+  ipcMain.on('change-icon', (sender, data) => {
+    const color = data === 'red' ? 'black' : 'green';
+    tray.setImage(path.join(assetsDir, `mbta-logo-${color}.png`));
+  });
+
+  ipcMain.on('hide-window', (sender, data) => {
     window.hide();
   });
-});
-
-ipcMain.on('new-route', (sender, data) => {
-  const newIndex =
-    data && data.key === 'ArrowLeft'
-      ? getPrevIndex(routes, currentIndex)
-      : getNextIndex(routes, currentIndex);
-
-  currentIndex = newIndex;
-  fetchAndSend(routes[newIndex]);
-});
-
-ipcMain.on('change-icon', (sender, data) => {
-  const color = data === 'darkred' ? 'black' : 'green';
-  tray.setImage(path.join(assetsDir, `mbta-logo-${color}.png`));
-});
-
-ipcMain.on('hide-window', (sender, data) => {
-  window.hide();
 });
 
 const getNextIndex = (arr, i) => (i < arr.length - 1 ? i + 1 : 0);
@@ -106,10 +102,10 @@ const fetchData = route => {
     })
     .then(result => {
       console.log(`Fetched live data`);
-      const arrivalMins = mbta.selectArrivals(result, { convertTo: 'min' });
+      const minsToArrival = mbta.selectArrivals(result, { convertTo: 'min' });
       const extra = {
         ts: Date.now(),
-        arrivalMins: arrivalMins.filter(arrival => arrival > 2),
+        minsToArrival: minsToArrival.filter(arrival => arrival > 2),
       };
       const cachedPrediction = { ...result, ...extra };
       cache.set(route.name, cachedPrediction);
