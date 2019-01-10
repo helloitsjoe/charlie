@@ -1,4 +1,4 @@
-import { h } from 'preact';
+import { h, Component } from 'preact';
 import { StopInfo } from './stop-info';
 import { Minutes } from './minutes';
 import styled from 'styled-components';
@@ -9,58 +9,52 @@ const RouteWrapper = styled.div`
   border-bottom: 1px solid #666;
   display: flex;
   flex-wrap: nowrap;
-  overflow-x: auto;
+  overflow-x: hidden;
 `;
 
 const StopWrapper = styled.div`
-  flex: 0 0 70%;
+  flex: ${props => (props.clicked ? '0 0 10%' : '0 0 70%')};
+  transition: 0.3s;
 `;
 
 const MinsWrapper = styled.div`
-  flex: 0 0 auto;
+  flex: '0 0 auto';
+  transition: 0.3s;
 `;
-// const StopWrapper = styled.div`
-//   display: inline-block;
-//   width: 80%;
-// `;
 
-// const MinsWrapper = styled.div`
-//   display: inline-block;
-//   overflow: hidden;
-//   width: 20%;
-// `;
+export class RouteItem extends Component {
+  state = { clicked: false };
 
-const getColor = id => {
-  const idAsNumber = Number(id);
-  if (idAsNumber === idAsNumber) return 'yellow';
-  if (/CR-/.test(id)) return 'purple';
-  // Subway IDs are line colors
-  return id.toLowerCase();
-};
+  handleClick = e => {
+    this.setState(prevState => ({
+      clicked: !prevState.clicked,
+    }));
+  };
 
-export const RouteItem = ({ route }) => {
-  console.log(`route:`, route);
-  // const id = route.relationships.route.data.id;
-  // console.log('id', id);
-
-  return (
-    <RouteWrapper>
-      {/* Name pill */}
-      {/* To: direction */}
-      <StopWrapper>
-        <StopInfo
-          color={route.color}
-          textColor={route.textColor}
-          name={route.stopName}
-          direction={route.direction}
-        />
-      </StopWrapper>
-      {/* Times */}
-      {/* Expand times on click */}
-      {/* Animation */}
-      <MinsWrapper>
-        <Minutes mins={route.arrivalMins} />
-      </MinsWrapper>
-    </RouteWrapper>
-  );
-};
+  render() {
+    const {
+      route: { color, textColor, stopName, direction, arrivalMins },
+    } = this.props;
+    const { clicked } = this.state;
+    return (
+      <RouteWrapper onClick={this.handleClick}>
+        {/* Name pill */}
+        {/* To: direction */}
+        <StopWrapper clicked={clicked}>
+          <StopInfo
+            color={color}
+            textColor={textColor}
+            name={clicked ? stopName[0] : stopName}
+            direction={!clicked && direction}
+          />
+        </StopWrapper>
+        {/* Times */}
+        {/* Expand times on click */}
+        {/* Animation */}
+        <MinsWrapper>
+          <Minutes mins={clicked ? arrivalMins : arrivalMins.slice(0, 2)} />
+        </MinsWrapper>
+      </RouteWrapper>
+    );
+  }
+}

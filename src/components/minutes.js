@@ -2,23 +2,28 @@ import { h } from 'preact';
 import styled from 'styled-components';
 
 const MinutesWrapper = styled.div`
-  display: inline;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
 `;
 
 const StyledMinutes = styled.div`
   display: inline-block;
   padding: 10px;
-  font-size: 3.5rem;
+  font-size: ${props => (props.idx > 0 ? '2.5rem' : '3.5rem')};
+`;
+
+const StyledMinutesLabel = styled.div`
+  font-size: ${props => (props.idx > 0 ? '1.25rem' : '1.5rem')};
 `;
 
 export const Minutes = ({ mins }) => {
-  // TODO: Make mins and 'min' line up vertically
   return (
-    <div>
-      {mins.map(min => (
+    <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+      {mins.map((min, idx) => (
         <MinutesWrapper>
-          <StyledMinutes>{min}</StyledMinutes>
-          <span>min</span>
+          <StyledMinutes idx={idx}>{min}</StyledMinutes>
+          <StyledMinutesLabel idx={idx}>min</StyledMinutesLabel>
         </MinutesWrapper>
       ))}
     </div>

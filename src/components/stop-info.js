@@ -15,12 +15,13 @@ const StyledStopName = styled.h3`
 
 const StyledDirection = styled.div`
   color: white;
-  margin: 10px 0px 0px 10px;
+  padding: 10px 0px 0px 10px;
   font-weight: 300;
 `;
 
 export const StopInfo = ({ color, textColor, name, direction }) => {
-  const cleanName = name.replace('Massachusetts Ave @ ', '');
+  console.log(`name:`, name);
+  const cleanName = name && name.replace('Massachusetts Ave @ ', '');
   return (
     <div>
       <StyledColorPill color={color}>

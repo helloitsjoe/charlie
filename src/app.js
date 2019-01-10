@@ -52,10 +52,10 @@ export default class App extends Component {
   }
 
   handleClick = () => {
-    ipcRenderer.send('fetch');
-    this.waitForLoad = setTimeout(() => {
-      this.setState({ loading: true });
-    }, LOADING_THRESHOLD);
+    // ipcRenderer.send('fetch');
+    // this.waitForLoad = setTimeout(() => {
+    //   this.setState({ loading: true });
+    // }, LOADING_THRESHOLD);
   };
 
   render() {
