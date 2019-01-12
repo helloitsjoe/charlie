@@ -1,90 +1,74 @@
 import { h, Component } from 'preact';
 import { ipcRenderer } from 'electron';
-import { Title } from './title';
-import { Arrivals } from './arrivals';
-import { Footer } from './footer';
+import { Header } from './components/header';
+// import { Arrivals } from './components/arrivals';
+import { RouteItem } from './components/route-item';
+import { Footer } from './components/footer';
+import { Fallback } from './components/fallback';
 
-const LOADING_THRESHOLD = 100;
+const LOADING_THRESHOLD = 150;
 const GREEN = 'green';
 const RED = 'red';
 
 export default class App extends Component {
   state = {
-    route: null,
-    minsToArrival: [],
+    routes: [],
     error: null,
     loading: true,
-    color: GREEN,
+    // color: GREEN,
   };
 
-  waitForLoad = null;
+  // waitForLoad = null;
 
   componentDidMount() {
     document.body.addEventListener('click', this.handleClick);
-    document.body.addEventListener('keydown', this.handleKeyDown);
 
-    ipcRenderer.on('update', (sender, data) => {
-      clearTimeout(this.waitForLoad);
+    ipcRenderer.send('fetch');
+    ipcRenderer.on('update', (sender, routes) => {
+      console.log(`routes`, routes);
+      // clearTimeout(this.waitForLoad);
 
-      if (!data || !data.data || !data.route) {
+      if (!routes) {
         return this.setState({ loading: false, error: true });
       }
 
-      const { route, minsToArrival } = data;
+      // const { routes } = data;
 
-      const { waitStart, waitLength } = route;
-      const isWalkable = mins =>
-        mins >= waitStart && mins <= waitStart + waitLength;
+      // const { waitStart, waitLength } = route;
+      // const isWalkable = mins =>
+      //   mins >= waitStart && mins <= waitStart + waitLength;
 
       this.setState({
-        route,
-        minsToArrival,
+        routes,
         error: false,
         loading: false,
-        color: minsToArrival.some(isWalkable) ? GREEN : RED,
+        // color: minsToArrival.some(isWalkable) ? GREEN : RED,
       });
     });
   }
 
   componentWillUnmount() {
     document.body.removeEventListener('click', this.handleClick);
-    document.body.removeEventListener('keydown', this.handleKeyDown);
   }
 
-  handleClick = () => {
-    ipcRenderer.send('new-route');
-    this.waitForLoad = setTimeout(() => {
-      this.setState({ loading: true });
-    }, LOADING_THRESHOLD);
-  };
-
-  handleKeyDown = e => {
-    const { key } = e;
-    if (key === 'Escape') {
-      ipcRenderer.send('hide-window');
-    } else {
-      // For now, get new route on any key.
-      // Left arrow will get previous route.
-      ipcRenderer.send('new-route', { key });
-    }
+  handleReFetch = () => {
+    ipcRenderer.send('fetch');
   };
 
   render() {
-    const { route, minsToArrival, color, error, loading } = this.state;
-
-    // Send event to main process to change icon color
-    ipcRenderer.send('change-icon', color);
+    const { routes, error, loading } = this.state;
 
     return error || loading ? (
-      <center className={color}>
-        <h3 className="header">{error ? 'No data!' : 'Loading...'}</h3>
-        <Footer color={color} />
-      </center>
+      <Fallback error={error} />
     ) : (
-      <center className={color}>
-        <Title route={route} />
-        <Arrivals minsToArrival={minsToArrival} route={route} />
-        <Footer color={color} />
+      <center>
+        <Header reFetch={this.handleReFetch} />
+        {/* <Arrivals routes={routes} /> */}
+        {routes.map(route => (
+          <RouteItem route={route} />
+        ))}
+
+        {/* <Footer /> */}
       </center>
     );
   }

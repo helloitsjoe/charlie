@@ -189,7 +189,7 @@ body {
   font-family: 'Roboto', 'HelveticaNeue', 'Helvetica Neue', Helvetica, Arial,
     sans-serif;
   color: #f7f7f7;
-  background-color: #0fa0ce;
+  background-color: #222;
   margin: auto;
 }
 
@@ -522,12 +522,8 @@ hr {
 }
 
 .header {
-  padding-top: 40px;
+  padding-top: 20px;
   padding-bottom: 10px;
-}
-
-.footer {
-  height: 500px;
 }
 
 .green {
