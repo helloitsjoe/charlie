@@ -30,8 +30,8 @@ const routes = [backBayOrange, backBayCR, southStation, clearway];
 app.on('ready', () => {
   tray = new Tray(path.join(assetsDir, 'mbta-logo-black.png'));
   window = new BrowserWindow({
-    width: 340,
-    height: 400,
+    width: 380,
+    height: 460,
     show: false,
     frame: false,
     resizable: false,

@@ -1,7 +1,8 @@
 import { h, Component } from 'preact';
 import { ipcRenderer } from 'electron';
-import { Title } from './components/title';
-import { Arrivals } from './components/arrivals';
+import { Header } from './components/header';
+// import { Arrivals } from './components/arrivals';
+import { RouteItem } from './components/route-item';
 import { Footer } from './components/footer';
 import { Fallback } from './components/fallback';
 
@@ -17,7 +18,7 @@ export default class App extends Component {
     // color: GREEN,
   };
 
-  waitForLoad = null;
+  // waitForLoad = null;
 
   componentDidMount() {
     document.body.addEventListener('click', this.handleClick);
@@ -25,7 +26,7 @@ export default class App extends Component {
     ipcRenderer.send('fetch');
     ipcRenderer.on('update', (sender, routes) => {
       console.log(`routes`, routes);
-      clearTimeout(this.waitForLoad);
+      // clearTimeout(this.waitForLoad);
 
       if (!routes) {
         return this.setState({ loading: false, error: true });
@@ -48,29 +49,26 @@ export default class App extends Component {
 
   componentWillUnmount() {
     document.body.removeEventListener('click', this.handleClick);
-    // document.body.removeEventListener('keydown', this.handleKeyDown);
   }
 
-  handleClick = () => {
-    // ipcRenderer.send('fetch');
-    // this.waitForLoad = setTimeout(() => {
-    //   this.setState({ loading: true });
-    // }, LOADING_THRESHOLD);
+  handleReFetch = () => {
+    ipcRenderer.send('fetch');
   };
 
   render() {
     const { routes, error, loading } = this.state;
-    console.log(`this.state:`, this.state);
-    // Send event to main process to change icon color
-    // ipcRenderer.send('change-icon', color);
 
     return error || loading ? (
       <Fallback error={error} />
     ) : (
       <center>
-        <Title />
-        <Arrivals routes={routes} />
-        <Footer />
+        <Header reFetch={this.handleReFetch} />
+        {/* <Arrivals routes={routes} /> */}
+        {routes.map(route => (
+          <RouteItem route={route} />
+        ))}
+
+        {/* <Footer /> */}
       </center>
     );
   }

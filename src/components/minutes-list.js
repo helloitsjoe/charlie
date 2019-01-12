@@ -5,11 +5,12 @@ const MinutesWrapper = styled.div`
   display: flex;
   flex-direction: column;
   text-align: center;
+  width: 60px;
 `;
 
 const StyledMinutes = styled.div`
   display: inline-block;
-  padding: 10px;
+  padding: 10px 0;
   font-size: ${props => (props.idx > 0 ? '2.5rem' : '3.5rem')};
 `;
 
@@ -17,7 +18,7 @@ const StyledMinutesLabel = styled.div`
   font-size: ${props => (props.idx > 0 ? '1.25rem' : '1.5rem')};
 `;
 
-export const Minutes = ({ mins }) => {
+export const MinutesList = ({ mins }) => {
   return (
     <div style={{ display: 'flex', alignItems: 'flex-end' }}>
       {mins.map((min, idx) => (
