@@ -5,6 +5,7 @@ const MinutesWrapper = styled.div`
   display: flex;
   flex-direction: column;
   text-align: center;
+  font-weight: 700;
   width: 60px;
 `;
 
