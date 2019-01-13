@@ -7,6 +7,7 @@ const StyledColorPill = styled.div`
   text-align: center;
   border-radius: 20px;
   width: ${props => (props.isCompact ? '40px' : '100%')};
+  margin-left: ${props => (props.isCompact ? '6px' : '0')};
   background-color: #${props => props.color};
   transition: ${TRANS_TIME};
 `;
@@ -54,13 +55,11 @@ export class StopInfo extends Component {
     const cleanName = name && name.replace('Massachusetts Ave @ ', '');
     return (
       <div>
-        <center>
-          <StyledColorPill color={color} isCompact={isCompact}>
-            <StyledStopName textColor={textColor}>
-              {showFullText ? cleanName : cleanName[0]}
-            </StyledStopName>
-          </StyledColorPill>
-        </center>
+        <StyledColorPill color={color} isCompact={isCompact}>
+          <StyledStopName textColor={textColor}>
+            {showFullText ? cleanName : cleanName[0]}
+          </StyledStopName>
+        </StyledColorPill>
         <StyledDirection isCompact={!showFullText}>
           {`\u2794 ${direction}`}
         </StyledDirection>

@@ -14,8 +14,6 @@ const StyledButton = styled.button`
 export const Header = ({ route, reFetch }) => {
   return (
     <div className="header">
-      {/* <h4 className="short">Upcoming:</h4> */}
-      {/* <h5 className="short light">Next {route.mode} in:</h5> */}
       <StyledButton onClick={reFetch}>REFRESH</StyledButton>
     </div>
   );

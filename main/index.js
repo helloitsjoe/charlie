@@ -17,9 +17,7 @@ try {
 }
 
 const PREDICTIONS_LIMIT = 4;
-// const CACHE_TTL = 60 * 1000;
 const assetsDir = path.join(__dirname, '../assets');
-// const cache = new Map();
 const mbta = new MBTA(mbtaKey);
 
 let tray;
@@ -103,13 +101,14 @@ const fetchData = async routes => {
 
       const color = routeAttrs.color;
       const textColor = routeAttrs.text_color;
+      const arrivalMins = arrivals.filter(min => min > 2 && min < 60);
 
       return {
         color,
         stopName,
         direction,
         textColor,
-        arrivalMins: arrivals.filter(min => min > 2),
+        arrivalMins,
         _prediction: pre,
       };
     });
