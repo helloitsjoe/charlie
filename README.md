@@ -1,4 +1,6 @@
-# Menubar Transit
+# MBTA in the Menubar
+
+### An electron app that lives in your menubar and tells you when the next train or bus is coming!
 
 1. Install dependencies with `npm i`
 2. Run app with `npm start`
