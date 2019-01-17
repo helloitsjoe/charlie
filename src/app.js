@@ -1,7 +1,6 @@
 import { h, Component } from 'preact';
 import { ipcRenderer } from 'electron';
 import { Header } from './components/header';
-// import { Arrivals } from './components/arrivals';
 import { RouteItem } from './components/route-item';
 import { Footer } from './components/footer';
 import { Fallback } from './components/fallback';
@@ -18,25 +17,15 @@ export default class App extends Component {
     // color: GREEN,
   };
 
-  // waitForLoad = null;
-
   componentDidMount() {
-    document.body.addEventListener('click', this.handleClick);
-
     ipcRenderer.send('fetch');
+
     ipcRenderer.on('update', (sender, routes) => {
       console.log(`routes`, routes);
-      // clearTimeout(this.waitForLoad);
 
       if (!routes) {
         return this.setState({ loading: false, error: true });
       }
-
-      // const { routes } = data;
-
-      // const { waitStart, waitLength } = route;
-      // const isWalkable = mins =>
-      //   mins >= waitStart && mins <= waitStart + waitLength;
 
       this.setState({
         routes,
@@ -58,18 +47,16 @@ export default class App extends Component {
   render() {
     const { routes, error, loading } = this.state;
 
-    return error || loading ? (
-      <Fallback error={error} />
-    ) : (
-      <center>
+    return (
+      <div>
         <Header reFetch={this.handleReFetch} />
-        {/* <Arrivals routes={routes} /> */}
-        {routes.map(route => (
-          <RouteItem route={route} />
-        ))}
-
+        {error || loading ? (
+          <Fallback error={error} />
+        ) : (
+          routes.map(route => <RouteItem route={route} />)
+        )}
         {/* <Footer /> */}
-      </center>
+      </div>
     );
   }
 }

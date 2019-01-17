@@ -1,6 +1,12 @@
 import { h } from 'preact';
 import styled from 'styled-components';
 
+const StyledHeader = styled.div`
+  text-align: center;
+  padding-top: 20px;
+  padding-bottom: 10px;
+`;
+
 const StyledButton = styled.button`
   font-size: 1rem;
   border-radius: 10px;
@@ -13,8 +19,8 @@ const StyledButton = styled.button`
 
 export const Header = ({ route, reFetch }) => {
   return (
-    <div className="header">
+    <StyledHeader>
       <StyledButton onClick={reFetch}>REFRESH</StyledButton>
-    </div>
+    </StyledHeader>
   );
 };

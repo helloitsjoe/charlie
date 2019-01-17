@@ -1,13 +1,7 @@
 const path = require('path');
 const MBTA = require('mbta-client');
 const { app, BrowserWindow, Tray, ipcMain } = require('electron');
-const {
-  clearway,
-  backBayOrange,
-  backBayCR,
-  harvard,
-  southStation,
-} = require('../resources/routes.json');
+const routesConfig = require('../resources/routes.config.js');
 
 let mbtaKey;
 try {
@@ -23,7 +17,7 @@ const mbta = new MBTA(mbtaKey);
 let tray;
 let window;
 let timeout;
-const routes = [backBayOrange, backBayCR, southStation, clearway];
+const routes = Object.values(routesConfig);
 
 app.on('ready', () => {
   tray = new Tray(path.join(assetsDir, 'mbta-logo-black.png'));
@@ -35,28 +29,19 @@ app.on('ready', () => {
     resizable: false,
   });
 
-  fetchAndSend(routes);
-
-  tray.on('double-click', () => window.openDevTools({ mode: 'detach' }));
-  tray.on('click', event => {
-    toggleWindow();
-  });
-
   window.loadURL(`file://${path.join(__dirname, '../index.html')}`);
   window.on('blur', window.hide);
 
-  ipcMain.on('fetch', (sender, data) => {
-    fetchAndSend(routes);
-  });
+  tray.on('click', () => toggleWindow());
+  tray.on('double-click', () => window.openDevTools({ mode: 'detach' }));
 
-  ipcMain.on('change-icon', (sender, data) => {
-    const color = data === 'red' ? 'black' : 'green';
-    tray.setImage(path.join(assetsDir, `mbta-logo-${color}.png`));
-  });
+  ipcMain.on('fetch', () => fetchAndSend(routes));
+  ipcMain.on('hide-window', () => window.hide());
 
-  ipcMain.on('hide-window', (sender, data) => {
-    window.hide();
-  });
+  // ipcMain.on('change-icon', (sender, data) => {
+  //   const color = data === 'red' ? 'black' : 'green';
+  //   tray.setImage(path.join(assetsDir, `mbta-logo-${color}.png`));
+  // });
 });
 
 const fetchAndSend = routes => {
@@ -103,12 +88,17 @@ const fetchData = async routes => {
       const textColor = routeAttrs.text_color;
       const arrivalMins = arrivals.filter(min => min > 2 && min < 60);
 
+      // const { waitStart, waitLength } = route;
+      // const isWalkable = mins =>
+      //   mins >= waitStart && mins <= waitStart + waitLength;
+
       return {
         color,
         stopName,
         direction,
         textColor,
         arrivalMins,
+        // for debugging client side
         _prediction: pre,
       };
     });
