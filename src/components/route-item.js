@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { StopInfo } from './stop-info';
 import { MinutesList } from './minutes-list';
-import { TRANS_TIME } from '../constants';
+import { TRANS_TIME, GREEN, RED } from '../constants';
 import styled from 'styled-components';
 
 const RouteWrapper = styled.div`
@@ -20,8 +20,9 @@ const StopWrapper = styled.div`
 
 const MinsListWrapper = styled.div`
   flex: '0 0 auto';
-  border-left: 1px solid #666;
+  width: 500px;
   transition: ${TRANS_TIME};
+  border-bottom: 6px solid ${props => (props.isWalkable ? GREEN : RED)};
 `;
 
 export class RouteItem extends Component {
@@ -35,7 +36,7 @@ export class RouteItem extends Component {
 
   render() {
     const {
-      route: { color, textColor, stopName, direction, arrivalMins },
+      route: { color, textColor, stopName, direction, arrivalMins, isWalkable },
     } = this.props;
     const { clicked } = this.state;
     return (
@@ -49,7 +50,7 @@ export class RouteItem extends Component {
             isCompact={clicked}
           />
         </StopWrapper>
-        <MinsListWrapper>
+        <MinsListWrapper isWalkable={isWalkable}>
           <MinutesList mins={arrivalMins} />
         </MinsListWrapper>
       </RouteWrapper>

@@ -5,39 +5,26 @@ import { RouteItem } from './components/route-item';
 import { Footer } from './components/footer';
 import { Fallback } from './components/fallback';
 
-const LOADING_THRESHOLD = 150;
-const GREEN = 'green';
-const RED = 'red';
-
 export default class App extends Component {
   state = {
     routes: [],
     error: null,
     loading: true,
-    // color: GREEN,
   };
 
   componentDidMount() {
     ipcRenderer.send('fetch');
 
     ipcRenderer.on('update', (sender, routes) => {
+      if (!routes) return this.setState({ loading: false, error: true });
+
       console.log(`routes`, routes);
-
-      if (!routes) {
-        return this.setState({ loading: false, error: true });
-      }
-
       this.setState({
         routes,
         error: false,
         loading: false,
-        // color: minsToArrival.some(isWalkable) ? GREEN : RED,
       });
     });
-  }
-
-  componentWillUnmount() {
-    document.body.removeEventListener('click', this.handleClick);
   }
 
   handleReFetch = () => {

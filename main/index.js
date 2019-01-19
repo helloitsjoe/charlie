@@ -75,7 +75,7 @@ const fetchData = async routes => {
     const predictions = await predictionPromises;
     console.log(`Fetched live data`);
 
-    return predictions.map(pre => {
+    return predictions.map((pre, index) => {
       const arrivals = mbta.selectArrivals(pre, { convertTo: 'min' });
       const stopName = mbta.selectIncluded(pre, 'stop')[0].attributes.name;
       const routeAttrs = mbta.selectIncluded(pre, 'route')[0].attributes;
@@ -88,15 +88,17 @@ const fetchData = async routes => {
       const textColor = routeAttrs.text_color;
       const arrivalMins = arrivals.filter(min => min > 2 && min < 60);
 
-      // const { waitStart, waitLength } = route;
-      // const isWalkable = mins =>
-      //   mins >= waitStart && mins <= waitStart + waitLength;
+      const { waitStart, waitLength } = routes[index];
+      const isWalkable = arrivals.some(
+        mins => mins >= waitStart && mins <= waitStart + waitLength
+      );
 
       return {
         color,
         stopName,
         direction,
         textColor,
+        isWalkable,
         arrivalMins,
         // for debugging client side
         _prediction: pre,
