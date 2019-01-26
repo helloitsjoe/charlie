@@ -9,9 +9,7 @@
 
 _Note: For route/stop info, `mbta-client` (included in dependencies) has a few helper functions that provide route/stop IDs and direction names: `fetchAllRoutes` and `fetchStopsByRoute`. In `routes.json`, `direction` maps to the index of the stop's `direction_name`_
 
-### Coming soon:
-
-Background will be green if a vehicle is arriving within your window of time, defined by `waitStart` and `waitLength` in `resources/routes.json`
+A green route signifies an arrival within your window of time, defined by `waitStart` and `waitLength` in `resources/routes.json`
 
 Example: If it takes you 5 minutes to walk to the train, and you don't want to wait more than 5 minutes on the platform:
 
