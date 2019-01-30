@@ -87,6 +87,7 @@ const fetchData = async routes => {
       const color = routeAttrs.color;
       const textColor = routeAttrs.text_color;
       const arrivalMins = arrivals.filter(min => min > 2 && min < 60);
+      const pastArrivalMins = arrivals.filter(min => min <= 2);
 
       const { waitStart, waitLength } = routes[index];
       const isWalkable = arrivals.some(
@@ -101,6 +102,7 @@ const fetchData = async routes => {
         isWalkable,
         arrivalMins,
         // for debugging client side
+        pastArrivalMins,
         _prediction: pre,
       };
     });
