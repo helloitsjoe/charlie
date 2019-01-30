@@ -6,14 +6,15 @@ import styled from 'styled-components';
 
 const RouteWrapper = styled.div`
   text-align: left;
-  border-bottom: 1px solid #666;
+  // border-bottom: 1px solid #666;
   display: flex;
   flex-wrap: nowrap;
   overflow-x: hidden;
+  padding: 5px 0px;
 `;
 
 const StopWrapper = styled.div`
-  padding: 10px;
+  padding: 10px 15px;
   flex: ${props => (props.clicked ? '0 0 13%' : '0 0 60%')};
   transition: ${TRANS_TIME};
 `;
