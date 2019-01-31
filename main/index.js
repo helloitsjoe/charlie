@@ -2,6 +2,7 @@ const path = require('path');
 const MBTA = require('mbta-client');
 const { app, BrowserWindow, Tray, ipcMain } = require('electron');
 const routesConfig = require('../resources/routes.config.js');
+const routes = Object.values(routesConfig);
 
 let mbtaKey;
 try {
@@ -11,19 +12,20 @@ try {
 }
 
 const PREDICTIONS_LIMIT = 4;
+const ROUTE_HEIGHT = 90;
+const HEADER_AND_FOOTER_HEIGHT = 90;
 const assetsDir = path.join(__dirname, '../assets');
 const mbta = new MBTA(mbtaKey);
 
 let tray;
 let window;
 let timeout;
-const routes = Object.values(routesConfig);
 
 app.on('ready', () => {
   tray = new Tray(path.join(assetsDir, 'mbta-logo-black.png'));
   window = new BrowserWindow({
     width: 380,
-    height: 460,
+    height: routes.length * ROUTE_HEIGHT + HEADER_AND_FOOTER_HEIGHT,
     show: false,
     frame: false,
     resizable: false,
@@ -87,7 +89,7 @@ const fetchData = async routes => {
       const color = routeAttrs.color;
       const textColor = routeAttrs.text_color;
       const arrivalMins = arrivals.filter(min => min > 2 && min < 60);
-      const pastArrivalMins = arrivals.filter(min => min <= 2);
+      const _pastArrivalMins = arrivals.filter(min => min <= 2);
 
       const { waitStart, waitLength } = routes[index];
       const isWalkable = arrivals.some(
@@ -102,7 +104,7 @@ const fetchData = async routes => {
         isWalkable,
         arrivalMins,
         // for debugging client side
-        pastArrivalMins,
+        _pastArrivalMins,
         _prediction: pre,
       };
     });
