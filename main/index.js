@@ -108,9 +108,10 @@ const fetchData = async routes => {
         _prediction: pre,
       };
     });
-  } catch (err) {
-    console.error('Error during fetch:', err.message);
-    return null;
+  } catch (e) {
+    console.error('Error during fetch:', e);
+    const { message, stack } = e;
+    return { error: { message, stack } };
   }
 };
 

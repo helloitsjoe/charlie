@@ -16,7 +16,10 @@ export default class App extends Component {
     ipcRenderer.send('fetch');
 
     ipcRenderer.on('update', (sender, routes) => {
-      if (!routes) return this.setState({ loading: false, error: true });
+      if (routes.error) {
+        console.error(routes.error.stack);
+        return this.setState({ loading: false, error: true });
+      }
 
       console.log(`routes`, routes);
       this.setState({
