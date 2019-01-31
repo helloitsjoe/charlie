@@ -23,7 +23,7 @@ module.exports = {
   },
   clearway: {
     code: 91,
-    waitStart: 12,
+    waitStart: 10,
     waitLength: 6,
   },
   //   harvard: {

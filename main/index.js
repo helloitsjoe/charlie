@@ -64,7 +64,7 @@ const fetchData = async routes => {
   const predictionPromises = Promise.all(
     routes.map(route =>
       mbta.fetchPredictions({
-        limit: PREDICTIONS_LIMIT,
+        // limit: PREDICTIONS_LIMIT,
         stop: route.code,
         direction_id: route.direction,
         sort: 'arrival_time',
@@ -88,7 +88,7 @@ const fetchData = async routes => {
 
       const color = routeAttrs.color;
       const textColor = routeAttrs.text_color;
-      const arrivalMins = arrivals.filter(min => min > 2 && min < 60);
+      const arrivalMins = arrivals.filter(min => min > 2 && min < 60).slice(0, PREDICTIONS_LIMIT);
       const _pastArrivalMins = arrivals.filter(min => min <= 2);
 
       const { waitStart, waitLength } = routes[index];
