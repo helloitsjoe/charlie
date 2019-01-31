@@ -6,11 +6,11 @@ import styled from 'styled-components';
 
 const RouteWrapper = styled.div`
   text-align: left;
-  // border-bottom: 1px solid #666;
+  border-bottom: 1px solid #666;
   display: flex;
   flex-wrap: nowrap;
   overflow-x: hidden;
-  padding: 5px 0px;
+  margin: 5px 0px;
 `;
 
 const StopWrapper = styled.div`
@@ -22,7 +22,6 @@ const StopWrapper = styled.div`
 const MinsListWrapper = styled.div`
   flex: '0 0 auto';
   width: 500px;
-  transition: ${TRANS_TIME};
   border-bottom: 6px solid ${props => (props.isWalkable ? GREEN : RED)};
 `;
 
@@ -52,7 +51,7 @@ export class RouteItem extends Component {
           />
         </StopWrapper>
         <MinsListWrapper isWalkable={isWalkable}>
-          <MinutesList mins={arrivalMins} />
+          <MinutesList clicked={clicked} mins={arrivalMins} />
         </MinsListWrapper>
       </RouteWrapper>
     );

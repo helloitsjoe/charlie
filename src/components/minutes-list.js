@@ -1,5 +1,6 @@
 import { h } from 'preact';
 import styled from 'styled-components';
+import { TRANS_TIME } from '../constants';
 
 const MinutesWrapper = styled.div`
   display: flex;
@@ -7,6 +8,8 @@ const MinutesWrapper = styled.div`
   text-align: center;
   font-weight: 700;
   width: 60px;
+  transition: color ${TRANS_TIME};
+  color: ${({ clicked, idx }) => (clicked || idx === 0 ? '#FFF' : '#888')};
 `;
 
 const StyledMinutes = styled.div`
@@ -19,11 +22,11 @@ const StyledMinutesLabel = styled.div`
   font-size: ${props => (props.idx > 0 ? '1.25rem' : '1.5rem')};
 `;
 
-export const MinutesList = ({ mins }) => {
+export const MinutesList = ({ mins, clicked }) => {
   return (
     <div style={{ display: 'flex', alignItems: 'flex-end' }}>
       {mins.map((min, idx) => (
-        <MinutesWrapper>
+        <MinutesWrapper idx={idx} clicked={clicked}>
           <StyledMinutes idx={idx}>{min}</StyledMinutes>
           <StyledMinutesLabel idx={idx}>min</StyledMinutesLabel>
         </MinutesWrapper>
