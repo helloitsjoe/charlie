@@ -10,6 +10,12 @@ module.exports = {
     waitStart: 5,
     waitLength: 6,
   },
+  copley: {
+    code: '70154',
+    direction: 1,
+    waitStart: 5,
+    waitLength: 6,
+  },
   southStation: {
     code: 70080,
     waitStart: 20,
