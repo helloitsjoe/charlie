@@ -1,11 +1,16 @@
 const MBTA = require('mbta-client');
 const routesConfig = require('../resources/routes.config.js');
 const routes = Object.values(routesConfig);
-const mbta = new MBTA();
 
+let mbtaKey;
+try {
+  mbtaKey = require('../resources/credentials.json').mbtaKey;
+} catch (err) {
+  console.warn('Missing API key, making call without key...');
+}
+
+const mbta = new MBTA(mbtaKey);
 const PREDICTIONS_LIMIT = 4;
-const ROUTE_HEIGHT = 90;
-const HEADER_AND_FOOTER_HEIGHT = 90;
 
 export const fetchData = async () => {
   const predictionPromises = Promise.all(

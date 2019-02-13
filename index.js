@@ -10436,6 +10436,17 @@ module.exports = function(originalModule) {
 
 /***/ }),
 
+/***/ "./resources/credentials.json":
+/*!************************************!*\
+  !*** ./resources/credentials.json ***!
+  \************************************/
+/*! exports provided: mbtaKey, default */
+/***/ (function(module) {
+
+module.exports = {"mbtaKey":"220358def8604846865a08546e986961"};
+
+/***/ }),
+
 /***/ "./resources/routes.config.js":
 /*!************************************!*\
   !*** ./resources/routes.config.js ***!
@@ -10524,7 +10535,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function _templateObject() {
-  var data = _babel_runtime_helpers_taggedTemplateLiteral__WEBPACK_IMPORTED_MODULE_7___default()(["\n  max-width: 380px;\n  margin: auto;\n  border-left: 1px solid #444;\n  border-right: 1px solid #444;\n"]);
+  var data = _babel_runtime_helpers_taggedTemplateLiteral__WEBPACK_IMPORTED_MODULE_7___default()(["\n  max-width: 380px;\n  margin: auto;\n  background-color: #191919;\n"]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -10595,7 +10606,6 @@ function (_Component) {
     });
 
     _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_6___default()(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_5___default()(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_5___default()(_this)), "handleReFetch", function () {
-      // ipcRenderer.send('fetch');
       clearInterval(_this.fetchInterval);
 
       _this.kickoffFetchLoop();
@@ -10607,8 +10617,6 @@ function (_Component) {
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(App, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      // ipcRenderer.send('fetch');
-      // ipcRenderer.on('update', (sender, routes) => {
       this.kickoffFetchLoop();
     }
   }, {
@@ -11174,10 +11182,16 @@ var MBTA = __webpack_require__(/*! mbta-client */ "./node_modules/mbta-client/in
 var routesConfig = __webpack_require__(/*! ../resources/routes.config.js */ "./resources/routes.config.js");
 
 var routes = Object.values(routesConfig);
-var mbta = new MBTA();
+var mbtaKey;
+
+try {
+  mbtaKey = __webpack_require__(/*! ../resources/credentials.json */ "./resources/credentials.json").mbtaKey;
+} catch (err) {
+  console.warn('Missing API key, making call without key...');
+}
+
+var mbta = new MBTA(mbtaKey);
 var PREDICTIONS_LIMIT = 4;
-var ROUTE_HEIGHT = 90;
-var HEADER_AND_FOOTER_HEIGHT = 90;
 var fetchData =
 /*#__PURE__*/
 function () {

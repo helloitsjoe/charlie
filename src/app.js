@@ -9,8 +9,7 @@ import { Fallback } from './components/fallback';
 const StyledContainer = styled.div`
   max-width: 380px;
   margin: auto;
-  border-left: 1px solid #444;
-  border-right: 1px solid #444;
+  background-color: #191919;
 `;
 
 export default class App extends Component {
@@ -44,14 +43,10 @@ export default class App extends Component {
   };
 
   componentDidMount() {
-    // ipcRenderer.send('fetch');
-
-    // ipcRenderer.on('update', (sender, routes) => {
     this.kickoffFetchLoop();
   }
 
   handleReFetch = () => {
-    // ipcRenderer.send('fetch');
     clearInterval(this.fetchInterval);
     this.kickoffFetchLoop();
   };
