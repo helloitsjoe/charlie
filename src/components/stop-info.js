@@ -14,6 +14,7 @@ const StyledColorPill = styled.div`
 
 const StyledStopName = styled.h3`
   color: #${props => props.textColor};
+  font-size: 200%;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;

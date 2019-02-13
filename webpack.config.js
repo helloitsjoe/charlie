@@ -3,7 +3,7 @@ const path = require('path');
 
 module.exports = {
   entry: './src/index.js',
-  target: 'electron-renderer',
+  target: 'web',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'index.js',
@@ -22,6 +22,7 @@ module.exports = {
               ['@babel/preset-react', { pragma: 'h' }],
             ],
             plugins: [
+              '@babel/plugin-transform-runtime',
               '@babel/plugin-proposal-class-properties',
               ['transform-react-jsx', { pragma: 'h' }],
             ],
