@@ -1,4 +1,18 @@
 module.exports = {
+  winthrop: {
+    route: 71,
+    code: 2056,
+    waitStart: 3,
+    waitLength: 6,
+    morning: true,
+  },
+  // holyoke: {
+  //   route: 1,
+  //   code: 110,
+  //   waitStart: 3,
+  //   waitLength: 6,
+  //   morning: true,
+  // },
   backBayOrange: {
     code: 70015,
     waitStart: 5,
@@ -26,10 +40,4 @@ module.exports = {
     waitStart: 10,
     waitLength: 6,
   },
-  //   harvard: {
-  //     code: 2056,
-  //     waitStart: 3,
-  //     waitLength: 6,
-  //     trafficUrl: "https://server-rthfsibjjo.now.sh/traffic"
-  //   },
 };

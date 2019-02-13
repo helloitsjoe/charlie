@@ -29,39 +29,47 @@ export const fetchData = async () => {
     const predictions = await predictionPromises;
     console.log(`Fetched live data`);
 
-    return predictions.map((pre, index) => {
-      const arrivals = mbta.selectArrivals(pre, { convertTo: 'min' });
-      const stopName = mbta.selectIncluded(pre, 'stop')[0].attributes.name;
-      const routeAttrs = mbta.selectIncluded(pre, 'route')[0].attributes;
-      const directionIdx = pre.data[0].attributes.direction_id;
-      const direction =
-        routeAttrs.direction_destinations[directionIdx] ||
-        routeAttrs.direction_names[directionIdx];
+    return predictions
+      .map((pre, index) => {
+        const { waitStart, waitLength, /* routeID, */ morning } = routes[index];
 
-      const color = routeAttrs.color;
-      const textColor = routeAttrs.text_color;
-      const arrivalMins = arrivals
-        .filter(min => min > 2 && min < 60)
-        .slice(0, PREDICTIONS_LIMIT);
-      const _pastArrivalMins = arrivals.filter(min => min <= 2);
+        const arrivals = mbta.selectArrivals(pre, { convertTo: 'min' });
+        const stopName = mbta.selectIncluded(pre, 'stop')[0].attributes.name;
+        const routeAttrs = mbta.selectIncluded(pre, 'route')[0].attributes;
+        const directionIdx = pre.data[0].attributes.direction_id;
+        const direction =
+          routeAttrs.direction_destinations[directionIdx] ||
+          routeAttrs.direction_names[directionIdx];
 
-      const { waitStart, waitLength } = routes[index];
-      const isWalkable = arrivals.some(
-        mins => mins >= waitStart && mins <= waitStart + waitLength
+        const color = routeAttrs.color;
+        const textColor = routeAttrs.text_color;
+        const arrivalMins = arrivals
+          .filter(min => min >= 1 && min < 60)
+          .slice(0, PREDICTIONS_LIMIT);
+        const _pastArrivalMins = arrivals.filter(min => min <= 2);
+
+        const isWalkable = arrivals.some(
+          mins => mins >= waitStart && mins <= waitStart + waitLength
+        );
+
+        return {
+          color,
+          morning,
+          stopName,
+          direction,
+          textColor,
+          isWalkable,
+          arrivalMins,
+          // for debugging client side
+          _pastArrivalMins,
+          _prediction: pre,
+        };
+      })
+      .sort((a, b) =>
+        new Date().getHours < 12
+          ? !!b.morning - !!a.morning
+          : !!a.morning - !!b.morning
       );
-
-      return {
-        color,
-        stopName,
-        direction,
-        textColor,
-        isWalkable,
-        arrivalMins,
-        // for debugging client side
-        _pastArrivalMins,
-        _prediction: pre,
-      };
-    });
   } catch (e) {
     console.error('Error during fetch:', e);
     const { message, stack } = e;

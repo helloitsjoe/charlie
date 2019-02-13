@@ -53,7 +53,8 @@ export class StopInfo extends Component {
   render() {
     const { showFullText } = this.state;
     const { color, textColor, name, direction, isCompact } = this.props;
-    const cleanName = name && name.replace('Massachusetts Ave @ ', '');
+    const [first, second] = name.split('@');
+    const cleanName = second ? second.trim() : first.trim();
     return (
       <div>
         <StyledColorPill color={color} isCompact={isCompact}>
