@@ -1,7 +1,6 @@
 .DS_Store
 resources/credentials.json
 node_modules
-/dist
+# /dist
 .DS_Store
 .vscode
-# /dist
