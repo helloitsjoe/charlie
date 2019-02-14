@@ -10550,13 +10550,13 @@ module.exports = {
     waitLength: 6,
     morning: true
   },
-  // holyoke: {
-  //   route: 1,
-  //   code: 110,
-  //   waitStart: 3,
-  //   waitLength: 6,
-  //   morning: true,
-  // },
+  holyoke: {
+    route: 1,
+    code: 110,
+    waitStart: 3,
+    waitLength: 6,
+    morning: true
+  },
   backBayOrange: {
     code: 70015,
     waitStart: 5,
@@ -11310,7 +11310,6 @@ function () {
           case 0:
             predictionPromises = Promise.all(routes.map(function (route) {
               return mbta.fetchPredictions({
-                // limit: PREDICTIONS_LIMIT,
                 stop: route.code,
                 direction_id: route.direction,
                 sort: 'arrival_time',
@@ -11324,17 +11323,24 @@ function () {
           case 4:
             predictions = _context.sent;
             console.log("Fetched live data");
-            return _context.abrupt("return", predictions.map(function (pre, index) {
+            return _context.abrupt("return", predictions.map(function (pred, index) {
               var _routes$index = routes[index],
                   waitStart = _routes$index.waitStart,
                   waitLength = _routes$index.waitLength,
+                  route = _routes$index.route,
                   morning = _routes$index.morning;
-              var arrivals = mbta.selectArrivals(pre, {
+              var stopDataByRoute = pred.data.filter(function (ea) {
+                return !route || ea.relationships.route.data.id === route.toString();
+              });
+              var filteredPredictions = {
+                data: stopDataByRoute
+              };
+              var arrivals = mbta.selectArrivals(pred, {
                 convertTo: 'min'
               });
-              var stopName = mbta.selectIncluded(pre, 'stop')[0].attributes.name;
-              var routeAttrs = mbta.selectIncluded(pre, 'route')[0].attributes;
-              var directionIdx = pre.data[0].attributes.direction_id;
+              var stopName = mbta.selectIncluded(pred, 'stop')[0].attributes.name;
+              var routeAttrs = mbta.selectIncluded(pred, 'route')[0].attributes;
+              var directionIdx = pred.data[0].attributes.direction_id;
               var direction = routeAttrs.direction_destinations[directionIdx] || routeAttrs.direction_names[directionIdx];
               var color = routeAttrs.color;
               var textColor = routeAttrs.text_color;
@@ -11359,10 +11365,10 @@ function () {
                 arrivalMins: arrivalMins,
                 // for debugging client side
                 _pastArrivalMins: _pastArrivalMins,
-                _prediction: pre
+                _prediction: pred
               };
             }).sort(function (a, b) {
-              return new Date().getHours < 12 ? !!b.morning - !!a.morning : !!a.morning - !!b.morning;
+              return new Date().getHours() < 12 ? !!b.morning - !!a.morning : !!a.morning - !!b.morning;
             }));
 
           case 9:

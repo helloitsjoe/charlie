@@ -6,13 +6,13 @@ module.exports = {
     waitLength: 6,
     morning: true,
   },
-  // holyoke: {
-  //   route: 1,
-  //   code: 110,
-  //   waitStart: 3,
-  //   waitLength: 6,
-  //   morning: true,
-  // },
+  holyoke: {
+    route: 1,
+    code: 110,
+    waitStart: 3,
+    waitLength: 6,
+    morning: true,
+  },
   backBayOrange: {
     code: 70015,
     waitStart: 5,
