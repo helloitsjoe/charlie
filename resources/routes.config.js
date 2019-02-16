@@ -25,7 +25,7 @@ module.exports = {
     waitLength: 6,
   },
   copley: {
-    code: '70154',
+    code: 70154,
     direction: 1,
     waitStart: 5,
     waitLength: 6,
@@ -38,6 +38,12 @@ module.exports = {
   clearway: {
     code: 91,
     waitStart: 10,
+    waitLength: 6,
+  },
+  harvardWatertown: {
+    route: 71,
+    code: 'place-harsq',
+    waitStart: 3,
     waitLength: 6,
   },
 };
