@@ -4,6 +4,7 @@ import { fetchData } from './fetchData';
 import { Header } from './components/header';
 import { RouteItem } from './components/route-item';
 import { Footer } from './components/footer';
+import { Spacer } from './components/spacer';
 import { Fallback } from './components/fallback';
 
 const StyledContainer = styled.div`
@@ -55,6 +56,13 @@ export default class App extends Component {
     clearInterval(this.fetchInterval);
   }
 
+  getCombinedRoutes = () => {
+    const { routes } = this.state;
+    return new Date().getHours() < 12
+      ? [...routes.morning, null, ...routes.evening]
+      : [...routes.evening, null, ...routes.morning];
+  };
+
   render() {
     const { routes, error, loading } = this.state;
 
@@ -64,7 +72,9 @@ export default class App extends Component {
         {error || loading ? (
           <Fallback error={error} />
         ) : (
-          routes.map(route => <RouteItem route={route} />)
+          this.getCombinedRoutes().map(route =>
+            route == null ? <Spacer /> : <RouteItem route={route} />
+          )
         )}
         {/* <Footer /> */}
       </StyledContainer>

@@ -10,7 +10,6 @@ const RouteWrapper = styled.div`
   display: flex;
   flex-wrap: nowrap;
   overflow-x: hidden;
-  margin: 5px 0px;
 `;
 
 const StopWrapper = styled.div`

@@ -13,6 +13,12 @@ module.exports = {
     waitLength: 6,
     morning: true,
   },
+  harvardWatertown: {
+    route: 71,
+    code: 'place-harsq',
+    waitStart: 3,
+    waitLength: 6,
+  },
   backBayOrange: {
     code: 70015,
     waitStart: 5,
@@ -38,12 +44,6 @@ module.exports = {
   clearway: {
     code: 91,
     waitStart: 10,
-    waitLength: 6,
-  },
-  harvardWatertown: {
-    route: 71,
-    code: 'place-harsq',
-    waitStart: 3,
     waitLength: 6,
   },
 };

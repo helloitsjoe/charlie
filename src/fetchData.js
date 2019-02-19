@@ -27,7 +27,7 @@ export const fetchData = async () => {
     const predictions = await predictionPromises;
     console.log(`Fetched live data`);
 
-    return predictions.map((rawPred, index) => {
+    const allPreds = predictions.map((rawPred, index) => {
       const { waitStart, waitLength, route, morning } = routes[index];
 
       const stopDataByRoute = rawPred.data.filter(
@@ -67,6 +67,20 @@ export const fetchData = async () => {
         _filtered: pred,
       };
     });
+
+    return {
+      morning: allPreds.filter(pred => pred.morning),
+      evening: allPreds.filter(pred => !pred.morning),
+    };
+
+    return allPreds.reduce(
+      (acc, curr) => {
+        return curr.morning
+          ? { morning: [...acc.morning, curr], evening: acc.evening }
+          : { morning: acc.morning, evening: [...acc.evening, curr] };
+      },
+      { morning: [], evening: [] }
+    );
     // .sort((a, b) =>
     //   new Date().getHours() < 12
     //     ? !!b.morning - !!a.morning
