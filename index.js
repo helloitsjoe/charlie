@@ -10597,17 +10597,6 @@ module.exports = function(originalModule) {
 
 /***/ }),
 
-/***/ "./resources/credentials.json":
-/*!************************************!*\
-  !*** ./resources/credentials.json ***!
-  \************************************/
-/*! exports provided: mbtaKey, default */
-/***/ (function(module) {
-
-module.exports = {"mbtaKey":"220358def8604846865a08546e986961"};
-
-/***/ }),
-
 /***/ "./resources/routes.config.js":
 /*!************************************!*\
   !*** ./resources/routes.config.js ***!
@@ -10631,6 +10620,7 @@ module.exports = {
     morning: true
   },
   harvardWatertown: {
+    customName: 'Harvard - 71',
     route: 71,
     code: 'place-harsq',
     waitStart: 3,
@@ -11140,11 +11130,13 @@ function (_Component) {
     value: function render() {
       var _this$props$route = this.props.route,
           color = _this$props$route.color,
-          textColor = _this$props$route.textColor,
           stopName = _this$props$route.stopName,
           direction = _this$props$route.direction,
-          arrivalMins = _this$props$route.arrivalMins,
-          isWalkable = _this$props$route.isWalkable;
+          textColor = _this$props$route.textColor,
+          customName = _this$props$route.customName,
+          isWalkable = _this$props$route.isWalkable,
+          arrivalMins = _this$props$route.arrivalMins;
+      console.log('customName', customName);
       var clicked = this.state.clicked;
       return Object(preact__WEBPACK_IMPORTED_MODULE_8__["h"])(RouteWrapper, {
         onClick: this.handleClick
@@ -11153,7 +11145,7 @@ function (_Component) {
       }, Object(preact__WEBPACK_IMPORTED_MODULE_8__["h"])(_stop_info__WEBPACK_IMPORTED_MODULE_9__["StopInfo"], {
         color: color,
         textColor: textColor,
-        name: stopName,
+        name: customName || stopName,
         direction: direction,
         isCompact: clicked
       })), Object(preact__WEBPACK_IMPORTED_MODULE_8__["h"])(MinsListWrapper, {
@@ -11417,7 +11409,7 @@ var routes = Object.values(routesConfig);
 var mbtaKey;
 
 try {
-  mbtaKey = __webpack_require__(/*! ../resources/credentials.json */ "./resources/credentials.json").mbtaKey;
+  mbtaKey = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module '../resources/credentials.json'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())).mbtaKey;
 } catch (err) {
   console.warn('Missing API key, making call without key...');
 }
@@ -11451,11 +11443,12 @@ function () {
             predictions = _context.sent;
             console.log("Fetched live data");
             allPreds = predictions.map(function (rawPred, index) {
-              var _routes$index = routes[index],
-                  waitStart = _routes$index.waitStart,
-                  waitLength = _routes$index.waitLength,
-                  route = _routes$index.route,
-                  morning = _routes$index.morning;
+              var currRoute = routes[index];
+              var waitStart = currRoute.waitStart,
+                  waitLength = currRoute.waitLength,
+                  route = currRoute.route,
+                  morning = currRoute.morning,
+                  customName = currRoute.customName;
               var stopDataByRoute = rawPred.data.filter(function (ea) {
                 return !route || ea.relationships.route.data.id === route.toString();
               });
@@ -11489,6 +11482,7 @@ function () {
                 direction: direction,
                 textColor: textColor,
                 isWalkable: isWalkable,
+                customName: customName,
                 arrivalMins: arrivalMins,
                 // for debugging client side
                 _pastArrivalMins: _pastArrivalMins,

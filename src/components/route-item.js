@@ -29,14 +29,23 @@ export class RouteItem extends Component {
 
   handleClick = e => {
     this.setState(prevState => ({
-      clicked: !prevState.clicked,
+      clicked: !prevState.clicked
     }));
   };
 
   render() {
     const {
-      route: { color, textColor, stopName, direction, arrivalMins, isWalkable },
+      route: {
+        color,
+        stopName,
+        direction,
+        textColor,
+        customName,
+        isWalkable,
+        arrivalMins
+      }
     } = this.props;
+    console.log('customName', customName);
     const { clicked } = this.state;
     return (
       <RouteWrapper onClick={this.handleClick}>
@@ -44,7 +53,7 @@ export class RouteItem extends Component {
           <StopInfo
             color={color}
             textColor={textColor}
-            name={stopName}
+            name={customName || stopName}
             direction={direction}
             isCompact={clicked}
           />

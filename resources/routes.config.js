@@ -14,6 +14,7 @@ module.exports = {
     morning: true,
   },
   harvardWatertown: {
+    customName: 'Harvard - 71',
     route: 71,
     code: 'place-harsq',
     waitStart: 3,

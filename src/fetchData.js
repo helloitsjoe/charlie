@@ -18,7 +18,7 @@ export const fetchData = async () => {
         stop: route.code,
         direction_id: route.direction,
         sort: 'arrival_time',
-        include: ['stop', 'route'],
+        include: ['stop', 'route']
       })
     )
   );
@@ -28,7 +28,8 @@ export const fetchData = async () => {
     console.log(`Fetched live data`);
 
     const allPreds = predictions.map((rawPred, index) => {
-      const { waitStart, waitLength, route, morning } = routes[index];
+      const currRoute = routes[index];
+      const { waitStart, waitLength, route, morning, customName } = currRoute;
 
       const stopDataByRoute = rawPred.data.filter(
         ea => !route || ea.relationships.route.data.id === route.toString()
@@ -60,17 +61,18 @@ export const fetchData = async () => {
         direction,
         textColor,
         isWalkable,
+        customName,
         arrivalMins,
         // for debugging client side
         _pastArrivalMins,
         _predictions: rawPred,
-        _filtered: pred,
+        _filtered: pred
       };
     });
 
     return {
       morning: allPreds.filter(pred => pred.morning),
-      evening: allPreds.filter(pred => !pred.morning),
+      evening: allPreds.filter(pred => !pred.morning)
     };
 
     return allPreds.reduce(
