@@ -45,7 +45,6 @@ export class RouteItem extends Component {
         arrivalMins
       }
     } = this.props;
-    console.log('customName', customName);
     const { clicked } = this.state;
     return (
       <RouteWrapper onClick={this.handleClick}>
