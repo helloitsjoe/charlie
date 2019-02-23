@@ -1,4 +1,14 @@
-# MBTA in the Menubar
+# Charlie - MBTA Predictions
+
+### A web app for MBTA predictions by stop
+
+1. Install dependencies: `npm i`
+2. Build app: `npm run build` or `npm run watch`
+
+
+# Charlie on the Menubar
+
+## (`menubar` branch)
 
 ### An electron app that lives in your menubar and tells you when the next train or bus is coming!
 
@@ -6,6 +16,8 @@
 2. Run app with `npm start`
 3. Click the icon in the menubar to see upcoming buses/trains
 4. Change stop info in `resources/routes.json`
+
+---
 
 _Note: For route/stop info, `mbta-client` (included in dependencies) has a few helper functions that provide route/stop IDs and direction names: `fetchAllRoutes` and `fetchStopsByRoute`. In `routes.json`, `direction` maps to the index of the stop's `direction_name`_
 
