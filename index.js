@@ -10597,6 +10597,17 @@ module.exports = function(originalModule) {
 
 /***/ }),
 
+/***/ "./resources/credentials.json":
+/*!************************************!*\
+  !*** ./resources/credentials.json ***!
+  \************************************/
+/*! exports provided: mbtaKey, default */
+/***/ (function(module) {
+
+module.exports = {"mbtaKey":"220358def8604846865a08546e986961"};
+
+/***/ }),
+
 /***/ "./resources/routes.config.js":
 /*!************************************!*\
   !*** ./resources/routes.config.js ***!
@@ -11136,7 +11147,6 @@ function (_Component) {
           customName = _this$props$route.customName,
           isWalkable = _this$props$route.isWalkable,
           arrivalMins = _this$props$route.arrivalMins;
-      console.log('customName', customName);
       var clicked = this.state.clicked;
       return Object(preact__WEBPACK_IMPORTED_MODULE_8__["h"])(RouteWrapper, {
         onClick: this.handleClick
@@ -11409,7 +11419,7 @@ var routes = Object.values(routesConfig);
 var mbtaKey;
 
 try {
-  mbtaKey = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module '../resources/credentials.json'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())).mbtaKey;
+  mbtaKey = __webpack_require__(/*! ../resources/credentials.json */ "./resources/credentials.json").mbtaKey;
 } catch (err) {
   console.warn('Missing API key, making call without key...');
 }
