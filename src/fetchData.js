@@ -15,10 +15,10 @@ export const fetchData = async () => {
   const predictionPromises = Promise.all(
     routes.map(route =>
       mbta.fetchPredictions({
-        stop: route.code,
+        stop: route.stop,
         direction_id: route.direction,
         sort: 'arrival_time',
-        include: ['stop', 'route']
+        include: ['stop', 'route'],
       })
     )
   );
@@ -66,13 +66,13 @@ export const fetchData = async () => {
         // for debugging client side
         _pastArrivalMins,
         _predictions: rawPred,
-        _filtered: pred
+        _filtered: pred,
       };
     });
 
     return {
       morning: allPreds.filter(pred => pred.morning),
-      evening: allPreds.filter(pred => !pred.morning)
+      evening: allPreds.filter(pred => !pred.morning),
     };
 
     return allPreds.reduce(

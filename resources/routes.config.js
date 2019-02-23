@@ -1,14 +1,14 @@
 module.exports = {
   winthrop: {
     route: 71,
-    code: 2056,
+    stop: 2056,
     waitStart: 3,
     waitLength: 6,
     morning: true,
   },
   holyoke: {
     route: 1,
-    code: 110,
+    stop: 110,
     waitStart: 3,
     waitLength: 6,
     morning: true,
@@ -16,34 +16,34 @@ module.exports = {
   harvardWatertown: {
     customName: 'Harvard - 71',
     route: 71,
-    code: 'place-harsq',
+    stop: 'place-harsq',
     waitStart: 3,
     waitLength: 6,
   },
   backBayOrange: {
-    code: 70015,
+    stop: 70015,
     waitStart: 5,
     waitLength: 6,
   },
   backBayCR: {
-    code: 'Back Bay',
+    stop: 'Back Bay',
     direction: 1,
     waitStart: 5,
     waitLength: 6,
   },
   copley: {
-    code: 70154,
+    stop: 70154,
     direction: 1,
     waitStart: 5,
     waitLength: 6,
   },
   southStation: {
-    code: 70080,
+    stop: 70080,
     waitStart: 20,
     waitLength: 10,
   },
   clearway: {
-    code: 91,
+    stop: 91,
     waitStart: 10,
     waitLength: 6,
   },
