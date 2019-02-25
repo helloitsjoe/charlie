@@ -12,6 +12,9 @@ const mbta = new MBTA(mbtaKey);
 const PREDICTIONS_LIMIT = 4;
 
 export const fetchData = async () => {
+  // It would be better to send one request with a list of stops, but parsing
+  // the response isn't feasible because data.relationships.stop.data.id
+  // is sometimes different from route.stop
   const predictionPromises = Promise.all(
     routes.map(route =>
       mbta.fetchPredictions({
@@ -31,10 +34,11 @@ export const fetchData = async () => {
       const currRoute = routes[index];
       const { waitStart, waitLength, route, morning, customName } = currRoute;
 
-      const stopDataByRoute = rawPred.data.filter(
+      // Filter out other routes for the same stop
+      const filteredData = rawPred.data.filter(
         ea => !route || ea.relationships.route.data.id === route.toString()
       );
-      const pred = { data: stopDataByRoute };
+      const pred = { data: filteredData };
       const arrivals = mbta.selectArrivals(pred, { convertTo: 'min' });
       const stopName = mbta.selectIncluded(rawPred, 'stop')[0].attributes.name;
       const routeAttrs = mbta.selectIncluded(rawPred, 'route')[0].attributes;

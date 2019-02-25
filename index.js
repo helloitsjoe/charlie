@@ -11437,6 +11437,9 @@ function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
+            // I would rather send one request with a list of stops, but parsing
+            // the response isn't feasible because data.relationships.route.data.id
+            // is different from the route ID I'm looking for
             predictionPromises = Promise.all(routes.map(function (route) {
               return mbta.fetchPredictions({
                 stop: route.stop,
@@ -11458,12 +11461,13 @@ function () {
                   waitLength = currRoute.waitLength,
                   route = currRoute.route,
                   morning = currRoute.morning,
-                  customName = currRoute.customName;
-              var stopDataByRoute = rawPred.data.filter(function (ea) {
+                  customName = currRoute.customName; // Filter out other routes for the same stop
+
+              var filteredData = rawPred.data.filter(function (ea) {
                 return !route || ea.relationships.route.data.id === route.toString();
               });
               var pred = {
-                data: stopDataByRoute
+                data: filteredData
               };
               var arrivals = mbta.selectArrivals(pred, {
                 convertTo: 'min'
