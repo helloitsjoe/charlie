@@ -37,11 +37,11 @@ module.exports = {
     waitStart: 5,
     waitLength: 6,
   },
-  southStation: {
-    stop: 70080,
-    waitStart: 20,
-    waitLength: 10,
-  },
+  // southStation: {
+  //   stop: 70080,
+  //   waitStart: 20,
+  //   waitLength: 10,
+  // },
   clearway: {
     stop: 91,
     waitStart: 10,
