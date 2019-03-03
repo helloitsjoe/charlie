@@ -10654,11 +10654,11 @@ module.exports = {
     waitStart: 5,
     waitLength: 6
   },
-  southStation: {
-    stop: 70080,
-    waitStart: 20,
-    waitLength: 10
-  },
+  // southStation: {
+  //   stop: 70080,
+  //   waitStart: 20,
+  //   waitLength: 10,
+  // },
   clearway: {
     stop: 91,
     waitStart: 10,
@@ -11437,9 +11437,9 @@ function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            // I would rather send one request with a list of stops, but parsing
-            // the response isn't feasible because data.relationships.route.data.id
-            // is different from the route ID I'm looking for
+            // It would be better to send one request with a list of stops, but parsing
+            // the response isn't feasible because data.relationships.stop.data.id
+            // is sometimes different from route.stop
             predictionPromises = Promise.all(routes.map(function (route) {
               return mbta.fetchPredictions({
                 stop: route.stop,
