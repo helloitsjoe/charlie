@@ -10608,63 +10608,14 @@ module.exports = {"mbtaKey":"220358def8604846865a08546e986961"};
 
 /***/ }),
 
-/***/ "./resources/routes.config.js":
-/*!************************************!*\
-  !*** ./resources/routes.config.js ***!
-  \************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/***/ "./resources/routes.config.json":
+/*!**************************************!*\
+  !*** ./resources/routes.config.json ***!
+  \**************************************/
+/*! exports provided: enabled, disabled, default */
+/***/ (function(module) {
 
-module.exports = {
-  winthrop: {
-    route: 71,
-    stop: 2056,
-    waitStart: 3,
-    waitLength: 6,
-    morning: true
-  },
-  holyoke: {
-    route: 1,
-    stop: 110,
-    waitStart: 3,
-    waitLength: 6,
-    morning: true
-  },
-  harvardWatertown: {
-    customName: 'Harvard - 71',
-    route: 71,
-    stop: 'place-harsq',
-    waitStart: 3,
-    waitLength: 6
-  },
-  backBayOrange: {
-    stop: 70015,
-    waitStart: 5,
-    waitLength: 6
-  },
-  backBayCR: {
-    stop: 'Back Bay',
-    direction: 1,
-    waitStart: 5,
-    waitLength: 6
-  },
-  copley: {
-    stop: 70154,
-    direction: 1,
-    waitStart: 5,
-    waitLength: 6
-  },
-  // southStation: {
-  //   stop: 70080,
-  //   waitStart: 20,
-  //   waitLength: 10,
-  // },
-  clearway: {
-    stop: 91,
-    waitStart: 10,
-    waitLength: 6
-  }
-};
+module.exports = {"enabled":{"winthrop":{"route":71,"stop":2056,"waitStart":3,"waitLength":6,"morning":true},"holyoke":{"route":1,"stop":110,"waitStart":3,"waitLength":6,"morning":true},"harvardWatertown":{"customName":"Harvard - 71","route":71,"stop":"place-harsq","waitStart":3,"waitLength":6},"backBayCR":{"stop":"Back Bay","direction":1,"waitStart":5,"waitLength":6},"copley":{"stop":70154,"direction":1,"waitStart":5,"waitLength":6},"clearway":{"stop":91,"waitStart":10,"waitLength":6}},"disabled":{"backBayOrange":{"stop":70015,"waitStart":5,"waitLength":6},"southStation":{"stop":70080,"waitStart":20,"waitLength":10}}};
 
 /***/ }),
 
@@ -11413,9 +11364,9 @@ __webpack_require__.r(__webpack_exports__);
 
 var MBTA = __webpack_require__(/*! mbta-client */ "./node_modules/mbta-client/index.js");
 
-var routesConfig = __webpack_require__(/*! ../resources/routes.config.js */ "./resources/routes.config.js");
+var routesConfig = __webpack_require__(/*! ../resources/routes.config.json */ "./resources/routes.config.json");
 
-var routes = Object.values(routesConfig);
+var routes = Object.values(routesConfig.enabled);
 var mbtaKey;
 
 try {

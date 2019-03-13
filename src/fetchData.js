@@ -1,6 +1,6 @@
 const MBTA = require('mbta-client');
-const routesConfig = require('../resources/routes.config.js');
-const routes = Object.values(routesConfig);
+const routesConfig = require('../resources/routes.config.json');
+const routes = Object.values(routesConfig.enabled);
 let mbtaKey;
 try {
   mbtaKey = require('../resources/credentials.json').mbtaKey;
