@@ -1,4 +1,4 @@
-import { h } from 'preact';
+import React from 'react';
 import styled from 'styled-components';
 import { TRANS_TIME } from '../constants';
 
@@ -26,7 +26,7 @@ export const MinutesList = ({ mins, clicked }) => {
   return (
     <div style={{ display: 'flex', alignItems: 'flex-end' }}>
       {mins.map((min, idx) => (
-        <MinutesWrapper idx={idx} clicked={clicked}>
+        <MinutesWrapper key={`${min}-${idx}`} idx={idx} clicked={clicked}>
           <StyledMinutes idx={idx}>{min}</StyledMinutes>
           <StyledMinutesLabel idx={idx}>min</StyledMinutesLabel>
         </MinutesWrapper>

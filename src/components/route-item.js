@@ -1,4 +1,4 @@
-import { h, Component } from 'preact';
+import React, { Component } from 'react';
 import { StopInfo } from './stop-info';
 import { MinutesList } from './minutes-list';
 import { TRANS_TIME, GREEN, RED } from '../constants';
@@ -29,7 +29,7 @@ export class RouteItem extends Component {
 
   handleClick = e => {
     this.setState(prevState => ({
-      clicked: !prevState.clicked
+      clicked: !prevState.clicked,
     }));
   };
 
@@ -42,8 +42,8 @@ export class RouteItem extends Component {
         textColor,
         customName,
         isWalkable,
-        arrivalMins
-      }
+        arrivalMins,
+      },
     } = this.props;
     const { clicked } = this.state;
     return (

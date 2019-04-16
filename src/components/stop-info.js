@@ -1,4 +1,4 @@
-import { h, Component } from 'preact';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 import { TRANS_TIME } from '../constants';
 

@@ -1,3 +1,3 @@
-import { h } from 'preact';
+import React from 'react';
 
 export const Footer = () => <div />;

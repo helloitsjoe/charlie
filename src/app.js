@@ -1,4 +1,4 @@
-import { h, Component } from 'preact';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 import { fetchData } from './fetchData';
 import { Header } from './components/header';
@@ -73,7 +73,11 @@ export default class App extends Component {
           <Fallback error={error} />
         ) : (
           this.getCombinedRoutes().map(route =>
-            route == null ? <Spacer /> : <RouteItem route={route} />
+            route == null ? (
+              <Spacer key="spacer" />
+            ) : (
+              <RouteItem key={route.id} route={route} />
+            )
           )
         )}
         {/* <Footer /> */}
