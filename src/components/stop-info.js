@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { TRANS_TIME } from '../constants';
+import { wait } from '../utils';
 
 const StyledColorPill = styled.div`
   height: 40px;
@@ -42,9 +43,9 @@ export class StopInfo extends Component {
     if (this.props === prevProps) return;
 
     if (prevProps.isCompact) {
-      setTimeout(() => {
+      wait(100).then(() => {
         this.setState({ showFullText: true });
-      }, 100);
+      });
     } else {
       this.setState({ showFullText: !this.props.isCompact });
     }
