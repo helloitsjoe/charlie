@@ -37,6 +37,7 @@ export class RouteItem extends Component {
   render() {
     const {
       route: {
+        id,
         color,
         stopName,
         direction,

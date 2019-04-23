@@ -1,18 +1,9 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { RouteItem } from '../components/route-item';
+import { route } from './route-test-data';
 
 describe('RouteItem', () => {
-  const route = {
-    color: 'red',
-    stopName: 'Harvard',
-    direction: 'Northbound',
-    textColor: 'white',
-    customName: 'Harvard - 71',
-    isWalkable: true,
-    arrivalMins: [1, 4],
-  };
-
   const STOP_INFO = '#stop-info';
   const MINUTES_LIST = '#minutes-list';
 

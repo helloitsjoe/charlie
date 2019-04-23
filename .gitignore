@@ -3,5 +3,4 @@ resources/credentials.json
 node_modules
 coverage
 # /dist
-.DS_Store
 .vscode
