@@ -1,4 +1,4 @@
-import { h, Component } from 'preact';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 import { TRANS_TIME } from '../constants';
 
@@ -14,6 +14,7 @@ const StyledColorPill = styled.div`
 
 const StyledStopName = styled.h3`
   color: #${props => props.textColor};
+  font-size: 200%;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -52,7 +53,8 @@ export class StopInfo extends Component {
   render() {
     const { showFullText } = this.state;
     const { color, textColor, name, direction, isCompact } = this.props;
-    const cleanName = name && name.replace('Massachusetts Ave @ ', '');
+    const [first, second] = name.split('@');
+    const cleanName = second ? second.trim() : first.trim();
     return (
       <div>
         <StyledColorPill color={color} isCompact={isCompact}>

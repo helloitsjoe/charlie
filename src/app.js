@@ -1,9 +1,17 @@
-import { h, Component } from 'preact';
-import { ipcRenderer } from 'electron';
+import React, { Component } from 'react';
+import styled from 'styled-components';
+import { fetchData } from './fetchData';
 import { Header } from './components/header';
 import { RouteItem } from './components/route-item';
 import { Footer } from './components/footer';
+import { Spacer } from './components/spacer';
 import { Fallback } from './components/fallback';
+
+const StyledContainer = styled.div`
+  max-width: 380px;
+  margin: auto;
+  background-color: #191919;
+`;
 
 export default class App extends Component {
   state = {
@@ -12,10 +20,8 @@ export default class App extends Component {
     loading: true,
   };
 
-  componentDidMount() {
-    ipcRenderer.send('fetch');
-
-    ipcRenderer.on('update', (sender, routes) => {
+  fetchNewData = () => {
+    fetchData().then(routes => {
       if (routes.error) {
         console.error(routes.error.stack);
         return this.setState({ loading: false, error: true });
@@ -28,25 +34,54 @@ export default class App extends Component {
         loading: false,
       });
     });
+  };
+
+  kickoffFetchLoop = () => {
+    this.fetchNewData();
+    this.fetchInterval = setInterval(() => {
+      this.fetchNewData();
+    }, 1000 * 30);
+  };
+
+  componentDidMount() {
+    this.kickoffFetchLoop();
   }
 
   handleReFetch = () => {
-    ipcRenderer.send('fetch');
+    clearInterval(this.fetchInterval);
+    this.kickoffFetchLoop();
+  };
+
+  componentWillUnmount() {
+    clearInterval(this.fetchInterval);
+  }
+
+  getCombinedRoutes = () => {
+    const { routes } = this.state;
+    return new Date().getHours() < 12
+      ? [...routes.morning, null, ...routes.evening]
+      : [...routes.evening, null, ...routes.morning];
   };
 
   render() {
     const { routes, error, loading } = this.state;
 
     return (
-      <div>
+      <StyledContainer>
         <Header reFetch={this.handleReFetch} />
         {error || loading ? (
           <Fallback error={error} />
         ) : (
-          routes.map(route => <RouteItem route={route} />)
+          this.getCombinedRoutes().map(route =>
+            route == null ? (
+              <Spacer key="spacer" />
+            ) : (
+              <RouteItem key={route.id} route={route} />
+            )
+          )
         )}
         {/* <Footer /> */}
-      </div>
+      </StyledContainer>
     );
   }
 }

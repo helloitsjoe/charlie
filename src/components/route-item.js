@@ -1,4 +1,4 @@
-import { h, Component } from 'preact';
+import React, { Component } from 'react';
 import { StopInfo } from './stop-info';
 import { MinutesList } from './minutes-list';
 import { TRANS_TIME, GREEN, RED } from '../constants';
@@ -10,7 +10,6 @@ const RouteWrapper = styled.div`
   display: flex;
   flex-wrap: nowrap;
   overflow-x: hidden;
-  margin: 5px 0px;
 `;
 
 const StopWrapper = styled.div`
@@ -36,7 +35,15 @@ export class RouteItem extends Component {
 
   render() {
     const {
-      route: { color, textColor, stopName, direction, arrivalMins, isWalkable },
+      route: {
+        color,
+        stopName,
+        direction,
+        textColor,
+        customName,
+        isWalkable,
+        arrivalMins,
+      },
     } = this.props;
     const { clicked } = this.state;
     return (
@@ -45,7 +52,7 @@ export class RouteItem extends Component {
           <StopInfo
             color={color}
             textColor={textColor}
-            name={stopName}
+            name={customName || stopName}
             direction={direction}
             isCompact={clicked}
           />
