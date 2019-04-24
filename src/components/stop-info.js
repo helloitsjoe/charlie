@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { TRANS_TIME } from '../constants';
 
@@ -33,39 +33,33 @@ const StyledDirection = styled.div`
   transition: opacity ${TRANS_TIME};
 `;
 
-export class StopInfo extends Component {
-  state = {
-    showFullText: true,
-  };
-
-  componentDidUpdate(prevProps) {
-    if (this.props === prevProps) return;
-
-    if (prevProps.isCompact) {
+export function StopInfo({ color, textColor, name, direction, isCompact }) {
+  const [showFullText, setShowFullText] = useState(true);
+  useEffect(
+    () => {
+      if (isCompact) {
+        return setShowFullText(false);
+      }
       setTimeout(() => {
-        this.setState({ showFullText: true });
+        setShowFullText(!isCompact);
       }, 100);
-    } else {
-      this.setState({ showFullText: !this.props.isCompact });
-    }
-  }
+    },
+    [isCompact]
+  );
 
-  render() {
-    const { showFullText } = this.state;
-    const { color, textColor, name, direction, isCompact } = this.props;
-    const [first, second] = name.split('@');
-    const cleanName = second ? second.trim() : first.trim();
-    return (
-      <div>
-        <StyledColorPill color={color} isCompact={isCompact}>
-          <StyledStopName textColor={textColor}>
-            {showFullText ? cleanName : cleanName[0]}
-          </StyledStopName>
-        </StyledColorPill>
-        <StyledDirection isCompact={!showFullText}>
-          {`\u2794 ${direction}`}
-        </StyledDirection>
-      </div>
-    );
-  }
+  const [first, second] = name.split('@');
+  const cleanName = second ? second.trim() : first.trim();
+
+  return (
+    <div>
+      <StyledColorPill color={color} isCompact={isCompact}>
+        <StyledStopName textColor={textColor}>
+          {showFullText ? cleanName : cleanName[0]}
+        </StyledStopName>
+      </StyledColorPill>
+      <StyledDirection isCompact={!showFullText}>
+        {`\u2794 ${direction}`}
+      </StyledDirection>
+    </div>
+  );
 }

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { StopInfo } from './stop-info';
 import { MinutesList } from './minutes-list';
 import { TRANS_TIME, GREEN, RED } from '../constants';
@@ -24,43 +24,35 @@ const MinsListWrapper = styled.div`
   border-bottom: 6px solid ${props => (props.isWalkable ? GREEN : RED)};
 `;
 
-export class RouteItem extends Component {
-  state = { clicked: false };
+export function RouteItem({
+  route: {
+    color,
+    stopName,
+    direction,
+    textColor,
+    customName,
+    isWalkable,
+    arrivalMins,
+  },
+}) {
+  const [clicked, setClicked] = useState(false);
 
-  handleClick = e => {
-    this.setState(prevState => ({
-      clicked: !prevState.clicked,
-    }));
-  };
+  const handleClick = () => setClicked(!clicked);
 
-  render() {
-    const {
-      route: {
-        color,
-        stopName,
-        direction,
-        textColor,
-        customName,
-        isWalkable,
-        arrivalMins,
-      },
-    } = this.props;
-    const { clicked } = this.state;
-    return (
-      <RouteWrapper onClick={this.handleClick}>
-        <StopWrapper clicked={clicked}>
-          <StopInfo
-            color={color}
-            textColor={textColor}
-            name={customName || stopName}
-            direction={direction}
-            isCompact={clicked}
-          />
-        </StopWrapper>
-        <MinsListWrapper isWalkable={isWalkable}>
-          <MinutesList clicked={clicked} mins={arrivalMins} />
-        </MinsListWrapper>
-      </RouteWrapper>
-    );
-  }
+  return (
+    <RouteWrapper onClick={handleClick}>
+      <StopWrapper clicked={clicked}>
+        <StopInfo
+          color={color}
+          textColor={textColor}
+          name={customName || stopName}
+          direction={direction}
+          isCompact={clicked}
+        />
+      </StopWrapper>
+      <MinsListWrapper isWalkable={isWalkable}>
+        <MinutesList clicked={clicked} mins={arrivalMins} />
+      </MinsListWrapper>
+    </RouteWrapper>
+  );
 }
