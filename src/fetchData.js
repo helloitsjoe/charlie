@@ -13,7 +13,7 @@ const PREDICTIONS_LIMIT = 4;
 export const fetchData = ({
   routes = enabledRoutes,
   mbta = new MBTA(mbtaKey),
-}) => {
+} = {}) => {
   // It would be better to send one request with a list of stops, but parsing
   // the response isn't feasible because data.relationships.stop.data.id
   // is sometimes different from route.stop
