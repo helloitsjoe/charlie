@@ -1,3 +1,3 @@
-const makeJestConfig = require('jest-simple-config');
+const { makeJestConfig } = require('jest-simple-config');
 
 module.exports = makeJestConfig();
