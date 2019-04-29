@@ -86,20 +86,6 @@ export const fetchData = ({
         morning: allPreds.filter(pred => pred.morning),
         evening: allPreds.filter(pred => !pred.morning),
       };
-
-      // return allPreds.reduce(
-      //   (acc, curr) => {
-      //     return curr.morning
-      //       ? { morning: [...acc.morning, curr], evening: acc.evening }
-      //       : { morning: acc.morning, evening: [...acc.evening, curr] };
-      //   },
-      //   { morning: [], evening: [] }
-      // );
-      // .sort((a, b) =>
-      //   new Date().getHours() < 12
-      //     ? !!b.morning - !!a.morning
-      //     : !!a.morning - !!b.morning
-      // );
     })
     .catch(e => {
       console.error('Error during fetch:', e);
