@@ -1,11 +1,10 @@
-# MBTA in the Menubar
+# Charlie
 
-### An electron app that lives in your menubar and tells you when the next train or bus is coming!
+### Find out when the next train or bus is coming!
 
-1. Install dependencies with `npm i`
-2. Run app with `npm start`
-3. Click the icon in the menubar to see upcoming buses/trains
-4. Change stop info in `resources/routes.json`
+![Screenshot](./assets/screenshot.png)
+
+To customize, change stop info in `resources/routes.json`
 
 _Note: For route/stop info, `mbta-client` (included in dependencies) has a few helper functions that provide route/stop IDs and direction names: `fetchAllRoutes` and `fetchStopsByRoute`. In `routes.json`, `direction` maps to the index of the stop's `direction_name`_
 
