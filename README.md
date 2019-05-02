@@ -2,7 +2,7 @@
 
 ### Find out when the next train or bus is coming!
 
-![Screenshot](./assets/screenshot.png)
+![Screenshot](./assets/screenshot.png =400x)
 
 To customize, change stop info in `resources/routes.json`
 
