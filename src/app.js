@@ -22,14 +22,14 @@ export default function App() {
   useEffect(
     () => {
       function fetchNewData() {
-        fetchData().then(routes => {
-          if (routes.error) {
-            console.error(routes.error.stack);
+        fetchData().then(loadedRoutes => {
+          if (loadedRoutes.error) {
+            console.error(loadedRoutes.error.stack);
             return setError(true);
           }
 
-          console.log(`routes`, routes);
-          setRoutes(routes);
+          console.log(`routes`, loadedRoutes);
+          setRoutes(loadedRoutes);
           setError(false);
           setLoading(false);
         });
@@ -53,11 +53,9 @@ export default function App() {
       : [...routes.evening, null, ...routes.morning];
   }
 
-  const handleRefetch = () => setRefetch(r => r + 1);
-
   return (
     <StyledContainer>
-      <Header reFetch={handleRefetch} />
+      <Header reFetch={() => setRefetch(r => r + 1)} />
       {error || loading ? (
         <Fallback error={error} />
       ) : (

@@ -40,15 +40,19 @@ export function StopInfo({ color, textColor, name, direction, isCompact }) {
       if (isCompact) {
         return setShowFullText(false);
       }
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         setShowFullText(!isCompact);
       }, 100);
+      return () => {
+        clearTimeout(timeout);
+      };
     },
     [isCompact]
   );
 
   const [first, second] = name.split('@');
-  const cleanName = second ? second.trim() : first.trim();
+  const name = second || first;
+  const cleanName = name.trim();
 
   return (
     <div>
