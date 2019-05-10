@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { TRANS_TIME } from '../constants';
 
 const MinutesWrapper = styled.div`
@@ -33,4 +34,13 @@ export const MinutesList = ({ mins, clicked }) => {
       ))}
     </div>
   );
+};
+
+MinutesList.propTypes = {
+  mins: PropTypes.arrayOf(PropTypes.number).isRequired,
+  clicked: PropTypes.bool,
+};
+
+MinutesList.defaultProps = {
+  clicked: false,
 };
