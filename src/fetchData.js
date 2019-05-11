@@ -1,6 +1,6 @@
 import MBTA from 'mbta-client';
 import routesConfig from '../resources/routes.config.json';
-const routes = Object.values(routesConfig.enabled);
+const enabledRoutes = Object.values(routesConfig.enabled);
 let mbtaKey;
 try {
   mbtaKey = require('../resources/credentials.json').mbtaKey;
@@ -8,10 +8,12 @@ try {
   console.warn('Missing API key, making call without key...');
 }
 
-const mbta = new MBTA(mbtaKey);
 const PREDICTIONS_LIMIT = 4;
 
-export const fetchData = () => {
+export const fetchData = ({
+  routes = enabledRoutes,
+  mbta = new MBTA(mbtaKey),
+} = {}) => {
   // It would be better to send one request with a list of stops, but parsing
   // the response isn't feasible because data.relationships.stop.data.id
   // is sometimes different from route.stop
@@ -31,6 +33,9 @@ export const fetchData = () => {
       console.log(`Fetched live data`);
 
       const allPreds = predictions.map((rawPred, index) => {
+        if (!rawPred) {
+          throw new Error('No predictions');
+        }
         const id = index;
         const currRoute = routes[index];
         const { waitStart, waitLength, route, morning, customName } = currRoute;
@@ -81,20 +86,6 @@ export const fetchData = () => {
         morning: allPreds.filter(pred => pred.morning),
         evening: allPreds.filter(pred => !pred.morning),
       };
-
-      // return allPreds.reduce(
-      //   (acc, curr) => {
-      //     return curr.morning
-      //       ? { morning: [...acc.morning, curr], evening: acc.evening }
-      //       : { morning: acc.morning, evening: [...acc.evening, curr] };
-      //   },
-      //   { morning: [], evening: [] }
-      // );
-      // .sort((a, b) =>
-      //   new Date().getHours() < 12
-      //     ? !!b.morning - !!a.morning
-      //     : !!a.morning - !!b.morning
-      // );
     })
     .catch(e => {
       console.error('Error during fetch:', e);

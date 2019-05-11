@@ -1,6 +1,5 @@
 .DS_Store
 resources/credentials.json
 node_modules
-/dist
 .vscode
 coverage

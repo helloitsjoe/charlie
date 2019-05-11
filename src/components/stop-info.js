@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { TRANS_TIME } from '../constants';
+import { wait } from '../utils';
 
 const StyledColorPill = styled.div`
   height: 40px;
@@ -51,17 +53,20 @@ export function StopInfo({ color, textColor, name, direction, isCompact }) {
   );
 
   const [first, second] = name.split('@');
-  const name = second || first;
-  const cleanName = name.trim();
+  const cleanName = second ? second.trim() : first.trim();
 
   return (
     <div>
-      <StyledColorPill color={color} isCompact={isCompact}>
-        <StyledStopName textColor={textColor}>
+      <StyledColorPill
+        data-enzyme-id="color-pill"
+        color={color}
+        isCompact={isCompact}
+      >
+        <StyledStopName data-enzyme-id="stop-name" textColor={textColor}>
           {showFullText ? cleanName : cleanName[0]}
         </StyledStopName>
       </StyledColorPill>
-      <StyledDirection isCompact={!showFullText}>
+      <StyledDirection data-enzyme-id="direction" isCompact={!showFullText}>
         {`\u2794 ${direction}`}
       </StyledDirection>
     </div>

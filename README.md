@@ -1,21 +1,10 @@
-# Charlie - MBTA Predictions
+# Charlie
 
-### A web app for MBTA predictions by stop
+### Find out when the next train or bus is coming!
 
-1. Install dependencies: `npm i`
-2. Build app: `npm run build` or `npm run watch`
+<img alt="screenshot" src="./assets/screenshot.png" width="300px">
 
-
-# Charlie on the Menubar
-
-## (`menubar` branch)
-
-### An electron app that lives in your menubar and tells you when the next train or bus is coming!
-
-1. Install dependencies with `npm i`
-2. Run app with `npm start`
-3. Click the icon in the menubar to see upcoming buses/trains
-4. Change stop info in `resources/routes.json`
+To customize, change stop info in `resources/routes.json`
 
 ---
 

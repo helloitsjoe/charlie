@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { StopInfo } from './stop-info';
 import { MinutesList } from './minutes-list';
 import { TRANS_TIME, GREEN, RED } from '../constants';
@@ -43,6 +44,7 @@ export function RouteItem({
     <RouteWrapper onClick={handleClick}>
       <StopWrapper clicked={clicked}>
         <StopInfo
+          id="stop-info"
           color={color}
           textColor={textColor}
           name={customName || stopName}
@@ -51,8 +53,20 @@ export function RouteItem({
         />
       </StopWrapper>
       <MinsListWrapper isWalkable={isWalkable}>
-        <MinutesList clicked={clicked} mins={arrivalMins} />
+        <MinutesList id="minutes-list" clicked={clicked} mins={arrivalMins} />
       </MinsListWrapper>
     </RouteWrapper>
   );
 }
+
+RouteItem.propTypes = {
+  route: PropTypes.shape({
+    color: PropTypes.string,
+    stopName: PropTypes.string,
+    direction: PropTypes.string,
+    textColor: PropTypes.string,
+    customName: PropTypes.string,
+    isWalkable: PropTypes.bool,
+    arrivalMins: PropTypes.arrayOf(PropTypes.number),
+  }).isRequired,
+};
