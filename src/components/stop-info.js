@@ -72,3 +72,19 @@ export function StopInfo({ color, textColor, name, direction, isCompact }) {
     </div>
   );
 }
+
+StopInfo.propTypes = {
+  color: PropTypes.string,
+  textColor: PropTypes.string,
+  direction: PropTypes.string,
+  isCompact: PropTypes.bool,
+  name: PropTypes.string,
+};
+
+StopInfo.defaultProps = {
+  isCompact: false,
+  textColor: '',
+  direction: '',
+  color: '',
+  name: '',
+};
