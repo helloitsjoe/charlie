@@ -38,10 +38,18 @@ const StyledDirection = styled.div`
 export class StopInfo extends Component {
   static propTypes = {
     name: PropTypes.string,
+    color: PropTypes.string,
+    textColor: PropTypes.string,
+    direction: PropTypes.string,
+    isCompact: PropTypes.bool,
   };
 
   static defaultProps = {
     name: '',
+    color: '',
+    textColor: '',
+    direction: '',
+    isCompact: false,
   };
 
   state = {
