@@ -45,7 +45,23 @@ export default class App extends Component {
 
   componentDidMount() {
     this.kickoffFetchLoop();
+    this.setUpPullToRefresh();
   }
+
+  setUpPullToRefresh = () => {
+    // TODO: Clean these up in unmount
+    let downY;
+    let upY;
+    document.addEventListener('touchstart', e => {
+      downY = e.targetTouches[0].clientY;
+    });
+    document.addEventListener('touchend', e => {
+      upY = e.changedTouches[0].clientY;
+      if (upY > downY) {
+        this.handleReFetch();
+      }
+    });
+  };
 
   handleReFetch = () => {
     clearInterval(this.fetchInterval);
