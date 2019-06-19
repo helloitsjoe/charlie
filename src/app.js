@@ -21,6 +21,7 @@ export default class App extends Component {
   };
 
   fetchNewData = () => {
+    this.setState({ loading: true });
     fetchData().then(routes => {
       if (routes.error) {
         console.error(routes.error.stack);
