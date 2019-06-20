@@ -6,6 +6,8 @@ export const Fallback = ({ error }) => (
     {error ? (
       <div>
         <h3 className="header">Error!</h3>
+        <p style={{ color: 'red' }}>{error.message}</p>
+        <pre style={{ color: 'red', textAlign: 'left' }}>{error.stack}</pre>
         <p style={{ fontWeight: 300 }}>Open devtools for more information</p>
       </div>
     ) : (

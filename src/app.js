@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { fetchData } from './fetchData';
 import { Header } from './components/header';
@@ -13,92 +13,98 @@ const StyledContainer = styled.div`
   background-color: #191919;
 `;
 
-export default class App extends Component {
-  state = {
-    routes: [],
-    error: null,
-    loading: true,
-  };
-
-  fetchNewData = () => {
-    this.setState({ loading: true });
-    fetchData().then(routes => {
-      if (routes.error) {
-        console.error(routes.error.stack);
-        return this.setState({ loading: false, error: true });
-      }
-
-      console.log(`routes`, routes);
-      this.setState({
-        routes,
-        error: false,
-        loading: false,
-      });
-    });
-  };
-
-  kickoffFetchLoop = () => {
-    this.fetchNewData();
-    this.fetchInterval = setInterval(() => {
-      this.fetchNewData();
-    }, 1000 * 30);
-  };
-
-  componentDidMount() {
-    this.kickoffFetchLoop();
-    this.setUpPullToRefresh();
-  }
-
-  setUpPullToRefresh = () => {
-    // TODO: Clean these up in unmount
+const usePullRefresh = trigger => {
+  useEffect(() => {
     let downY;
     let upY;
-    document.addEventListener('touchstart', e => {
+    const setDownY = e => {
       downY = e.targetTouches[0].clientY;
-    });
-    document.addEventListener('touchend', e => {
+    };
+    const setUpY = e => {
       upY = e.changedTouches[0].clientY;
       if (upY > downY) {
-        this.handleReFetch();
+        trigger();
       }
-    });
-  };
+    };
 
-  handleReFetch = () => {
-    clearInterval(this.fetchInterval);
-    this.kickoffFetchLoop();
-  };
+    document.addEventListener('touchstart', setDownY);
+    document.addEventListener('touchend', setUpY);
 
-  componentWillUnmount() {
-    clearInterval(this.fetchInterval);
-  }
+    return () => {
+      document.removeEventListener('touchstart', setDownY);
+      document.removeEventListener('touchend', setUpY);
+    };
+  }, []);
+};
 
-  getCombinedRoutes = () => {
-    const { routes } = this.state;
+export default function App() {
+  const [state, setState] = useState({
+    routes: [],
+    loading: true,
+    error: null,
+  });
+  const [count, setCount] = useState(0);
+
+  const updateState = newState => setState(s => ({ ...s, ...newState }));
+
+  useEffect(
+    () => {
+      const fetchNewData = () => {
+        updateState({ loading: true });
+        fetchData()
+          .then(routes => {
+            if (routes.error) {
+              console.error(routes.error.stack);
+              updateState({ loading: false, error: routes.error });
+              return;
+            }
+
+            console.log(`routes`, routes);
+            updateState({ loading: false, error: null, routes });
+          })
+          .catch(error => {
+            updateState({ loading: false, error });
+          });
+      };
+
+      fetchNewData();
+      const fetchInterval = setInterval(() => {
+        console.log(`INTERVAL`);
+        fetchNewData();
+      }, 1000 * 30);
+
+      return () => clearInterval(fetchInterval);
+    },
+    [count]
+  );
+
+  const handleReFetch = () => setCount(c => c + 1);
+
+  usePullRefresh(handleReFetch);
+
+  const getCombinedRoutes = routes => {
     return new Date().getHours() < 12
       ? [...routes.morning, null, ...routes.evening]
       : [...routes.evening, null, ...routes.morning];
   };
 
-  render() {
-    const { routes, error, loading } = this.state;
+  const { routes, error, loading } = state;
 
-    return (
-      <StyledContainer>
-        <Header reFetch={this.handleReFetch} />
-        {error || loading ? (
-          <Fallback error={error} />
-        ) : (
-          this.getCombinedRoutes().map(route =>
-            route == null ? (
-              <Spacer key="spacer" />
-            ) : (
-              <RouteItem key={route.id} route={route} />
-            )
+  return (
+    <StyledContainer>
+      <Header reFetch={handleReFetch} />
+      {error || loading ? (
+        <Fallback error={error} />
+      ) : (
+        getCombinedRoutes(routes).map(route =>
+          route == null ? (
+            <Spacer key="spacer" />
+          ) : (
+            <RouteItem key={route.id} route={route} />
           )
-        )}
-        {/* <Footer /> */}
-      </StyledContainer>
-    );
-  }
+        )
+      )}
+      {/* <Footer /> */}
+    </StyledContainer>
+  );
 }

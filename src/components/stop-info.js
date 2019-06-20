@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { TRANS_TIME } from '../constants';
@@ -35,59 +35,50 @@ const StyledDirection = styled.div`
   transition: opacity ${TRANS_TIME};
 `;
 
-export class StopInfo extends Component {
-  static propTypes = {
-    name: PropTypes.string,
-    color: PropTypes.string,
-    textColor: PropTypes.string,
-    direction: PropTypes.string,
-    isCompact: PropTypes.bool,
-  };
+export function StopInfo({ color, textColor, name, direction, isCompact }) {
+  const [showFullText, setShowFullText] = useState(true);
 
-  static defaultProps = {
-    name: '',
-    color: '',
-    textColor: '',
-    direction: '',
-    isCompact: false,
-  };
+  useEffect(
+    () => {
+      if (isCompact) return setShowFullText(false);
 
-  state = {
-    showFullText: true,
-  };
+      wait(100).then(() => setShowFullText(true));
+    },
+    [isCompact]
+  );
 
-  componentDidUpdate(prevProps) {
-    if (this.props === prevProps) return;
-
-    if (prevProps.isCompact) {
-      wait(100).then(() => {
-        this.setState({ showFullText: true });
-      });
-    } else {
-      this.setState({ showFullText: !this.props.isCompact });
-    }
-  }
-
-  render() {
-    const { showFullText } = this.state;
-    const { color, textColor, name, direction, isCompact } = this.props;
-    const [first, second] = name.split('@');
-    const cleanName = second ? second.trim() : first.trim();
-    return (
-      <div>
-        <StyledColorPill
-          data-enzyme-id="color-pill"
-          color={color}
-          isCompact={isCompact}
-        >
-          <StyledStopName data-enzyme-id="stop-name" textColor={textColor}>
-            {showFullText ? cleanName : cleanName[0]}
-          </StyledStopName>
-        </StyledColorPill>
-        <StyledDirection data-enzyme-id="direction" isCompact={!showFullText}>
-          {`\u2794 ${direction}`}
-        </StyledDirection>
-      </div>
-    );
-  }
+  const [first, second] = name.split('@');
+  const cleanName = second ? second.trim() : first.trim();
+  return (
+    <div>
+      <StyledColorPill
+        data-enzyme-id="color-pill"
+        color={color}
+        isCompact={isCompact}
+      >
+        <StyledStopName data-enzyme-id="stop-name" textColor={textColor}>
+          {showFullText ? cleanName : cleanName[0]}
+        </StyledStopName>
+      </StyledColorPill>
+      <StyledDirection data-enzyme-id="direction" isCompact={!showFullText}>
+        {`\u2794 ${direction}`}
+      </StyledDirection>
+    </div>
+  );
 }
+
+StopInfo.propTypes = {
+  name: PropTypes.string,
+  color: PropTypes.string,
+  textColor: PropTypes.string,
+  direction: PropTypes.string,
+  isCompact: PropTypes.bool,
+};
+
+StopInfo.defaultProps = {
+  name: '',
+  color: '',
+  textColor: '',
+  direction: '',
+  isCompact: false,
+};
