@@ -39,20 +39,28 @@ export const fetchData = ({
         const id = index;
         const currRoute = routes[index];
         const { waitStart, waitLength, route, morning, customName } = currRoute;
+        const { selectArrivals, selectIncluded } = mbta;
+
+        // TODO: Figure out some good defaults to fall back to,
+        // in case of missing data/included info
 
         // Filter out other routes for the same stop
         const filteredData = rawPred.data.filter(
           ea => !route || ea.relationships.route.data.id === route.toString()
         );
         const pred = { data: filteredData };
-        const arrivals = mbta.selectArrivals(pred, { convertTo: 'min' });
-        const stopName = mbta.selectIncluded(rawPred, 'stop')[0].attributes
-          .name;
-        const routeAttrs = mbta.selectIncluded(rawPred, 'route')[0].attributes;
-        const directionIdx = rawPred.data[0].attributes.direction_id;
+        const arrivals = selectArrivals(pred, { convertTo: 'min' });
+        const stopName = selectIncluded(rawPred, 'stop')[0].attributes.name;
+        const routeAttrs = selectIncluded(rawPred, 'route')[0].attributes;
+        const directionIdx =
+          pred.data.length > 0 && pred.data[0].attributes.direction_id;
+
+        // Either set direction as the destination or
+        // generic Inbound/Outbound, or fall back to empty string
         const direction =
           routeAttrs.direction_destinations[directionIdx] ||
-          routeAttrs.direction_names[directionIdx];
+          routeAttrs.direction_names[directionIdx] ||
+          '';
 
         const color = routeAttrs.color;
         const textColor = routeAttrs.text_color;
