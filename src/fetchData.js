@@ -32,46 +32,51 @@ export const fetchData = ({
     .then(predictions => {
       console.log(`Fetched live data`);
 
-      const allPreds = predictions.map((rawPred, index) => {
+      const allPreds = predictions.map((rawPred, i) => {
         if (!rawPred) {
           throw new Error('No predictions');
         }
-        const id = index;
-        const currRoute = routes[index];
-        const { waitStart, waitLength, route, morning, customName } = currRoute;
+
+        const { waitStart, waitLength, route, morning, customName } = routes[i];
         const { selectArrivals, selectIncluded } = mbta;
 
         // TODO: Figure out some good defaults to fall back to,
         // in case of missing data/included info
 
         // Filter out other routes for the same stop
-        const filteredData = rawPred.data.filter(
+        const routeData = rawPred.data.filter(
           ea => !route || ea.relationships.route.data.id === route.toString()
         );
-        const pred = { data: filteredData };
+        const pred = { data: routeData };
         const arrivals = selectArrivals(pred, { convertTo: 'min' });
         const stopName = selectIncluded(rawPred, 'stop')[0].attributes.name;
         const routeAttrs = selectIncluded(rawPred, 'route')[0].attributes;
         const directionIdx =
-          pred.data.length > 0 && pred.data[0].attributes.direction_id;
+          routeData.length > 0 && routeData[0].attributes.direction_id;
+
+        const {
+          direction_destinations,
+          direction_names,
+          color,
+          text_color: textColor,
+        } = routeAttrs;
 
         // Either set direction as the destination or
         // generic Inbound/Outbound, or fall back to empty string
         const direction =
-          routeAttrs.direction_destinations[directionIdx] ||
-          routeAttrs.direction_names[directionIdx] ||
+          direction_destinations[directionIdx] ||
+          direction_names[directionIdx] ||
           '';
 
-        const color = routeAttrs.color;
-        const textColor = routeAttrs.text_color;
         const arrivalMins = arrivals
           .filter(min => min >= 1 && min < 60)
           .slice(0, PREDICTIONS_LIMIT);
-        const _pastArrivalMins = arrivals.filter(min => min <= 2);
 
-        const isWalkable = arrivals.some(
+        const isWalkable = arrivalMins.some(
           mins => mins >= waitStart && mins <= waitStart + waitLength
         );
+
+        const id = i;
 
         return {
           id,
@@ -84,9 +89,9 @@ export const fetchData = ({
           customName,
           arrivalMins,
           // for debugging client side
-          _pastArrivalMins,
+          _pastArrivalMins: arrivals.filter(min => min <= 2),
           _predictions: rawPred,
-          _filtered: pred,
+          _filtered: routeData,
         };
       });
 
