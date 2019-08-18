@@ -56,7 +56,11 @@ export function StopInfo({ color, textColor, name, direction, isCompact }) {
         color={color}
         isCompact={isCompact}
       >
-        <StyledStopName data-enzyme-id="stop-name" textColor={textColor}>
+        <StyledStopName
+          data-enzyme-id="stop-name"
+          data-testid="stop-name"
+          textColor={textColor}
+        >
           {showFullText ? cleanName : cleanName[0]}
         </StyledStopName>
       </StyledColorPill>

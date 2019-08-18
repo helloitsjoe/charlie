@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { fetchData } from './fetchData';
 import { Header } from './components/header';
 import { RouteItem } from './components/route-item';
-import { Footer } from './components/footer';
 import { Spacer } from './components/spacer';
 import { Fallback } from './components/fallback';
 
@@ -37,7 +37,7 @@ const usePullRefresh = trigger => {
   }, []);
 };
 
-export default function App() {
+export default function App(props) {
   const [state, setState] = useState({
     routes: [],
     loading: true,
@@ -51,7 +51,8 @@ export default function App() {
     () => {
       const fetchNewData = () => {
         updateState({ loading: true });
-        fetchData()
+        props
+          .fetchData()
           .then(routes => {
             if (routes.error) {
               console.error(routes.error.stack);
@@ -69,7 +70,6 @@ export default function App() {
 
       fetchNewData();
       const fetchInterval = setInterval(() => {
-        console.log(`INTERVAL`);
         fetchNewData();
       }, 1000 * 30);
 
@@ -83,28 +83,37 @@ export default function App() {
   usePullRefresh(handleReFetch);
 
   const getCombinedRoutes = routes => {
-    return new Date().getHours() < 12
-      ? [...routes.morning, null, ...routes.evening]
-      : [...routes.evening, null, ...routes.morning];
+    return props.hourOfDay < 12
+      ? ['Inbound', ...routes.morning, 'Outbound', ...routes.evening]
+      : ['Outbound', ...routes.evening, 'Inbound', ...routes.morning];
   };
 
   const { routes, error, loading } = state;
 
   return (
-    <StyledContainer>
+    <StyledContainer data-testid="app">
       <Header reFetch={handleReFetch} />
       {error || loading ? (
         <Fallback error={error} />
       ) : (
-        getCombinedRoutes(routes).map(route =>
-          route == null ? (
-            <Spacer key="spacer" />
+        getCombinedRoutes(routes).map(route => {
+          return typeof route === 'string' ? (
+            <Spacer key={route} text={route} />
           ) : (
             <RouteItem key={route.id} route={route} />
-          )
-        )
+          );
+        })
       )}
       {/* <Footer /> */}
     </StyledContainer>
   );
 }
+App.propTypes = {
+  fetchData: PropTypes.func,
+  hourOfDay: PropTypes.number,
+};
+
+App.defaultProps = {
+  fetchData,
+  hourOfDay: new Date().getHours(),
+};
