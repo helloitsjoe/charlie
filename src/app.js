@@ -6,6 +6,7 @@ import { Header } from './components/header';
 import { RouteItem } from './components/route-item';
 import { Spacer } from './components/spacer';
 import { Fallback } from './components/fallback';
+import { Footer } from './components/footer';
 
 const StyledContainer = styled.div`
   max-width: 380px;
@@ -83,6 +84,7 @@ export default function App(props) {
   usePullRefresh(handleReFetch);
 
   const getCombinedRoutes = routes => {
+    console.log(`props.hourOfDay:`, props.hourOfDay);
     return props.hourOfDay < 12
       ? ['Inbound', ...routes.morning, 'Outbound', ...routes.evening]
       : ['Outbound', ...routes.evening, 'Inbound', ...routes.morning];
@@ -104,7 +106,7 @@ export default function App(props) {
           );
         })
       )}
-      {/* <Footer /> */}
+      <Footer hourOfDay={props.hourOfDay} />
     </StyledContainer>
   );
 }
