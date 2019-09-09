@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 const StyledHeader = styled.div`
@@ -17,10 +18,14 @@ const StyledButton = styled.button`
   color: #666;
 `;
 
-export const Header = ({ route, reFetch }) => {
+export default function Header({ reFetch }) {
   return (
     <StyledHeader>
       <StyledButton onClick={reFetch}>REFRESH</StyledButton>
     </StyledHeader>
   );
+}
+
+Header.propTypes = {
+  reFetch: PropTypes.func.isRequired,
 };

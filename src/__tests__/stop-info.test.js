@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import byEnzymeId from 'get-by-enzyme-id';
-import { StopInfo } from '../components/stop-info';
+import StopInfo from '../components/stop-info';
 import { route } from './route-test-data';
 import { wait } from '../utils';
 

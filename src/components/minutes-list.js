@@ -23,10 +23,11 @@ const StyledMinutesLabel = styled.div`
   font-size: ${props => (props.idx > 0 ? '1.25rem' : '1.5rem')};
 `;
 
-export const MinutesList = ({ mins, clicked }) => {
+export default function MinutesList({ mins, clicked }) {
   return (
     <div style={{ display: 'flex', alignItems: 'flex-end' }}>
       {mins.map((min, idx) => (
+        // eslint-disable-next-line
         <MinutesWrapper key={`${min}-${idx}`} idx={idx} clicked={clicked}>
           <StyledMinutes idx={idx}>{min}</StyledMinutes>
           <StyledMinutesLabel idx={idx}>min</StyledMinutesLabel>
@@ -34,7 +35,7 @@ export const MinutesList = ({ mins, clicked }) => {
       ))}
     </div>
   );
-};
+}
 
 MinutesList.propTypes = {
   mins: PropTypes.arrayOf(PropTypes.number).isRequired,

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { StopInfo } from './stop-info';
-import { MinutesList } from './minutes-list';
-import { TRANS_TIME, GREEN, RED } from '../constants';
 import styled from 'styled-components';
+import StopInfo from './stop-info';
+import MinutesList from './minutes-list';
+import { TRANS_TIME, GREEN, RED } from '../constants';
 
 const RouteWrapper = styled.div`
   text-align: left;
@@ -25,22 +25,13 @@ const MinsListWrapper = styled.div`
   border-bottom: 6px solid ${props => (props.isWalkable ? GREEN : RED)};
 `;
 
-export function RouteItem({
-  route: {
-    id,
-    color,
-    stopName,
-    direction,
-    textColor,
-    customName,
-    isWalkable,
-    arrivalMins,
-  },
+export default function RouteItem({
+  route: { color, stopName, direction, textColor, customName, isWalkable, arrivalMins },
 }) {
   const [clicked, setClicked] = useState(false);
 
   return (
-    <RouteWrapper onClick={e => setClicked(c => !c)}>
+    <RouteWrapper onClick={() => setClicked(c => !c)}>
       <StopWrapper clicked={clicked}>
         <StopInfo
           id="stop-info"

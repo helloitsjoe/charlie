@@ -1,6 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import { RouteItem } from '../components/route-item';
+import RouteItem from '../components/route-item';
 import { route } from './route-test-data';
 
 describe('RouteItem', () => {

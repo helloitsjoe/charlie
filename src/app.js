@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { fetchData } from './fetchData';
-import { Header } from './components/header';
-import { RouteItem } from './components/route-item';
-import { Spacer } from './components/spacer';
-import { Fallback } from './components/fallback';
-// import { Footer } from './components/footer';
+import fetchData from './fetchData';
+import Header from './components/header';
+import RouteItem from './components/route-item';
+import Spacer from './components/spacer';
+import Fallback from './components/fallback';
+import Footer from './components/footer';
 
 const StyledContainer = styled.div`
   max-width: 380px;
@@ -83,11 +83,10 @@ export default function App(props) {
 
   usePullRefresh(handleReFetch);
 
-  const getCombinedRoutes = routes => {
-    return props.hourOfDay < 12
+  const getCombinedRoutes = routes =>
+    props.hourOfDay < 12
       ? ['Inbound', ...routes.morning, 'Outbound', ...routes.evening]
       : ['Outbound', ...routes.evening, 'Inbound', ...routes.morning];
-  };
 
   const { routes, error, loading } = state;
 
@@ -97,15 +96,15 @@ export default function App(props) {
       {error || loading ? (
         <Fallback error={error} />
       ) : (
-        getCombinedRoutes(routes).map(route => {
-          return typeof route === 'string' ? (
+        getCombinedRoutes(routes).map(route =>
+          typeof route === 'string' ? (
             <Spacer key={route} text={route} />
           ) : (
             <RouteItem key={route.id} route={route} />
-          );
-        })
+          )
+        )
       )}
-      {/* <Footer hourOfDay={props.hourOfDay} /> */}
+      <Footer hourOfDay={props.hourOfDay} />
     </StyledContainer>
   );
 }

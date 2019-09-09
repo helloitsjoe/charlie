@@ -1,4 +1,4 @@
-import { fetchData } from '../fetchData';
+import fetchData from '../fetchData';
 
 describe('fetchData', () => {
   it('Returns empty morning/evening arrays if no route information', () => {

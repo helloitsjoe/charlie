@@ -9,7 +9,7 @@ const StyledDebug = styled.div`
   text-align: center;
 `;
 
-export const Footer = ({ hourOfDay }) => {
+export default function Footer({ hourOfDay }) {
   const [debug, setDebug] = useState(false);
 
   let timeout;
@@ -26,12 +26,17 @@ export const Footer = ({ hourOfDay }) => {
 
   return (
     hourOfDay && (
-      <StyledDebug onMouseDown={handlePress} onMouseUp={handleRelease}>
-        {debug && hourOfDay}
+      <StyledDebug
+        onTouchStart={handlePress}
+        onTouchEnd={handleRelease}
+        onMouseDown={handlePress}
+        onMouseUp={handleRelease}
+      >
+        {hourOfDay}
       </StyledDebug>
     )
   );
-};
+}
 
 Footer.propTypes = {
   hourOfDay: PropTypes.number,

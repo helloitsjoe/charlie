@@ -11,9 +11,9 @@ const StyledSpacer = styled.div`
   padding-left: 10px;
 `;
 
-export const Spacer = ({ text }) => (
-  <StyledSpacer data-testid="spacer">{text}</StyledSpacer>
-);
+export default function Spacer({ text }) {
+  return <StyledSpacer data-testid="spacer">{text}</StyledSpacer>;
+}
 
 Spacer.propTypes = {
   text: PropTypes.string.isRequired,

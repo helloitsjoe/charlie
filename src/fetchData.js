@@ -1,19 +1,20 @@
+/* eslint-disable camelcase */
+/* eslint-disable function-paren-newline */
 import MBTA from 'mbta-client';
 import routesConfig from '../resources/routes.config.json';
+
 const enabledRoutes = Object.values(routesConfig.enabled);
 let mbtaKey;
 try {
-  mbtaKey = require('../resources/credentials.json').mbtaKey;
+  // eslint-disable-next-line
+  ({ mbtaKey } = require('../resources/credentials.json'));
 } catch (err) {
   console.warn('Missing API key, making call without key...');
 }
 
 const PREDICTIONS_LIMIT = 4;
 
-export const fetchData = ({
-  routes = enabledRoutes,
-  mbta = new MBTA(mbtaKey),
-} = {}) => {
+const fetchData = ({ routes = enabledRoutes, mbta = new MBTA(mbtaKey) } = {}) => {
   // It would be better to send one request with a list of stops, but parsing
   // the response isn't feasible because data.relationships.stop.data.id
   // is sometimes different from route.stop
@@ -51,22 +52,18 @@ export const fetchData = ({
         const arrivals = selectArrivals(pred, { convertTo: 'min' });
         const stopName = selectIncluded(rawPred, 'stop')[0].attributes.name;
         const routeAttrs = selectIncluded(rawPred, 'route')[0].attributes;
-        const directionIdx =
-          routeData.length > 0 && routeData[0].attributes.direction_id;
+        const directionIdx = routeData.length > 0 && routeData[0].attributes.direction_id;
 
         const {
-          direction_destinations,
-          direction_names,
+          direction_destinations: dirDestinations,
+          direction_names: dirNames,
           color,
           text_color: textColor,
         } = routeAttrs;
 
         // Either set direction as the destination or
         // generic Inbound/Outbound, or fall back to empty string
-        const direction =
-          direction_destinations[directionIdx] ||
-          direction_names[directionIdx] ||
-          '';
+        const direction = dirDestinations[directionIdx] || dirNames[directionIdx] || '';
 
         const arrivalMins = arrivals
           .filter(min => min >= 1 && min < 60)
@@ -106,3 +103,5 @@ export const fetchData = ({
       return { error: { message, stack } };
     });
 };
+
+export default fetchData;
