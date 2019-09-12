@@ -1,3 +1,4 @@
+/* eslint-disable function-paren-newline */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -84,7 +85,7 @@ export default function App(props) {
   usePullRefresh(handleReFetch);
 
   const getCombinedRoutes = routes =>
-    props.hourOfDay < 12
+    props.date.getHours() < 12
       ? ['Inbound', ...routes.morning, 'Outbound', ...routes.evening]
       : ['Outbound', ...routes.evening, 'Inbound', ...routes.morning];
 
@@ -104,16 +105,16 @@ export default function App(props) {
           )
         )
       )}
-      <Footer hourOfDay={props.hourOfDay} />
+      <Footer hourOfDay={props.date.getHours()} />
     </StyledContainer>
   );
 }
 App.propTypes = {
   fetchData: PropTypes.func,
-  hourOfDay: PropTypes.number,
+  date: PropTypes.instanceOf(Date),
 };
 
 App.defaultProps = {
   fetchData,
-  hourOfDay: new Date().getHours(),
+  date: new Date(),
 };

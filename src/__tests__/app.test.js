@@ -24,31 +24,31 @@ describe('App', () => {
   });
 
   it('renders routes with spacers (Morning)', () => {
+    const date = new Date();
+    date.setHours(7);
     const { queryByText, getByTestId, findAllByTestId } = render(
-      <App {...testProps} hourOfDay={11} />
+      <App {...testProps} date={date} />
     );
     return findAllByTestId('stop-name').then(routeItems => {
       expect(queryByText('Inbound')).toBeTruthy();
       expect(queryByText('Outbound')).toBeTruthy();
       const appText = getByTestId('app').textContent;
-      expect(appText.indexOf('Inbound')).toBeLessThan(
-        appText.indexOf('Outbound')
-      );
+      expect(appText.indexOf('Inbound')).toBeLessThan(appText.indexOf('Outbound'));
       expect(routeItems.length).toBe(morning.length + evening.length);
     });
   });
 
   it('renders morning routes with spacers (Evening)', () => {
+    const date = new Date();
+    date.setHours(13);
     const { getByTestId, queryByText, findAllByTestId } = render(
-      <App {...testProps} hourOfDay={13} />
+      <App {...testProps} date={date} />
     );
     return findAllByTestId('stop-name').then(routeItems => {
       expect(queryByText('Inbound')).toBeTruthy();
       expect(queryByText('Outbound')).toBeTruthy();
       const appText = getByTestId('app').textContent;
-      expect(appText.indexOf('Outbound')).toBeLessThan(
-        appText.indexOf('Inbound')
-      );
+      expect(appText.indexOf('Outbound')).toBeLessThan(appText.indexOf('Inbound'));
       expect(routeItems.length).toBe(morning.length + evening.length);
     });
   });
