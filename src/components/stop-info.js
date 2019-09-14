@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { TRANS_TIME } from '../constants';
-import { wait } from '../utils';
 
 const StyledColorPill = styled.div`
   height: 40px;
@@ -38,14 +37,15 @@ const StyledDirection = styled.div`
 export default function StopInfo({ color, textColor, name, direction, isCompact }) {
   const [showFullText, setShowFullText] = useState(true);
 
-  useEffect(
-    () => {
-      if (isCompact) return setShowFullText(false);
+  useEffect(() => {
+    if (isCompact) return setShowFullText(false);
 
-      wait(100).then(() => setShowFullText(true));
-    },
-    [isCompact]
-  );
+    const timeout = setTimeout(() => {
+      setShowFullText(true);
+    }, 100);
+
+    return () => clearTimeout(timeout);
+  }, [isCompact]);
 
   const [first, second] = name.split('@');
   const cleanName = second ? second.trim() : first.trim();

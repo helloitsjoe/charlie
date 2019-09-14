@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 import byEnzymeId from 'get-by-enzyme-id';
 import StopInfo from '../components/stop-info';
 import { route } from './route-test-data';
-import { wait } from '../utils';
+import { sleep } from '../utils';
 
 const { stopName, direction } = route;
 
@@ -50,7 +50,7 @@ describe('StopInfo', () => {
     expect(getStopNameText(wrapper)).toBe('H');
     wrapper.setProps({ isCompact: false });
     expect(getStopNameText(wrapper)).toBe('H');
-    await wait(100);
+    await sleep(100);
     expect(getStopNameText(wrapper)).toBe('Harvard');
   });
 });

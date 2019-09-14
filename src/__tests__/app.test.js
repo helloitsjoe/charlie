@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait } from '@testing-library/react';
+import { render, wait, cleanup, fireEvent } from '@testing-library/react';
 import App from '../app';
 import { mockRoutes, mockRoutesWithError } from './route-test-data';
 
@@ -16,6 +16,7 @@ describe('App', () => {
   });
 
   afterEach(() => {
+    cleanup();
     jest.clearAllMocks();
   });
 
@@ -44,6 +45,31 @@ describe('App', () => {
     return wait(() => {
       expect(container.textContent).toMatch('Error!argh');
     });
+  });
+
+  it('refetches every 30 seconds', () => {
+    jest.useFakeTimers();
+    const fetchData = jest.fn().mockResolvedValue();
+    render(<App fetchData={fetchData} />);
+    expect(fetchData).toBeCalledTimes(1);
+    jest.advanceTimersByTime(29000);
+    expect(fetchData).toBeCalledTimes(1);
+    jest.advanceTimersByTime(1000);
+    expect(fetchData).toBeCalledTimes(2);
+    jest.useRealTimers();
+  });
+
+  it('pull to refetch', () => {
+    const fetchData = jest.fn().mockResolvedValue();
+    render(<App fetchData={fetchData} />);
+    expect(fetchData).toBeCalledTimes(1);
+    fireEvent.touchStart(document, { targetTouches: [{ clientY: 0 }] });
+    fireEvent.touchEnd(document, { changedTouches: [{ clientY: 1 }] });
+    expect(fetchData).toBeCalledTimes(2);
+    // pull down only, pull up doesn't work
+    fireEvent.touchStart(document, { targetTouches: [{ clientY: 1 }] });
+    fireEvent.touchEnd(document, { changedTouches: [{ clientY: 0 }] });
+    expect(fetchData).toBeCalledTimes(2);
   });
 
   it('renders routes with spacers (Morning)', () => {

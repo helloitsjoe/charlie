@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import fetchDataNative from './fetchData';
+import { usePullRefresh } from './utils';
 import Header from './components/header';
 import RouteItem from './components/route-item';
 import Spacer from './components/spacer';
@@ -15,33 +16,6 @@ const StyledContainer = styled.div`
   background-color: #191919;
 `;
 
-const usePullRefresh = trigger => {
-  useEffect(
-    () => {
-      let downY;
-      let upY;
-      const setDownY = e => {
-        downY = e.targetTouches[0].clientY;
-      };
-      const setUpY = e => {
-        upY = e.changedTouches[0].clientY;
-        if (upY > downY) {
-          trigger();
-        }
-      };
-
-      document.addEventListener('touchstart', setDownY);
-      document.addEventListener('touchend', setUpY);
-
-      return () => {
-        document.removeEventListener('touchstart', setDownY);
-        document.removeEventListener('touchend', setUpY);
-      };
-    },
-    [trigger]
-  );
-};
-
 export default function App({ getHourOfDay, fetchData }) {
   const [state, setState] = useState({
     routes: [],
@@ -52,36 +26,33 @@ export default function App({ getHourOfDay, fetchData }) {
 
   const updateState = newState => setState(s => ({ ...s, ...newState }));
 
-  useEffect(
-    () => {
-      const fetchNewData = () => {
-        updateState({ loading: true });
+  useEffect(() => {
+    const fetchNewData = () => {
+      updateState({ loading: true });
 
-        fetchData()
-          .then(routes => {
-            if (routes.error) {
-              console.error(routes.error.stack);
-              updateState({ loading: false, error: routes.error });
-              return;
-            }
+      fetchData()
+        .then(routes => {
+          if (routes.error) {
+            console.error(routes.error.stack);
+            updateState({ loading: false, error: routes.error });
+            return;
+          }
 
-            console.log(`routes`, routes);
-            updateState({ loading: false, error: null, routes });
-          })
-          .catch(error => {
-            updateState({ loading: false, error });
-          });
-      };
+          console.log(`routes`, routes);
+          updateState({ loading: false, error: null, routes });
+        })
+        .catch(error => {
+          updateState({ loading: false, error });
+        });
+    };
 
+    fetchNewData();
+    const fetchInterval = setInterval(() => {
       fetchNewData();
-      const fetchInterval = setInterval(() => {
-        fetchNewData();
-      }, 1000 * 30);
+    }, 1000 * 30);
 
-      return () => clearInterval(fetchInterval);
-    },
-    [fetchData, count]
-  );
+    return () => clearInterval(fetchInterval);
+  }, [fetchData, count]);
 
   const handleReFetch = useCallback(() => setCount(c => c + 1), []);
 
