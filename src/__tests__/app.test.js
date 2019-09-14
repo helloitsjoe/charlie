@@ -1,7 +1,7 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, wait } from '@testing-library/react';
 import App from '../app';
-import { mockRoutes } from './route-test-data';
+import { mockRoutes, mockRoutesWithError } from './route-test-data';
 
 const { morning, evening } = mockRoutes;
 
@@ -11,6 +11,7 @@ const testProps = {
 
 describe('App', () => {
   beforeEach(() => {
+    // Don't log routes
     console.log.mockImplementationOnce(() => {});
   });
 
@@ -21,6 +22,28 @@ describe('App', () => {
   it('displays refresh header', () => {
     const { queryByText } = render(<App {...testProps} />);
     expect(queryByText('REFRESH')).toBeTruthy();
+  });
+
+  it('shows loading screen', () => {
+    const fetchData = () => Promise.resolve();
+    const { container } = render(<App fetchData={fetchData} />);
+    expect(container.textContent).toMatch('Loading...');
+  });
+
+  it('handles error in routes', () => {
+    const fetchData = () => Promise.resolve(mockRoutesWithError);
+    const { container } = render(<App fetchData={fetchData} />);
+    return wait(() => {
+      expect(container.textContent).toMatch('Error!Noes');
+    });
+  });
+
+  it('handles error during request', () => {
+    const fetchData = () => Promise.reject(new Error('argh'));
+    const { container } = render(<App fetchData={fetchData} />);
+    return wait(() => {
+      expect(container.textContent).toMatch('Error!argh');
+    });
   });
 
   it('renders routes with spacers (Morning)', () => {

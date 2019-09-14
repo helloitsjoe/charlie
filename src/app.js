@@ -1,8 +1,8 @@
 /* eslint-disable function-paren-newline */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import fetchData from './fetchData';
+import fetchDataNative from './fetchData';
 import Header from './components/header';
 import RouteItem from './components/route-item';
 import Spacer from './components/spacer';
@@ -16,30 +16,33 @@ const StyledContainer = styled.div`
 `;
 
 const usePullRefresh = trigger => {
-  useEffect(() => {
-    let downY;
-    let upY;
-    const setDownY = e => {
-      downY = e.targetTouches[0].clientY;
-    };
-    const setUpY = e => {
-      upY = e.changedTouches[0].clientY;
-      if (upY > downY) {
-        trigger();
-      }
-    };
+  useEffect(
+    () => {
+      let downY;
+      let upY;
+      const setDownY = e => {
+        downY = e.targetTouches[0].clientY;
+      };
+      const setUpY = e => {
+        upY = e.changedTouches[0].clientY;
+        if (upY > downY) {
+          trigger();
+        }
+      };
 
-    document.addEventListener('touchstart', setDownY);
-    document.addEventListener('touchend', setUpY);
+      document.addEventListener('touchstart', setDownY);
+      document.addEventListener('touchend', setUpY);
 
-    return () => {
-      document.removeEventListener('touchstart', setDownY);
-      document.removeEventListener('touchend', setUpY);
-    };
-  }, []);
+      return () => {
+        document.removeEventListener('touchstart', setDownY);
+        document.removeEventListener('touchend', setUpY);
+      };
+    },
+    [trigger]
+  );
 };
 
-export default function App(props) {
+export default function App({ getHourOfDay, fetchData }) {
   const [state, setState] = useState({
     routes: [],
     loading: true,
@@ -53,8 +56,8 @@ export default function App(props) {
     () => {
       const fetchNewData = () => {
         updateState({ loading: true });
-        props
-          .fetchData()
+
+        fetchData()
           .then(routes => {
             if (routes.error) {
               console.error(routes.error.stack);
@@ -77,15 +80,15 @@ export default function App(props) {
 
       return () => clearInterval(fetchInterval);
     },
-    [count]
+    [fetchData, count]
   );
 
-  const handleReFetch = () => setCount(c => c + 1);
+  const handleReFetch = useCallback(() => setCount(c => c + 1), []);
 
   usePullRefresh(handleReFetch);
 
   const getCombinedRoutes = routes =>
-    props.getHourOfDay() < 12
+    getHourOfDay() < 12
       ? ['Inbound', ...routes.morning, 'Outbound', ...routes.evening]
       : ['Outbound', ...routes.evening, 'Inbound', ...routes.morning];
 
@@ -105,7 +108,7 @@ export default function App(props) {
           )
         )
       )}
-      <Footer hourOfDay={props.getHourOfDay()} />
+      <Footer hourOfDay={getHourOfDay()} />
     </StyledContainer>
   );
 }
@@ -115,6 +118,6 @@ App.propTypes = {
 };
 
 App.defaultProps = {
-  fetchData,
+  fetchData: fetchDataNative,
   getHourOfDay: () => new Date().getHours(),
 };

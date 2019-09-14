@@ -8,6 +8,13 @@ export const route = {
   arrivalMins: [1, 4],
 };
 
+export const mockRoutesWithError = {
+  error: {
+    message: 'Noes',
+    stack: 'Aw nuts',
+  },
+};
+
 export const mockRoutes = {
   morning: [
     {
