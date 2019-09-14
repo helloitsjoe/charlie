@@ -85,7 +85,7 @@ export default function App(props) {
   usePullRefresh(handleReFetch);
 
   const getCombinedRoutes = routes =>
-    props.date.getHours() < 12
+    props.getHourOfDay() < 12
       ? ['Inbound', ...routes.morning, 'Outbound', ...routes.evening]
       : ['Outbound', ...routes.evening, 'Inbound', ...routes.morning];
 
@@ -105,16 +105,16 @@ export default function App(props) {
           )
         )
       )}
-      <Footer hourOfDay={props.date.getHours()} />
+      <Footer hourOfDay={props.getHourOfDay()} />
     </StyledContainer>
   );
 }
 App.propTypes = {
   fetchData: PropTypes.func,
-  date: PropTypes.instanceOf(Date),
+  getHourOfDay: PropTypes.func,
 };
 
 App.defaultProps = {
   fetchData,
-  date: new Date(),
+  getHourOfDay: () => new Date().getHours(),
 };

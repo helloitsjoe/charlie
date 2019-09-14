@@ -24,10 +24,9 @@ describe('App', () => {
   });
 
   it('renders routes with spacers (Morning)', () => {
-    const date = new Date();
-    date.setHours(7);
+    const getHourOfDay = () => 7;
     const { queryByText, getByTestId, findAllByTestId } = render(
-      <App {...testProps} date={date} />
+      <App {...testProps} getHourOfDay={getHourOfDay} />
     );
     return findAllByTestId('stop-name').then(routeItems => {
       expect(queryByText('Inbound')).toBeTruthy();
@@ -39,10 +38,9 @@ describe('App', () => {
   });
 
   it('renders morning routes with spacers (Evening)', () => {
-    const date = new Date();
-    date.setHours(13);
+    const getHourOfDay = () => 17;
     const { getByTestId, queryByText, findAllByTestId } = render(
-      <App {...testProps} date={date} />
+      <App {...testProps} getHourOfDay={getHourOfDay} />
     );
     return findAllByTestId('stop-name').then(routeItems => {
       expect(queryByText('Inbound')).toBeTruthy();
