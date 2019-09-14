@@ -25,14 +25,21 @@ const StyledMinutesLabel = styled.div`
 
 export default function MinutesList({ mins, clicked }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-      {mins.map((min, idx) => (
-        // eslint-disable-next-line
-        <MinutesWrapper key={`${min}-${idx}`} idx={idx} clicked={clicked}>
-          <StyledMinutes idx={idx}>{min}</StyledMinutes>
-          <StyledMinutesLabel idx={idx}>min</StyledMinutesLabel>
-        </MinutesWrapper>
-      ))}
+    <div data-testid="minutes-list" style={{ display: 'flex', alignItems: 'flex-end' }}>
+      {mins.map((min, idx) => {
+        return (
+          <MinutesWrapper
+            data-testid="minutes"
+            // eslint-disable-next-line
+            key={`${min}-${idx}`}
+            clicked={clicked}
+            idx={idx}
+          >
+            <StyledMinutes idx={idx}>{min}</StyledMinutes>
+            <StyledMinutesLabel idx={idx}>min</StyledMinutesLabel>
+          </MinutesWrapper>
+        );
+      })}
     </div>
   );
 }

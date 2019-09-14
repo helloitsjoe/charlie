@@ -1,56 +1,47 @@
 import React from 'react';
-import { mount } from 'enzyme';
-import byEnzymeId from 'get-by-enzyme-id';
+import { render } from '@testing-library/react';
 import StopInfo from '../components/stop-info';
 import { route } from './route-test-data';
 import { wait } from '../utils';
+import 'jest-styled-components';
 
 const { stopName, direction } = route;
 
-const getStopNameText = wrapper =>
-  wrapper
-    .find(byEnzymeId('stop-name'))
-    .first()
-    .text();
-
 describe('StopInfo', () => {
   it('displays name and direction', () => {
-    const wrapper = mount(<StopInfo name={stopName} direction={direction} />);
-    expect(wrapper.text()).toMatchInlineSnapshot(`"Harvard➔ Northbound"`);
+    const { container } = render(<StopInfo name={stopName} direction={direction} />);
+    expect(container.textContent).toMatchInlineSnapshot(`"Harvard➔ Northbound"`);
   });
 
   it('displays cleaned name if it contains @', () => {
-    const wrapper = mount(<StopInfo name="One @ Two" direction={direction} />);
-    expect(wrapper.text()).toMatch('Two');
-    expect(wrapper.text()).not.toMatch('One');
+    const { container } = render(<StopInfo name="One @ Two" direction={direction} />);
+    expect(container.textContent).toMatch('Two');
+    expect(container.textContent).not.toMatch('One');
   });
 
   it('passes color to color pill', () => {
-    const wrapper = mount(<StopInfo color="red" />);
-    const colorPill = wrapper.find(byEnzymeId('color-pill')).first();
-    expect(colorPill.props().color).toBe('red');
+    const { getByTestId } = render(<StopInfo color="red" />);
+    expect(getByTestId('color-pill')).toHaveStyleRule('background-color', '#red');
   });
 
   it('passes text color to stop name', () => {
-    const wrapper = mount(<StopInfo textColor="white" />);
-    const colorPill = wrapper.find(byEnzymeId('stop-name')).first();
-    expect(colorPill.props().textColor).toBe('white');
+    const { getByTestId } = render(<StopInfo textColor="white" />);
+    expect(getByTestId('stop-name')).toHaveStyleRule('color', '#white');
   });
 
   it('displays only first letter if props.isCompact goes from false to true', () => {
-    const wrapper = mount(<StopInfo name="Harvard" isCompact={false} />);
-    expect(getStopNameText(wrapper)).toBe('Harvard');
-    wrapper.setProps({ isCompact: true });
-    expect(getStopNameText(wrapper)).toBe('H');
+    const { container, rerender } = render(<StopInfo name="Harvard" isCompact={false} />);
+    expect(container.textContent).toMatchInlineSnapshot(`"Harvard➔ "`);
+    rerender(<StopInfo name="Harvard" isCompact />);
+    expect(container.textContent).toMatchInlineSnapshot(`"H➔ "`);
   });
 
   it('displays full name again after a pause if props.isCompact goes from true to false', async () => {
-    const wrapper = mount(<StopInfo name="Harvard" isCompact={false} />);
-    wrapper.setProps({ isCompact: true });
-    expect(getStopNameText(wrapper)).toBe('H');
-    wrapper.setProps({ isCompact: false });
-    expect(getStopNameText(wrapper)).toBe('H');
+    const { container, rerender } = render(<StopInfo name="Harvard" isCompact />);
+    expect(container.textContent).toMatchInlineSnapshot(`"H➔ "`);
+    rerender(<StopInfo name="Harvard" isCompact={false} />);
+    expect(container.textContent).toMatchInlineSnapshot(`"H➔ "`);
     await wait(100);
-    expect(getStopNameText(wrapper)).toBe('Harvard');
+    expect(container.textContent).toMatchInlineSnapshot(`"Harvard➔ "`);
   });
 });

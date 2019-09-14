@@ -51,8 +51,8 @@ export default function StopInfo({ color, textColor, name, direction, isCompact 
   const cleanName = second ? second.trim() : first.trim();
   return (
     <div>
-      <StyledColorPill data-enzyme-id="color-pill" color={color} isCompact={isCompact}>
-        <StyledStopName data-enzyme-id="stop-name" data-testid="stop-name" textColor={textColor}>
+      <StyledColorPill data-testid="color-pill" color={color} isCompact={isCompact}>
+        <StyledStopName data-testid="stop-name" textColor={textColor}>
           {showFullText ? cleanName : cleanName[0]}
         </StyledStopName>
       </StyledColorPill>
