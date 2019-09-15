@@ -1,5 +1,8 @@
 const { makeJestConfig } = require('jest-simple-config');
 
-module.exports = makeJestConfig({
-  setupFilesAfterEnv: ['./src/__tests__/setup.js'],
-});
+const config = makeJestConfig();
+
+config.setupFilesAfterEnv = ['./src/__tests__/setup.js'];
+config.collectCoverageFrom.push('!src/index.js');
+
+module.exports = config;

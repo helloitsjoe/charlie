@@ -1,8 +1,9 @@
 /* eslint-disable function-paren-newline */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import fetchData from './fetchData';
+import fetchDataNative from './fetchData';
+import { usePullRefresh } from './utils';
 import Header from './components/header';
 import RouteItem from './components/route-item';
 import Spacer from './components/spacer';
@@ -15,31 +16,7 @@ const StyledContainer = styled.div`
   background-color: #191919;
 `;
 
-const usePullRefresh = trigger => {
-  useEffect(() => {
-    let downY;
-    let upY;
-    const setDownY = e => {
-      downY = e.targetTouches[0].clientY;
-    };
-    const setUpY = e => {
-      upY = e.changedTouches[0].clientY;
-      if (upY > downY) {
-        trigger();
-      }
-    };
-
-    document.addEventListener('touchstart', setDownY);
-    document.addEventListener('touchend', setUpY);
-
-    return () => {
-      document.removeEventListener('touchstart', setDownY);
-      document.removeEventListener('touchend', setUpY);
-    };
-  }, []);
-};
-
-export default function App(props) {
+export default function App({ getHourOfDay, fetchData }) {
   const [state, setState] = useState({
     routes: [],
     loading: true,
@@ -49,43 +26,40 @@ export default function App(props) {
 
   const updateState = newState => setState(s => ({ ...s, ...newState }));
 
-  useEffect(
-    () => {
-      const fetchNewData = () => {
-        updateState({ loading: true });
-        props
-          .fetchData()
-          .then(routes => {
-            if (routes.error) {
-              console.error(routes.error.stack);
-              updateState({ loading: false, error: routes.error });
-              return;
-            }
+  useEffect(() => {
+    const fetchNewData = () => {
+      updateState({ loading: true });
 
-            console.log(`routes`, routes);
-            updateState({ loading: false, error: null, routes });
-          })
-          .catch(error => {
-            updateState({ loading: false, error });
-          });
-      };
+      fetchData()
+        .then(routes => {
+          if (routes.error) {
+            console.error(routes.error.stack);
+            updateState({ loading: false, error: routes.error });
+            return;
+          }
 
+          console.log(`routes`, routes);
+          updateState({ loading: false, error: null, routes });
+        })
+        .catch(error => {
+          updateState({ loading: false, error });
+        });
+    };
+
+    fetchNewData();
+    const fetchInterval = setInterval(() => {
       fetchNewData();
-      const fetchInterval = setInterval(() => {
-        fetchNewData();
-      }, 1000 * 30);
+    }, 1000 * 30);
 
-      return () => clearInterval(fetchInterval);
-    },
-    [count]
-  );
+    return () => clearInterval(fetchInterval);
+  }, [fetchData, count]);
 
-  const handleReFetch = () => setCount(c => c + 1);
+  const handleReFetch = useCallback(() => setCount(c => c + 1), []);
 
   usePullRefresh(handleReFetch);
 
   const getCombinedRoutes = routes =>
-    props.getHourOfDay() < 12
+    getHourOfDay() < 12
       ? ['Inbound', ...routes.morning, 'Outbound', ...routes.evening]
       : ['Outbound', ...routes.evening, 'Inbound', ...routes.morning];
 
@@ -105,7 +79,7 @@ export default function App(props) {
           )
         )
       )}
-      <Footer hourOfDay={props.getHourOfDay()} />
+      <Footer hourOfDay={getHourOfDay()} />
     </StyledContainer>
   );
 }
@@ -115,6 +89,6 @@ App.propTypes = {
 };
 
 App.defaultProps = {
-  fetchData,
+  fetchData: fetchDataNative,
   getHourOfDay: () => new Date().getHours(),
 };

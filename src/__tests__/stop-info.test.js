@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import StopInfo from '../components/stop-info';
 import { route } from './route-test-data';
-import { wait } from '../utils';
+import { sleep } from '../utils';
 import 'jest-styled-components';
 
 const { stopName, direction } = route;
@@ -41,7 +41,7 @@ describe('StopInfo', () => {
     expect(container.textContent).toMatchInlineSnapshot(`"H➔ "`);
     rerender(<StopInfo name="Harvard" isCompact={false} />);
     expect(container.textContent).toMatchInlineSnapshot(`"H➔ "`);
-    await wait(100);
+    await sleep(100);
     expect(container.textContent).toMatchInlineSnapshot(`"Harvard➔ "`);
   });
 });
