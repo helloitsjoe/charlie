@@ -34,7 +34,6 @@ export default function RouteItem({
     <RouteWrapper onClick={() => setClicked(c => !c)}>
       <StopWrapper clicked={clicked}>
         <StopInfo
-          id="stop-info"
           color={color}
           textColor={textColor}
           name={customName || stopName}
@@ -43,7 +42,7 @@ export default function RouteItem({
         />
       </StopWrapper>
       <MinsListWrapper isWalkable={isWalkable}>
-        <MinutesList id="minutes-list" clicked={clicked} mins={arrivalMins} />
+        <MinutesList clicked={clicked} mins={arrivalMins} />
       </MinsListWrapper>
     </RouteWrapper>
   );
