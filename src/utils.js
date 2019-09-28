@@ -7,11 +7,9 @@ export const usePullRefresh = trigger => {
     let downY;
     let upY;
     const setDownY = e => {
-      console.log(`down`);
       downY = e.targetTouches[0].clientY;
     };
     const setUpY = e => {
-      console.log(`up`);
       upY = e.changedTouches[0].clientY;
       if (upY > downY) {
         trigger();

@@ -10,11 +10,6 @@ const testProps = {
 };
 
 describe('App', () => {
-  beforeEach(() => {
-    // Don't log routes
-    console.log.mockImplementationOnce(() => {});
-  });
-
   afterEach(() => {
     cleanup();
     jest.clearAllMocks();

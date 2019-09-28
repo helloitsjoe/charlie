@@ -38,7 +38,7 @@ export default function App({ getHourOfDay, fetchData }) {
             return;
           }
 
-          console.log(`routes`, routes);
+          // console.log(`routes`, routes);
           updateState({ loading: false, error: null, routes });
         })
         .catch(error => {
