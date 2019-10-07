@@ -23,7 +23,7 @@ const fetchData = ({ routes = enabledRoutes, mbta = new MBTA(mbtaKey) } = {}) =>
       mbta.fetchPredictions({
         stop: route.stop,
         direction_id: route.direction,
-        sort: 'arrival_time',
+        sort: 'departure_time',
         include: ['stop', 'route'],
       })
     )
@@ -39,7 +39,7 @@ const fetchData = ({ routes = enabledRoutes, mbta = new MBTA(mbtaKey) } = {}) =>
         }
 
         const { waitStart, waitLength, route, morning, customName } = routes[i];
-        const { selectArrivals, selectIncluded } = mbta;
+        const { selectDepartures, selectIncluded } = mbta;
 
         // TODO: Figure out some good defaults to fall back to,
         // in case of missing data/included info
@@ -49,7 +49,8 @@ const fetchData = ({ routes = enabledRoutes, mbta = new MBTA(mbtaKey) } = {}) =>
           ea => !route || ea.relationships.route.data.id === route.toString()
         );
         const pred = { data: routeData };
-        const arrivals = selectArrivals(pred, { convertTo: 'min' });
+        // const arrivals = selectArrivals(pred, { convertTo: 'min' });
+        const departures = selectDepartures(pred, { convertTo: 'min' });
         const stopName = selectIncluded(rawPred, 'stop')[0].attributes.name;
         const routeAttrs = selectIncluded(rawPred, 'route')[0].attributes;
         const directionIdx = routeData.length > 0 && routeData[0].attributes.direction_id;
@@ -65,11 +66,11 @@ const fetchData = ({ routes = enabledRoutes, mbta = new MBTA(mbtaKey) } = {}) =>
         // generic Inbound/Outbound, or fall back to empty string
         const direction = dirDestinations[directionIdx] || dirNames[directionIdx] || '';
 
-        const arrivalMins = arrivals
+        const departMins = departures
           .filter(min => min >= 1 && min < 60)
           .slice(0, PREDICTIONS_LIMIT);
 
-        const isWalkable = arrivalMins.some(
+        const isWalkable = departMins.some(
           mins => mins >= waitStart && mins <= waitStart + waitLength
         );
 
@@ -84,9 +85,9 @@ const fetchData = ({ routes = enabledRoutes, mbta = new MBTA(mbtaKey) } = {}) =>
           textColor,
           isWalkable,
           customName,
-          arrivalMins,
+          departMins,
           // for debugging client side
-          _pastArrivalMins: arrivals.filter(min => min <= 2),
+          _pastDepartMins: departures.filter(min => min <= 2),
           _predictions: rawPred,
           _filtered: routeData,
         };

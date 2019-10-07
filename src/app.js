@@ -79,7 +79,7 @@ export default function App({ getHourOfDay, fetchData }) {
           )
         )
       )}
-      <Footer hourOfDay={getHourOfDay()} />
+      {/* <Footer hourOfDay={getHourOfDay()} /> */}
     </StyledContainer>
   );
 }

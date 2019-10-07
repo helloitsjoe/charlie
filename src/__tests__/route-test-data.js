@@ -5,7 +5,7 @@ export const route = {
   textColor: 'white',
   customName: 'Harvard - 71',
   isWalkable: true,
-  arrivalMins: [1, 4],
+  departMins: [1, 4],
 };
 
 export const mockRoutesWithError = {
@@ -26,7 +26,7 @@ export const mockRoutes = {
       textColor: '000000',
       isWalkable: false,
       customName: undefined,
-      arrivalMins: [1, 4],
+      departMins: [1, 4],
     },
     {
       id: 1,
@@ -37,7 +37,7 @@ export const mockRoutes = {
       textColor: '000000',
       isWalkable: true,
       customName: undefined,
-      arrivalMins: [2, 6],
+      departMins: [2, 6],
     },
   ],
   evening: [
@@ -50,7 +50,7 @@ export const mockRoutes = {
       textColor: '000000',
       isWalkable: false,
       customName: 'Harvard - 71',
-      arrivalMins: [],
+      departMins: [],
     },
     {
       id: 3,
@@ -61,7 +61,7 @@ export const mockRoutes = {
       textColor: 'FFFFFF',
       isWalkable: false,
       customName: undefined,
-      arrivalMins: [3, 6],
+      departMins: [3, 6],
     },
     {
       id: 4,
@@ -72,7 +72,7 @@ export const mockRoutes = {
       textColor: 'FFFFFF',
       isWalkable: false,
       customName: undefined,
-      arrivalMins: [1, 1],
+      departMins: [1, 1],
     },
     {
       id: 5,
@@ -83,7 +83,7 @@ export const mockRoutes = {
       textColor: '000000',
       isWalkable: false,
       customName: undefined,
-      arrivalMins: [12, 13],
+      departMins: [12, 13],
     },
   ],
 };

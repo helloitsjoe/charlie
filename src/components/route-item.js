@@ -26,7 +26,7 @@ const MinsListWrapper = styled.div`
 `;
 
 export default function RouteItem({
-  route: { color, stopName, direction, textColor, customName, isWalkable, arrivalMins },
+  route: { color, stopName, direction, textColor, customName, isWalkable, departMins },
 }) {
   const [clicked, setClicked] = useState(false);
 
@@ -42,7 +42,7 @@ export default function RouteItem({
         />
       </StopWrapper>
       <MinsListWrapper isWalkable={isWalkable}>
-        <MinutesList clicked={clicked} mins={arrivalMins} />
+        <MinutesList clicked={clicked} mins={departMins} />
       </MinsListWrapper>
     </RouteWrapper>
   );
@@ -56,6 +56,6 @@ RouteItem.propTypes = {
     textColor: PropTypes.string,
     customName: PropTypes.string,
     isWalkable: PropTypes.bool,
-    arrivalMins: PropTypes.arrayOf(PropTypes.number),
+    departMins: PropTypes.arrayOf(PropTypes.number),
   }).isRequired,
 };
