@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render } from '@testing-library/preact';
 import StopInfo from '../components/stop-info';
 import { route } from './route-test-data';
 import { sleep } from '../utils';

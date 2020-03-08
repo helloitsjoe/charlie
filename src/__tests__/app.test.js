@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait, cleanup, fireEvent } from '@testing-library/react';
+import { render, wait, cleanup, fireEvent } from '@testing-library/preact';
 import App from '../app';
 import { mockRoutes, mockRoutesWithError } from './route-test-data';
 
