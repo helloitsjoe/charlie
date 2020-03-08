@@ -8,7 +8,7 @@ import Header from './components/header';
 import RouteItem from './components/route-item';
 import Spacer from './components/spacer';
 import Fallback from './components/fallback';
-import Footer from './components/footer';
+// import Footer from './components/footer';
 
 const StyledContainer = styled.div`
   max-width: 380px;

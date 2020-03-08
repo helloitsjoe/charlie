@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+// import { h } from 'preact';
+import { render, fireEvent } from '@testing-library/preact';
 import MinutesList from '../components/minutes-list';
 import Fallback from '../components/fallback';
 import Footer from '../components/footer';
