@@ -6,9 +6,10 @@
   "scripts": {
     "pretest": "npm run build",
     "test": "jest --verbose",
-    "build": "webpack",
-    "watch": "npm run build -- --watch",
-    "start": "electron ."
+    "build": "webpack --mode production",
+    "watch": "webpack --mode development --watch",
+    "start": "webpack-dev-server --open",
+    "analyze": "webpack --mode production --profile --json > stats.json && webpack-bundle-analyzer ./stats.json"
   },
   "husky": {
     "hooks": {
@@ -32,16 +33,20 @@
     "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-react-hooks": "^2.5.0",
     "get-by-enzyme-id": "^1.0.1",
+    "html-webpack-plugin": "^4.0.3",
     "husky": "^3.0.5",
     "jest": "^24.9.0",
     "jest-simple-config": "^0.2.4",
     "jest-styled-components": "^6.3.3",
     "prettier": "^1.18.2",
     "webpack": "^4.40.2",
+    "webpack-bundle-analyzer": "^3.6.1",
     "webpack-cli": "^3.3.8",
+    "webpack-dev-server": "^3.10.3",
     "webpack-simple": "^1.5.2"
   },
   "dependencies": {
+    "@loadable/component": "^5.12.0",
     "axios": "^0.19.0",
     "babel-loader": "^8.0.6",
     "babel-react-simple": "^1.0.2",

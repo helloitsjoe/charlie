@@ -2,13 +2,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+// import loadable from '@loadable/component';
 import fetchDataNative from './fetchData';
 import { usePullRefresh } from './utils';
 import Header from './components/header';
-import RouteItem from './components/route-item';
-import Spacer from './components/spacer';
 import Fallback from './components/fallback';
 // import Footer from './components/footer';
+import RouteItem from './components/route-item';
+import Spacer from './components/spacer';
+
+// Could lazy load, but it doesn't save much from the initial bundle.
+// Cool that @loadable/component works with preact though!
+// const RouteItem = loadable(() => import('./components/route-item'));
+// const Spacer = loadable(() => import('./components/spacer'));
 
 const StyledContainer = styled.div`
   max-width: 380px;

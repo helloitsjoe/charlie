@@ -1,7 +1,16 @@
 const { makeWebpackConfig } = require('webpack-simple');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+const htmlPlugin = new HtmlWebpackPlugin({
+  template: './index-template.html',
+  filename: '../index.html',
+});
 
 module.exports = makeWebpackConfig({
-  output: { filename: 'index.js', path: __dirname },
+  plugins: [htmlPlugin],
+  output: {
+    filename: '[name].[contenthash].js',
+  },
   resolve: {
     alias: {
       react: 'preact/compat',

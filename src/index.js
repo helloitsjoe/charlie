@@ -1,6 +1,5 @@
 import React from 'react';
-// import ReactDOM from 'react-dom';
-import { render } from 'preact';
+import ReactDOM from 'react-dom';
 import App from './app';
 
-render(<App />, document.querySelector('.main'));
+ReactDOM.render(<App />, document.querySelector('.main'));
