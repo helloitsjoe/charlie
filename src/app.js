@@ -16,6 +16,8 @@ import Spacer from './components/spacer';
 // const RouteItem = loadable(() => import('./components/route-item'));
 // const Spacer = loadable(() => import('./components/spacer'));
 
+// import '../css/skeleton.css';
+
 const StyledContainer = styled.div`
   max-width: 380px;
   margin: auto;
