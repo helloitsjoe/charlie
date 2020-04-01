@@ -43,7 +43,7 @@
     "webpack-bundle-analyzer": "^3.6.1",
     "webpack-cli": "^3.3.8",
     "webpack-dev-server": "^3.10.3",
-    "webpack-simple": "^1.5.2"
+    "webpack-simple": "^1.6.0"
   },
   "dependencies": {
     "@loadable/component": "^5.12.0",
