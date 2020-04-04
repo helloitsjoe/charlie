@@ -1,15 +1,18 @@
 /* eslint-disable function-paren-newline */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useReducer, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 // import loadable from '@loadable/component';
 import fetchDataNative from './fetchData';
 import { usePullRefresh } from './utils';
 import Header from './components/header';
-import Fallback from './components/fallback';
+import Error from './components/error';
 // import Footer from './components/footer';
 import RouteItem from './components/route-item';
 import Spacer from './components/spacer';
+import routeConfig from '../resources/routes.config.json';
+
+const enabledRoutes = Object.values(routeConfig.enabled);
 
 // Could lazy load, but it doesn't save much from the initial bundle.
 // Cool that @loadable/component works with preact though!
@@ -24,36 +27,52 @@ const StyledContainer = styled.div`
   background-color: #191919;
 `;
 
+const appReducer = (s, action) => {
+  const { type, payload } = action;
+
+  switch (type) {
+    case 'FETCH':
+      return { ...s, status: 'LOADING', error: null };
+    case 'SUCCESS':
+      return { ...s, status: 'IDLE', routes: payload, error: null };
+    case 'ERROR':
+      return { ...s, status: 'ERROR', error: payload };
+    default:
+      return s;
+  }
+};
+
+const wait = () => new Promise(resolve => setTimeout(resolve, 0));
+
 export default function App({ getHourOfDay, fetchData }) {
-  const [state, setState] = useState({
-    routes: [],
-    loading: true,
+  const [state, dispatch] = useReducer(appReducer, {
+    status: 'LOADING',
     error: null,
+    routes: enabledRoutes.map(({ morning }) => ({ morning })),
   });
   const [count, setCount] = useState(0);
 
-  const updateState = newState => setState(s => ({ ...s, ...newState }));
-
   useEffect(() => {
     const fetchNewData = () => {
-      updateState({ loading: true });
-
-      fetchData()
+      wait()
+        .then(() => {
+          return fetchData({ routes: enabledRoutes });
+        })
         .then(routes => {
           if (routes.error) {
-            console.error(routes.error.stack);
-            updateState({ loading: false, error: routes.error });
-            return;
+            throw routes.error;
           }
 
           // console.log(`routes`, routes);
-          updateState({ loading: false, error: null, routes });
+          dispatch({ type: 'SUCCESS', payload: routes });
         })
         .catch(error => {
-          updateState({ loading: false, error });
+          console.error(error.stack);
+          dispatch({ type: 'ERROR', payload: error });
         });
     };
 
+    dispatch({ type: 'FETCH' });
     fetchNewData();
     const fetchInterval = setInterval(() => {
       fetchNewData();
@@ -66,24 +85,28 @@ export default function App({ getHourOfDay, fetchData }) {
 
   usePullRefresh(handleReFetch);
 
-  const getCombinedRoutes = routes =>
-    getHourOfDay() < 12
-      ? ['Inbound', ...routes.morning, 'Outbound', ...routes.evening]
-      : ['Outbound', ...routes.evening, 'Inbound', ...routes.morning];
+  const getCombinedRoutes = routes => {
+    const morningRoutes = routes.filter(route => route.morning);
+    const eveningRoutes = routes.filter(route => !route.morning);
 
-  const { routes, error, loading } = state;
+    return getHourOfDay() < 12
+      ? ['Inbound', ...morningRoutes, 'Outbound', ...eveningRoutes]
+      : ['Outbound', ...eveningRoutes, 'Inbound', ...morningRoutes];
+  };
+
+  const { routes, status, error } = state;
 
   return (
     <StyledContainer data-testid="app">
       <Header reFetch={handleReFetch} />
-      {error || loading ? (
-        <Fallback error={error} />
+      {status === 'ERROR' ? (
+        <Error error={error} />
       ) : (
         getCombinedRoutes(routes).map(route =>
           typeof route === 'string' ? (
             <Spacer key={route} text={route} />
           ) : (
-            <RouteItem key={route.id} route={route} />
+            <RouteItem key={route.id} {...route} />
           )
         )
       )}
