@@ -13,6 +13,9 @@ module.exports = makeWebpackConfig({
     // filename: '[name].[contenthash:8].js',
     filename: '[name].js',
   },
+  devServer: {
+    contentBase: './',
+  },
   optimization: {
     runtimeChunk: 'single',
     splitChunks: {
