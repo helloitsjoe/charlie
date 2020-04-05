@@ -1,24 +1,18 @@
 import React from 'react';
-// import { h } from 'preact';
 import { render, fireEvent } from '@testing-library/preact';
 import MinutesList from '../components/minutes-list';
-import Fallback from '../components/fallback';
+import Error from '../components/error';
 import Footer from '../components/footer';
 import Header from '../components/header';
 import Spacer from '../components/spacer';
 
-describe('Fallback', () => {
+describe('Error', () => {
   it('renders error if error is provided', () => {
     const mockErr = { message: 'sorryyy', stack: 'this is a stack' };
-    const { container } = render(<Fallback error={mockErr} />);
+    const { container } = render(<Error error={mockErr} />);
     expect(container.textContent).toMatchInlineSnapshot(
       `"Error!sorryyythis is a stackOpen devtools for more information"`
     );
-  });
-
-  it('renders loading if no error provided', () => {
-    const { container } = render(<Fallback error={null} />);
-    expect(container.textContent).toMatchInlineSnapshot(`"Loading..."`);
   });
 });
 

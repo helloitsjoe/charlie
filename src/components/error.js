@@ -4,9 +4,9 @@ import styled from 'styled-components';
 
 const StyledError = styled.div`
   color: red;
-  font-weight: 300;
   text-align: center;
   margin-top: 5px;
+  font-weight: 300;
 `;
 
 export default function Error({ error }) {

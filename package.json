@@ -4,7 +4,6 @@
   "description": "",
   "main": "main",
   "scripts": {
-    "pretest": "yarn build",
     "test": "jest",
     "build": "webpack --mode production",
     "watch": "webpack --mode development --watch",

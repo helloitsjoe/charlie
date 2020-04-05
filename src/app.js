@@ -54,9 +54,11 @@ export default function App({ getHourOfDay, fetchData }) {
 
   useEffect(() => {
     const fetchNewData = () => {
-      wait()
-        .then(() => {
-          return fetchData({ routes: enabledRoutes });
+      fetchData({ routes: enabledRoutes })
+        .then(data => {
+          return wait().then(() => {
+            return data;
+          });
         })
         .then(routes => {
           if (routes.error) {
@@ -86,12 +88,10 @@ export default function App({ getHourOfDay, fetchData }) {
   usePullRefresh(handleReFetch);
 
   const getCombinedRoutes = routes => {
-    const morningRoutes = ['Inbound', ...routes.filter(route => route.morning)];
-    const eveningRoutes = ['Outbound', ...routes.filter(route => !route.morning)];
+    const morning = ['Inbound', ...routes.filter(route => route.morning)];
+    const evening = ['Outbound', ...routes.filter(route => !route.morning)];
 
-    return getHourOfDay() < 12
-      ? [...morningRoutes, ...eveningRoutes]
-      : [...eveningRoutes, ...morningRoutes];
+    return getHourOfDay() < 12 ? [...morning, ...evening] : [...evening, ...morning];
   };
 
   const { routes, status, error } = state;
