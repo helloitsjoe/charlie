@@ -20,10 +20,11 @@ describe('App', () => {
     expect(queryByText('REFRESH')).toBeTruthy();
   });
 
-  it('shows loading screen', () => {
+  it('shows skeleton components during loading', () => {
     const fetchData = () => Promise.resolve();
     const { container } = render(<App fetchData={fetchData} />);
-    expect(container.textContent).toMatch('Loading...');
+    expect(container.textContent).toMatch('Outbound');
+    expect(container.textContent).toMatch('Inbound');
   });
 
   it('handles error in routes', () => {

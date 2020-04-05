@@ -3,7 +3,7 @@ import fetchData from '../fetchData';
 describe('fetchData', () => {
   it('Returns empty morning/evening arrays if no route information', () => {
     return fetchData({ routes: [] }).then(res => {
-      expect(res).toEqual({ morning: [], evening: [] });
+      expect(res).toEqual([]);
     });
   });
 
