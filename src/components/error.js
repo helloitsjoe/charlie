@@ -1,14 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+
+const StyledError = styled.div`
+  color: red;
+  text-align: center;
+  margin-top: 5px;
+  font-weight: 300;
+`;
 
 export default function Error({ error }) {
   return (
-    <div style={{ textAlign: 'center', marginTop: '5px' }}>
+    <StyledError>
       <h3 className="header">Error!</h3>
-      <p style={{ color: 'red' }}>{error.message}</p>
-      <pre style={{ color: 'red', textAlign: 'left' }}>{error.stack}</pre>
-      <p style={{ fontWeight: 300 }}>Open devtools for more information</p>
-    </div>
+      <p>{error.message}</p>
+      <pre>{error.stack}</pre>
+      <p>Open devtools for more information</p>
+    </StyledError>
   );
 }
 

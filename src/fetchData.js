@@ -94,11 +94,6 @@ const fetchData = ({ routes = enabledRoutes, mbta = new MBTA(mbtaKey) } = {}) =>
       });
 
       return allPreds;
-
-      // return {
-      //   morning: allPreds.filter(pred => pred.morning),
-      //   evening: allPreds.filter(pred => !pred.morning),
-      // };
     })
     .catch(e => {
       console.error('Error during fetch:', e);

@@ -46,15 +46,17 @@ export default function App({ getHourOfDay, fetchData }) {
   const [state, dispatch] = useReducer(appReducer, {
     status: 'LOADING',
     error: null,
-    routes: enabledRoutes.map(({ morning }) => ({ morning })),
+    routes: enabledRoutes.map(({ morning, stop }) => ({ morning, id: stop })),
   });
   const [count, setCount] = useState(0);
 
   useEffect(() => {
     const fetchNewData = () => {
-      wait()
-        .then(() => {
-          return fetchData({ routes: enabledRoutes });
+      fetchData({ routes: enabledRoutes })
+        .then(data => {
+          return wait().then(() => {
+            return data;
+          });
         })
         .then(routes => {
           if (routes.error) {
@@ -84,12 +86,10 @@ export default function App({ getHourOfDay, fetchData }) {
   usePullRefresh(handleReFetch);
 
   const getCombinedRoutes = routes => {
-    const morningRoutes = routes.filter(route => route.morning);
-    const eveningRoutes = routes.filter(route => !route.morning);
+    const morning = ['Inbound', ...routes.filter(route => route.morning)];
+    const evening = ['Outbound', ...routes.filter(route => !route.morning)];
 
-    return getHourOfDay() < 12
-      ? ['Inbound', ...morningRoutes, 'Outbound', ...eveningRoutes]
-      : ['Outbound', ...eveningRoutes, 'Inbound', ...morningRoutes];
+    return getHourOfDay() < 12 ? [...morning, ...evening] : [...evening, ...morning];
   };
 
   const { routes, status, error } = state;
