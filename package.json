@@ -9,7 +9,7 @@
     "build": "webpack --mode production",
     "watch": "webpack --mode development --watch",
     "dev": "webpack-dev-server --open",
-    "ssr": "nodemon ./server/index.js",
+    "ssr": "webpack --mode development && nodemon ./server/index.js",
     "analyze": "webpack --mode production --profile --json > stats.json && webpack-bundle-analyzer ./stats.json"
   },
   "husky": {
@@ -51,6 +51,7 @@
     "webpack-bundle-analyzer": "^3.6.1",
     "webpack-cli": "^3.3.8",
     "webpack-dev-server": "^3.10.3",
+    "webpack-node-externals": "^1.7.2",
     "webpack-simple": "^1.6.1"
   },
   "dependencies": {
@@ -64,7 +65,6 @@
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "styled-components": "^4.3.2",
-    "webpack-node-externals": "^1.7.2"
+    "styled-components": "^4.3.2"
   }
 }

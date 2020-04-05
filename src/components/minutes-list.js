@@ -3,6 +3,11 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { TRANS_TIME } from '../constants';
 
+const MinutesListWrapper = styled.div`
+  display: flex;
+  align-items: flex-end;
+`;
+
 const MinutesWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -25,7 +30,7 @@ const StyledMinutesLabel = styled.div`
 
 export default function MinutesList({ mins, clicked }) {
   return (
-    <div data-testid="minutes-list" style={{ display: 'flex', alignItems: 'flex-end' }}>
+    <MinutesListWrapper data-testid="minutes-list">
       {mins.map((min, idx) => {
         return (
           <MinutesWrapper
@@ -40,7 +45,7 @@ export default function MinutesList({ mins, clicked }) {
           </MinutesWrapper>
         );
       })}
-    </div>
+    </MinutesListWrapper>
   );
 }
 

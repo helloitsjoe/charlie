@@ -1,4 +1,3 @@
-const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
@@ -46,9 +45,6 @@ const client = makeWebpackConfig({
     },
   },
 });
-
-// TODO: Fix webpack-simple to remove invalid `module` option for sass-loader. Also require node-sass as a dep if requiring sass-loader
-client.module.rules[1].use.pop();
 
 const server = makeWebpackConfig({
   entry: './src/server.js',

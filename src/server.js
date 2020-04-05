@@ -38,5 +38,5 @@ app.get('/', (req, res) => {
 app.use(express.static('./dist'));
 
 app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
+  console.log(`App listening at http://localhost:${PORT}`);
 });
