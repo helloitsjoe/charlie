@@ -1,6 +1,6 @@
 const { makeJestConfig } = require('jest-simple-config');
 
-const config = makeJestConfig();
+const config = makeJestConfig({ testEnvironment: 'jsdom' });
 
 config.setupFilesAfterEnv = ['./src/__tests__/setup.js'];
 config.collectCoverageFrom.push('!src/index.js');
