@@ -39,7 +39,7 @@
     "jest": "^27.0.4",
     "jest-simple-config": "^0.4.0",
     "jest-styled-components": "^6.3.3",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "prettier": "^1.18.2",
     "sass-loader": "^8.0.2",
     "style-loader": "^1.1.3",
