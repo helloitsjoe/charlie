@@ -3,8 +3,6 @@ resources/credentials.json
 node_modules
 coverage
 dist
-index.html
 .vscode
-coverage
 yarn-error.log
 stats.json
