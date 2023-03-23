@@ -5,12 +5,12 @@ import routesConfig from '../resources/routes.config.json';
 
 const enabledRoutes = Object.values(routesConfig.enabled);
 let mbtaKey;
-// try {
-//   // eslint-disable-next-line
-//   ({ mbtaKey } = require('../resources/credentials.json'));
-// } catch (err) {
-//   console.warn('Missing API key, making call without key...');
-// }
+try {
+  // eslint-disable-next-line
+  ({ mbtaKey } = require('../resources/credentials.json'));
+} catch (err) {
+  console.warn('Missing API key, making call without key...');
+}
 
 const PREDICTIONS_LIMIT = 4;
 
@@ -54,6 +54,8 @@ const fetchData = ({
         const pred = { data: routeData };
         // const arrivals = selectArrivals(pred, { convertTo: 'min' });
         const departures = selectDepartures(pred, { convertTo: 'min' });
+        console.log('rawPred', rawPred);
+        console.log('routeData', routeData);
         const stopName = selectIncluded(rawPred, 'stop')[0].attributes.name;
         const routeAttrs = selectIncluded(rawPred, 'route')[0].attributes;
         const directionIdx =

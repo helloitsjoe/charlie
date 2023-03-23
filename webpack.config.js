@@ -1,17 +1,13 @@
-const webpack = require('webpack');
 const { makeWebpackConfig } = require('webpack-simple');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const htmlPlugin = new HtmlWebpackPlugin({ template: 'index-template.html' });
 
-module.exports = makeWebpackConfig({
+const config = makeWebpackConfig({
   plugins: [htmlPlugin],
   output: {
     // filename: '[name].[contenthash:8].js',
     filename: '[name].js',
-  },
-  devServer: {
-    contentBase: './',
   },
   optimization: {
     runtimeChunk: 'single',
@@ -43,3 +39,7 @@ module.exports = makeWebpackConfig({
   //   },
   // },
 });
+
+console.log('config', config);
+
+module.exports = config;
