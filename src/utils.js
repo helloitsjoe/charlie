@@ -1,15 +1,16 @@
+// eslint-disable-next-line import/no-unresolved
 import { useEffect } from 'react';
 
-export const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const usePullRefresh = trigger => {
+export const usePullRefresh = (trigger) => {
   useEffect(() => {
     let downY;
     let upY;
-    const setDownY = e => {
+    const setDownY = (e) => {
       downY = e.targetTouches[0].clientY;
     };
-    const setUpY = e => {
+    const setUpY = (e) => {
       upY = e.changedTouches[0].clientY;
       if (upY > downY) {
         trigger();

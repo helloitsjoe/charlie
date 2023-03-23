@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -21,7 +22,10 @@ export default function Error({ error }) {
 }
 
 Error.propTypes = {
-  error: PropTypes.shape({ message: PropTypes.string, stack: PropTypes.string }),
+  error: PropTypes.shape({
+    message: PropTypes.string,
+    stack: PropTypes.string,
+  }),
 };
 
 Error.defaultProps = {

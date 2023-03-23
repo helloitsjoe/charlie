@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
@@ -21,11 +22,11 @@ const MinutesWrapper = styled.div`
 const StyledMinutes = styled.div`
   display: inline-block;
   padding: 10px 0;
-  font-size: ${props => (props.idx > 0 ? '2.5rem' : '3.5rem')};
+  font-size: ${(props) => (props.idx > 0 ? '2.5rem' : '3.5rem')};
 `;
 
 const StyledMinutesLabel = styled.div`
-  font-size: ${props => (props.idx > 0 ? '1.25rem' : '1.5rem')};
+  font-size: ${(props) => (props.idx > 0 ? '1.25rem' : '1.5rem')};
 `;
 
 export default function MinutesList({ mins, clicked }) {

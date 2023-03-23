@@ -2,7 +2,8 @@
 resources/credentials.json
 node_modules
 coverage
-# dist
+dist
+index.html
 .vscode
 coverage
 yarn-error.log

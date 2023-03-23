@@ -14,12 +14,15 @@ try {
 
 const PREDICTIONS_LIMIT = 4;
 
-const fetchData = ({ routes = enabledRoutes, mbta = new MBTA(mbtaKey) } = {}) => {
+const fetchData = ({
+  routes = enabledRoutes,
+  mbta = new MBTA(mbtaKey),
+} = {}) => {
   // It would be better to send one request with a list of stops, but parsing
   // the response isn't feasible because data.relationships.stop.data.id
   // is sometimes different from route.stop
   const predictionPromises = Promise.all(
-    routes.map(route =>
+    routes.map((route) =>
       mbta.fetchPredictions({
         stop: route.stop,
         direction_id: route.direction,
@@ -30,7 +33,7 @@ const fetchData = ({ routes = enabledRoutes, mbta = new MBTA(mbtaKey) } = {}) =>
   );
 
   return predictionPromises
-    .then(predictions => {
+    .then((predictions) => {
       console.log(`Fetched live data`);
 
       const allPreds = predictions.map((rawPred, i) => {
@@ -46,14 +49,15 @@ const fetchData = ({ routes = enabledRoutes, mbta = new MBTA(mbtaKey) } = {}) =>
 
         // Filter out other routes for the same stop
         const routeData = rawPred.data.filter(
-          ea => !route || ea.relationships.route.data.id === route.toString()
+          (ea) => !route || ea.relationships.route.data.id === route.toString()
         );
         const pred = { data: routeData };
         // const arrivals = selectArrivals(pred, { convertTo: 'min' });
         const departures = selectDepartures(pred, { convertTo: 'min' });
         const stopName = selectIncluded(rawPred, 'stop')[0].attributes.name;
         const routeAttrs = selectIncluded(rawPred, 'route')[0].attributes;
-        const directionIdx = routeData.length > 0 && routeData[0].attributes.direction_id;
+        const directionIdx =
+          routeData.length > 0 && routeData[0].attributes.direction_id;
 
         const {
           direction_destinations: dirDestinations,
@@ -64,14 +68,15 @@ const fetchData = ({ routes = enabledRoutes, mbta = new MBTA(mbtaKey) } = {}) =>
 
         // Either set direction as the destination or
         // generic Inbound/Outbound, or fall back to empty string
-        const direction = dirDestinations[directionIdx] || dirNames[directionIdx] || '';
+        const direction =
+          dirDestinations[directionIdx] || dirNames[directionIdx] || '';
 
         const departMins = departures
-          .filter(min => min >= 1 && min < 60)
+          .filter((min) => min >= 1 && min < 60)
           .slice(0, PREDICTIONS_LIMIT);
 
         const isWalkable = departMins.some(
-          mins => mins >= waitStart && mins <= waitStart + waitLength
+          (mins) => mins >= waitStart && mins <= waitStart + waitLength
         );
 
         const id = i;
@@ -87,7 +92,7 @@ const fetchData = ({ routes = enabledRoutes, mbta = new MBTA(mbtaKey) } = {}) =>
           customName,
           departMins,
           // for debugging client side
-          _pastDepartMins: departures.filter(min => min <= 2),
+          _pastDepartMins: departures.filter((min) => min <= 2),
           _predictions: rawPred,
           _filtered: routeData,
         };
@@ -95,7 +100,7 @@ const fetchData = ({ routes = enabledRoutes, mbta = new MBTA(mbtaKey) } = {}) =>
 
       return allPreds;
     })
-    .catch(e => {
+    .catch((e) => {
       console.error('Error during fetch:', e);
       const { message, stack } = e;
       return { error: { message, stack } };

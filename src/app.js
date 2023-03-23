@@ -1,4 +1,5 @@
 /* eslint-disable function-paren-newline */
+// eslint-disable-next-line import/no-unresolved
 import React, { useState, useEffect, useReducer, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -40,7 +41,7 @@ const appReducer = (s, action) => {
   }
 };
 
-const wait = () => new Promise(resolve => setTimeout(resolve, 0));
+const wait = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 export default function App({ getHourOfDay, fetchData }) {
   const [state, dispatch] = useReducer(appReducer, {
@@ -53,12 +54,12 @@ export default function App({ getHourOfDay, fetchData }) {
   useEffect(() => {
     const fetchNewData = () => {
       fetchData({ routes: enabledRoutes })
-        .then(data => {
+        .then((data) => {
           return wait().then(() => {
             return data;
           });
         })
-        .then(routes => {
+        .then((routes) => {
           if (routes.error) {
             throw routes.error;
           }
@@ -66,7 +67,7 @@ export default function App({ getHourOfDay, fetchData }) {
           // console.log(`routes`, routes);
           dispatch({ type: 'SUCCESS', payload: routes });
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error.stack);
           dispatch({ type: 'ERROR', payload: error });
         });
@@ -81,15 +82,17 @@ export default function App({ getHourOfDay, fetchData }) {
     return () => clearInterval(fetchInterval);
   }, [fetchData, count]);
 
-  const handleReFetch = useCallback(() => setCount(c => c + 1), []);
+  const handleReFetch = useCallback(() => setCount((c) => c + 1), []);
 
   usePullRefresh(handleReFetch);
 
-  const getCombinedRoutes = routes => {
-    const morning = ['Inbound', ...routes.filter(route => route.morning)];
-    const evening = ['Outbound', ...routes.filter(route => !route.morning)];
+  const getCombinedRoutes = (routes) => {
+    const morning = ['Inbound', ...routes.filter((route) => route.morning)];
+    const evening = ['Outbound', ...routes.filter((route) => !route.morning)];
 
-    return getHourOfDay() < 12 ? [...morning, ...evening] : [...evening, ...morning];
+    return getHourOfDay() < 12
+      ? [...morning, ...evening]
+      : [...evening, ...morning];
   };
 
   const { routes, status, error } = state;
@@ -100,7 +103,7 @@ export default function App({ getHourOfDay, fetchData }) {
       {status === 'ERROR' ? (
         <Error error={error} />
       ) : (
-        getCombinedRoutes(routes).map(route =>
+        getCombinedRoutes(routes).map((route) =>
           typeof route === 'string' ? (
             <Spacer key={route} text={route} />
           ) : (

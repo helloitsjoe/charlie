@@ -1,5 +1,6 @@
+// eslint-disable-next-line import/no-unresolved
 import React from 'react';
-import { render, wait, cleanup, fireEvent } from '@testing-library/preact';
+import { render, waitFor, cleanup, fireEvent } from '@testing-library/react';
 import App from '../app';
 import { mockRoutes, mockRoutesWithError } from './route-test-data';
 
@@ -30,7 +31,7 @@ describe('App', () => {
   it('handles error in routes', () => {
     const fetchData = () => Promise.resolve(mockRoutesWithError);
     const { container } = render(<App fetchData={fetchData} />);
-    return wait(() => {
+    return waitFor(() => {
       expect(container.textContent).toMatch('Error!Noes');
     });
   });
@@ -38,7 +39,7 @@ describe('App', () => {
   it('handles error during request', () => {
     const fetchData = () => Promise.reject(new Error('argh'));
     const { container } = render(<App fetchData={fetchData} />);
-    return wait(() => {
+    return waitFor(() => {
       expect(container.textContent).toMatch('Error!argh');
     });
   });
@@ -73,11 +74,13 @@ describe('App', () => {
     const { queryByText, getByTestId, findAllByTestId } = render(
       <App {...testProps} getHourOfDay={getHourOfDay} />
     );
-    return findAllByTestId('stop-name').then(routeItems => {
+    return findAllByTestId('stop-name').then((routeItems) => {
       expect(queryByText('Inbound')).toBeTruthy();
       expect(queryByText('Outbound')).toBeTruthy();
       const appText = getByTestId('app').textContent;
-      expect(appText.indexOf('Inbound')).toBeLessThan(appText.indexOf('Outbound'));
+      expect(appText.indexOf('Inbound')).toBeLessThan(
+        appText.indexOf('Outbound')
+      );
       expect(routeItems.length).toBe(morning.length + evening.length);
     });
   });
@@ -87,11 +90,13 @@ describe('App', () => {
     const { getByTestId, queryByText, findAllByTestId } = render(
       <App {...testProps} getHourOfDay={getHourOfDay} />
     );
-    return findAllByTestId('stop-name').then(routeItems => {
+    return findAllByTestId('stop-name').then((routeItems) => {
       expect(queryByText('Inbound')).toBeTruthy();
       expect(queryByText('Outbound')).toBeTruthy();
       const appText = getByTestId('app').textContent;
-      expect(appText.indexOf('Outbound')).toBeLessThan(appText.indexOf('Inbound'));
+      expect(appText.indexOf('Outbound')).toBeLessThan(
+        appText.indexOf('Inbound')
+      );
       expect(routeItems.length).toBe(morning.length + evening.length);
     });
   });

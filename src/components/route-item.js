@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -15,14 +16,14 @@ const RouteWrapper = styled.div`
 
 const StopWrapper = styled.div`
   padding: 10px 15px;
-  flex: ${props => (props.clicked ? '0 0 13%' : '0 0 60%')};
+  flex: ${(props) => (props.clicked ? '0 0 13%' : '0 0 60%')};
   transition: ${TRANS_TIME};
 `;
 
 const MinsListWrapper = styled.div`
   flex: '0 0 auto';
   width: 500px;
-  border-bottom: 6px solid ${props => (props.isWalkable ? GREEN : RED)};
+  border-bottom: 6px solid ${(props) => (props.isWalkable ? GREEN : RED)};
 `;
 
 export default function RouteItem({
@@ -37,7 +38,7 @@ export default function RouteItem({
   const [clicked, setClicked] = useState(false);
 
   return (
-    <RouteWrapper onClick={() => setClicked(c => !c)}>
+    <RouteWrapper onClick={() => setClicked((c) => !c)}>
       <StopWrapper clicked={clicked}>
         <StopInfo
           color={color}

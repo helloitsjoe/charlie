@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export */
-import React, { useState } from 'react';
+// eslint-disable-next-line import/no-unresolved
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -10,14 +11,14 @@ const StyledDebug = styled.div`
 `;
 
 export default function Footer({ hourOfDay }) {
-  const [debug, setDebug] = useState(false);
+  // const [debug, setDebug] = useState(false);
 
   let timeout;
 
   const handlePress = () => {
-    timeout = setTimeout(() => {
-      setDebug(d => !d);
-    }, 1000);
+    // timeout = setTimeout(() => {
+    //   setDebug(d => !d);
+    // }, 1000);
   };
 
   const handleRelease = () => {
