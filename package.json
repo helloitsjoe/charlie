@@ -7,9 +7,10 @@
     "test": "jest",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "build": "webpack --mode production",
+    "clean": "rm -rf dist && cp -r assets/ dist",
+    "build": "yarn clean && webpack --mode production",
     "watch": "webpack --mode development --watch",
-    "dev": "webpack-dev-server --open",
+    "dev": "webpack serve",
     "analyze": "webpack --mode production --profile --json > stats.json && webpack-bundle-analyzer ./stats.json"
   },
   "husky": {
