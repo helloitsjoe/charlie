@@ -5,12 +5,12 @@ import routesConfig from '../resources/routes.config.json';
 
 const enabledRoutes = Object.values(routesConfig.enabled);
 let mbtaKey;
-try {
-  // eslint-disable-next-line
-  ({ mbtaKey } = require('../resources/credentials.json'));
-} catch (err) {
-  console.warn('Missing API key, making call without key...');
-}
+// try {
+//   // eslint-disable-next-line
+//   ({ mbtaKey } = require('../resources/credentials.json'));
+// } catch (err) {
+//   console.warn('Missing API key, making call without key...');
+// }
 
 const PREDICTIONS_LIMIT = 4;
 
