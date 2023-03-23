@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
 import React from 'react';
 import { render, waitFor, cleanup, fireEvent } from '@testing-library/react';
 import App from '../app';

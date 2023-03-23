@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import RouteItem from '../components/route-item';

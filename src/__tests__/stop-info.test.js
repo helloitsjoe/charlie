@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
 import React from 'react';
 import { render } from '@testing-library/react';
 import StopInfo from '../components/stop-info';
@@ -8,6 +7,7 @@ import 'jest-styled-components';
 
 const { stopName, direction } = route;
 
+// TODO: Fix test issues with console.error
 describe('StopInfo', () => {
   it('displays name and direction', () => {
     const { container } = render(
