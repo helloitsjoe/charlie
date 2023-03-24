@@ -15,4 +15,6 @@ describe('fetchData', () => {
       expect(res.error.stack).toEqual(expect.any(String));
     });
   });
+
+  it.todo('returns blank data if route has no data');
 });

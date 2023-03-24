@@ -1,9 +1,7 @@
 import React from 'react';
-import { render, waitFor, cleanup, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import App from '../app';
 import { mockRoutes, mockRoutesWithError } from './route-test-data';
-
-const { morning, evening } = mockRoutes;
 
 const testProps = {
   fetchData: jest.fn().mockResolvedValue(mockRoutes),
@@ -11,20 +9,24 @@ const testProps = {
 
 describe('App', () => {
   afterEach(() => {
-    cleanup();
     jest.clearAllMocks();
   });
 
   it('displays refresh header', () => {
     const { queryByText } = render(<App {...testProps} />);
-    expect(queryByText('REFRESH')).toBeTruthy();
+    return waitFor(() => {
+      expect(queryByText('REFRESH')).toBeTruthy();
+    });
   });
 
   it('shows skeleton components during loading', () => {
-    const fetchData = () => Promise.resolve();
-    const { container } = render(<App fetchData={fetchData} />);
-    expect(container.textContent).toMatch('Outbound');
-    expect(container.textContent).toMatch('Inbound');
+    render(<App {...testProps} />);
+    expect(screen.getByText('Outbound')).toBeTruthy();
+    expect(screen.getByText('Inbound')).toBeTruthy();
+    expect(screen.queryAllByText(/harvard/i).length).toBe(0);
+    return waitFor(() => {
+      expect(screen.queryAllByText(/harvard/i).length).toBeGreaterThan(0);
+    });
   });
 
   it('handles error in routes', () => {
@@ -45,18 +47,20 @@ describe('App', () => {
 
   it('refetches every 30 seconds', () => {
     jest.useFakeTimers();
-    const fetchData = jest.fn().mockResolvedValue();
+    const fetchData = jest.fn().mockResolvedValue(mockRoutes);
     render(<App fetchData={fetchData} />);
     expect(fetchData).toBeCalledTimes(1);
     jest.advanceTimersByTime(29000);
     expect(fetchData).toBeCalledTimes(1);
     jest.advanceTimersByTime(1000);
-    expect(fetchData).toBeCalledTimes(2);
-    jest.useRealTimers();
+    return waitFor(() => {
+      expect(fetchData).toBeCalledTimes(2);
+      jest.useRealTimers();
+    });
   });
 
   it('pull to refetch', () => {
-    const fetchData = jest.fn().mockResolvedValue();
+    const fetchData = jest.fn().mockResolvedValue(mockRoutes);
     render(<App fetchData={fetchData} />);
     expect(fetchData).toBeCalledTimes(1);
     fireEvent.touchStart(document, { targetTouches: [{ clientY: 0 }] });
@@ -65,7 +69,9 @@ describe('App', () => {
     // pull down only, pull up doesn't work
     fireEvent.touchStart(document, { targetTouches: [{ clientY: 1 }] });
     fireEvent.touchEnd(document, { changedTouches: [{ clientY: 0 }] });
-    expect(fetchData).toBeCalledTimes(2);
+    return waitFor(() => {
+      expect(fetchData).toBeCalledTimes(2);
+    });
   });
 
   it('renders routes with spacers (Morning)', () => {
@@ -80,7 +86,7 @@ describe('App', () => {
       expect(appText.indexOf('Inbound')).toBeLessThan(
         appText.indexOf('Outbound')
       );
-      expect(routeItems.length).toBe(morning.length + evening.length);
+      expect(routeItems.length).toBe(mockRoutes.length);
     });
   });
 
@@ -96,7 +102,7 @@ describe('App', () => {
       expect(appText.indexOf('Outbound')).toBeLessThan(
         appText.indexOf('Inbound')
       );
-      expect(routeItems.length).toBe(morning.length + evening.length);
+      expect(routeItems.length).toBe(mockRoutes.length);
     });
   });
 });

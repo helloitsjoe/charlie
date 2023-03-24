@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, act } from '@testing-library/react';
 import StopInfo from '../components/stop-info';
 import { route } from './route-test-data';
 import { sleep } from '../utils';
@@ -49,13 +49,17 @@ describe('StopInfo', () => {
   });
 
   it('displays full name again after a pause if props.isCompact goes from true to false', async () => {
+    jest.useFakeTimers();
     const { container, rerender } = render(
       <StopInfo name="Harvard" isCompact />
     );
     expect(container.textContent).toMatchInlineSnapshot(`"H➔ "`);
     rerender(<StopInfo name="Harvard" isCompact={false} />);
     expect(container.textContent).toMatchInlineSnapshot(`"H➔ "`);
-    await sleep(200);
+    act(() => {
+      jest.advanceTimersByTime(100);
+    });
     expect(container.textContent).toMatchInlineSnapshot(`"Harvard➔ "`);
+    jest.useRealTimers();
   });
 });
