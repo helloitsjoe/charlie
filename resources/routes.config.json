@@ -22,7 +22,8 @@
       "waitLength": 6
     },
     "backBayCR": {
-      "stop": "Back Bay",
+      "customName": "Back Bay",
+      "stop": "NEC-2276",
       "direction": 1,
       "waitStart": 5,
       "waitLength": 6

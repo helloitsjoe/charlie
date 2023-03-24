@@ -54,10 +54,15 @@ const fetchData = ({
         const pred = { data: routeData };
         // const arrivals = selectArrivals(pred, { convertTo: 'min' });
         const departures = selectDepartures(pred, { convertTo: 'min' });
-        console.log('rawPred', rawPred);
-        console.log('routeData', routeData);
-        const stopName = selectIncluded(rawPred, 'stop')[0].attributes.name;
-        const routeAttrs = selectIncluded(rawPred, 'route')[0].attributes;
+        const includedStop = selectIncluded(rawPred, 'stop');
+        const includedRoute = selectIncluded(rawPred, 'route');
+
+        if (!includedStop.length || !includedRoute.length) {
+          return routes[i];
+        }
+
+        const stopName = includedStop[0].attributes.name;
+        const routeAttrs = includedRoute[0].attributes;
         const directionIdx =
           routeData.length > 0 && routeData[0].attributes.direction_id;
 

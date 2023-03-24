@@ -1,8 +1,9 @@
 // eslint-disable-next-line import/no-unresolved
 import React from 'react';
 // eslint-disable-next-line import/no-unresolved
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import App from './app';
 import '../css/skeleton.css';
 
-ReactDOM.render(<App />, document.getElementById('main'));
+const root = ReactDOM.createRoot(document.getElementById('main'));
+root.render(<App />);
