@@ -51,6 +51,10 @@ export default function App({ getHourOfDay, fetchData }) {
   });
   const [count, setCount] = useState(0);
 
+  const handleAddStop = (newStop) => {
+    console.log('newStop', newStop);
+  };
+
   useEffect(() => {
     const fetchNewData = () => {
       fetchData({ routes: enabledRoutes })
@@ -99,7 +103,7 @@ export default function App({ getHourOfDay, fetchData }) {
 
   return (
     <StyledContainer data-testid="app">
-      <Header reFetch={handleReFetch} />
+      <Header reFetch={handleReFetch} onAddStop={handleAddStop} />
       {status === 'ERROR' ? (
         <Error error={error} />
       ) : (

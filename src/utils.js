@@ -26,3 +26,14 @@ export const usePullRefresh = (trigger) => {
     };
   }, [trigger]);
 };
+
+export const debounce = (fn) => {
+  const cached = fn;
+  setTimeout(() => {
+    if (cached !== fn) {
+      console.log('not equal, cancelling...');
+      return;
+    }
+    fn();
+  }, 500);
+};
