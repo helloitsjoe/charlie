@@ -13,7 +13,7 @@ import RouteItem from './components/route-item';
 import Spacer from './components/spacer';
 import routeConfig from '../resources/routes.config.json';
 
-const enabledRoutes = Object.values(routeConfig.enabled);
+// const enabledRoutes = Object.values(routeConfig.enabled);
 
 // Could lazy load, but it doesn't save much from the initial bundle.
 // Cool that @loadable/component works with preact though!
@@ -44,15 +44,21 @@ const appReducer = (s, action) => {
 const wait = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 export default function App({ getHourOfDay, fetchData }) {
+  const [enabledRoutes, setEnabledRoutes] = useState(
+    Object.values(routeConfig.enabled)
+  );
+
   const [state, dispatch] = useReducer(appReducer, {
     status: 'LOADING',
     error: null,
     routes: enabledRoutes.map(({ morning, stop }) => ({ morning, id: stop })),
   });
+
   const [count, setCount] = useState(0);
 
   const handleAddStop = (newStop) => {
     console.log('newStop', newStop);
+    setEnabledRoutes((e) => [...e, newStop]);
   };
 
   useEffect(() => {
@@ -84,7 +90,7 @@ export default function App({ getHourOfDay, fetchData }) {
     }, 1000 * 30);
 
     return () => clearInterval(fetchInterval);
-  }, [fetchData, count]);
+  }, [fetchData, count, enabledRoutes]);
 
   const handleReFetch = useCallback(() => setCount((c) => c + 1), []);
 
@@ -100,6 +106,7 @@ export default function App({ getHourOfDay, fetchData }) {
   };
 
   const { routes, status, error } = state;
+  console.log('routes', routes);
 
   return (
     <StyledContainer data-testid="app">

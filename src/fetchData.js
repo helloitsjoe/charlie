@@ -114,8 +114,8 @@ const fetchData = ({
     });
 };
 
-export const fetchRoutes = ({ mbta = new MBTA(mbtaKey) } = {}) => {
-  return mbta.fetchAllRoutes();
+export const fetchRoutes = ({ type, mbta = new MBTA(mbtaKey) } = {}) => {
+  return mbta.fetchAllRoutes({ type });
 };
 
 export const fetchStops = ({
@@ -131,7 +131,9 @@ export const fetchStops = ({
 };
 
 export const searchStops = ({ search, mbta = new MBTA(mbtaKey) }) => {
-  return mbta.fetchStopsByName(search);
+  return mbta
+    .fetchStopsByName(search)
+    .then((stops) => stops.map((s) => ({ id: s.id, name: s.attributes.name })));
 };
 
 export default fetchData;

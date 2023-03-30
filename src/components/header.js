@@ -2,8 +2,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { fetchRoutes, fetchStops, searchStops } from '../fetchData';
-import { debounce } from '../utils';
+import { fetchRoutes, fetchStops /* searchStops */ } from '../fetchData';
+// import { debounce } from '../utils';
 
 const StyledHeader = styled.div`
   text-align: center;
@@ -38,29 +38,49 @@ const StyledSelect = styled.select`
   width: 100%;
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+`;
+
+const vehicles = {
+  Bus: 3,
+  Subway: [0, 1],
+  'Commuter Rail': 2,
+  Boat: 4,
+};
+
 export default function Header({ reFetch, onAddStop }) {
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
-  const [newStop, setNewStop] = useState({});
   const [lines, setLines] = useState(null);
-  const [searchResults, setSearchResults] = useState(null);
+  // const [searchResults, setSearchResults] = useState(null);
+  const [, setSelectedVehicle] = useState();
   const [selectedLine, setSelectedLine] = useState(null);
   const [selectedDirection, setSelectedDirection] = useState(null);
+  const [selectedStop, setSelectedStop] = useState(null);
   const [stops, setStops] = useState([]);
   console.log('lines', lines);
   console.log('selectedLine', selectedLine);
   console.log('stops', stops);
 
-  const openDialog = () => {
-    setDialogIsOpen(true);
-    if (!lines) {
-      fetchRoutes()
-        .then((data) => setLines(data))
-        .catch(console.error);
-    }
-  };
+  const openDialog = () => setDialogIsOpen(true);
+  const closeDialog = () => setDialogIsOpen(false);
 
-  const handleSearch = (e) => {
-    debounce(() => searchStops({ search: e.target.value }).then(console.log));
+  // TODO: finish search
+  // const handleSearch = debounce((e) =>
+  //   searchStops({ search: e.target.value }).then(setSearchResults)
+  // );
+
+  const handleVehicleSelect = (e) => {
+    const vehicle = vehicles[e.target.value];
+    setStops([]);
+    setSelectedLine(null);
+    setSelectedVehicle(vehicle);
+    setSelectedDirection(null);
+    fetchRoutes({ type: vehicle })
+      .then((data) => setLines(data.sort((a, b) => (a.id < b.id ? 1 : -1))))
+      .catch(console.error);
   };
 
   const handleLineSelect = (e) => {
@@ -68,6 +88,11 @@ export default function Header({ reFetch, onAddStop }) {
     const newLine = lines.find((l) => l.id === routeId);
     setStops([]);
     setSelectedLine(newLine);
+    if (selectedDirection != null) {
+      fetchStops({ routeId: newLine.id, selectedDirection })
+        .then((s) => setStops(s))
+        .catch(console.error);
+    }
   };
 
   const handleDirectionSelect = (e) => {
@@ -81,37 +106,62 @@ export default function Header({ reFetch, onAddStop }) {
 
   const handleStopSelect = (e) => {
     const { value } = e.target;
-    const selectedStop = stops.find((s) => s.name === value);
-    console.log('selectedStop', selectedStop);
-    if (!selectedStop) {
+    const stop = stops.find((s) => s.name === value);
+    console.log('selectedStop', stop);
+    if (!stop) {
       // TODO: Handle this error!
       throw new Error(`Stop not found! ${value}`);
     }
-    setNewStop(newStop);
+    setSelectedStop(stop);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add route, stop, direction, customName, morning = true, waitStart = 5, waitLength = 6
+
+    // TODO: Why are subway lines showing as buses?
+    // TODO: UI for custom name and wait times
+
+    const newStop = {
+      route: selectedLine.id,
+      stop: selectedStop.id,
+      direction: selectedDirection,
+      morning: false,
+      waitStart: 5,
+      waitLength: 6,
+    };
     onAddStop(newStop);
+    closeDialog();
   };
 
   return (
     <StyledHeader>
-      <StyledButton onClick={reFetch}>REFRESH</StyledButton>
-      <StyledButton onClick={openDialog}>ADD STOP</StyledButton>
-      {dialogIsOpen && lines && (
+      <ButtonContainer>
+        <StyledButton onClick={reFetch}>REFRESH</StyledButton>
+        <StyledButton onClick={dialogIsOpen ? closeDialog : openDialog}>
+          ADD STOP
+        </StyledButton>
+      </ButtonContainer>
+      {dialogIsOpen && (
         <StyledForm onSubmit={handleSubmit}>
+          {/* <StyledLabel> */}
+          {/*   Search */}
+          {/*   <input onChange={handleSearch} /> */}
+          {/*   {JSON.stringify(searchResults)} */}
+          {/* </StyledLabel> */}
           <StyledLabel>
-            Search
-            <input onChange={handleSearch} />
-            {JSON.stringify(searchResults)}
+            Select a vehicle type
+            <StyledSelect onChange={handleVehicleSelect}>
+              <option />
+              {Object.keys(vehicles).map((v) => (
+                <option value={v}>{v}</option>
+              ))}
+            </StyledSelect>
           </StyledLabel>
           <StyledLabel>
             Select a line
             <StyledSelect onChange={handleLineSelect}>
               <option />
-              {lines.map((line) => (
+              {lines?.map((line) => (
                 <option value={line.id}>{line.id}</option>
               ))}
             </StyledSelect>
@@ -140,7 +190,9 @@ export default function Header({ reFetch, onAddStop }) {
               ))}
             </StyledSelect>
           </StyledLabel>
-          {JSON.stringify(newStop)}
+          {/* TODO: localStorage */}
+          <div>Note: your changes will not be saved</div>
+          <br />
           <button type="submit">Submit</button>
         </StyledForm>
       )}
