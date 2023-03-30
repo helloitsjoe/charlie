@@ -3,6 +3,7 @@ const { makeJestConfig } = require('jest-simple-config');
 const config = makeJestConfig({ testEnvironment: 'jsdom' });
 
 config.collectCoverageFrom.push('!src/index.js');
+config.roots = ['<rootDir>/src'];
 // config.moduleNameMapper = {
 //   '^react$': 'preact/compat',
 //   '^react-dom/test-utils$': 'preact/test-utils',

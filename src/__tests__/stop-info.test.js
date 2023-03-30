@@ -2,7 +2,6 @@ import React from 'react';
 import { render, act } from '@testing-library/react';
 import StopInfo from '../components/stop-info';
 import { route } from './route-test-data';
-import { sleep } from '../utils';
 import 'jest-styled-components';
 
 const { stopName, direction } = route;

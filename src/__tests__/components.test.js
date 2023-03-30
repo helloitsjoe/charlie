@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { screen, render, fireEvent } from '@testing-library/react';
 import MinutesList from '../components/minutes-list';
 import Error from '../components/error';
 import Footer from '../components/footer';
@@ -24,9 +24,10 @@ describe('Footer', () => {
 });
 
 describe('Header', () => {
-  it('renders refresh button', () => {
-    const { container } = render(<Header reFetch={() => {}} />);
-    expect(container.textContent).toMatchInlineSnapshot(`"REFRESH"`);
+  it('renders refresh and add route buttons', () => {
+    render(<Header reFetch={() => {}} />);
+    expect(screen.getByRole('button', { name: /refresh/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /add stop/i })).toBeTruthy();
   });
 
   it('calls reFetch on button click', () => {

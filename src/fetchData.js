@@ -114,4 +114,26 @@ const fetchData = ({
     });
 };
 
+export const fetchRoutes = ({ type, mbta = new MBTA(mbtaKey) } = {}) => {
+  return mbta.fetchAllRoutes({ type });
+};
+
+export const fetchStops = ({
+  routeId,
+  direction,
+  mbta = new MBTA(mbtaKey),
+} = {}) => {
+  return mbta
+    .fetchStops({ route: routeId, direction_id: direction })
+    .then((stops) =>
+      stops.data.map((s) => ({ id: s.id, name: s.attributes.name }))
+    );
+};
+
+export const searchStops = ({ search, mbta = new MBTA(mbtaKey) }) => {
+  return mbta
+    .fetchStopsByName(search)
+    .then((stops) => stops.map((s) => ({ id: s.id, name: s.attributes.name })));
+};
+
 export default fetchData;
