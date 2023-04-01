@@ -63,7 +63,7 @@ export default function App({ getHourOfDay, fetchData }) {
 
   useEffect(() => {
     const fetchNewData = () => {
-      fetchData({ routes: enabledRoutes })
+      return fetchData({ routes: enabledRoutes })
         .then((data) => {
           return wait().then(() => {
             return data;

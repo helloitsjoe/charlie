@@ -51,26 +51,18 @@ const vehicles = {
   Boat: 4,
 };
 
-export default function Header({ reFetch, onAddStop }) {
-  const [dialogIsOpen, setDialogIsOpen] = useState(false);
-  const [lines, setLines] = useState(null);
+function useMbtaForm() {
   // const [searchResults, setSearchResults] = useState(null);
+  const [lines, setLines] = useState(null);
+  const [stops, setStops] = useState([]);
   const [, setSelectedVehicle] = useState();
   const [selectedLine, setSelectedLine] = useState(null);
   const [selectedDirection, setSelectedDirection] = useState(null);
   const [selectedStop, setSelectedStop] = useState(null);
-  const [stops, setStops] = useState([]);
+
   console.log('lines', lines);
   console.log('selectedLine', selectedLine);
   console.log('stops', stops);
-
-  const openDialog = () => setDialogIsOpen(true);
-  const closeDialog = () => setDialogIsOpen(false);
-
-  // TODO: finish search
-  // const handleSearch = debounce((e) =>
-  //   searchStops({ search: e.target.value }).then(setSearchResults)
-  // );
 
   const handleVehicleSelect = (e) => {
     const vehicle = vehicles[e.target.value];
@@ -79,7 +71,7 @@ export default function Header({ reFetch, onAddStop }) {
     setSelectedVehicle(vehicle);
     setSelectedDirection(null);
     fetchRoutes({ type: vehicle })
-      .then((data) => setLines(data.sort((a, b) => (a.id < b.id ? 1 : -1))))
+      .then((data) => setLines(data.sort((a, b) => (a.id < b.id ? -1 : 1))))
       .catch(console.error);
   };
 
@@ -114,6 +106,41 @@ export default function Header({ reFetch, onAddStop }) {
     }
     setSelectedStop(stop);
   };
+
+  return {
+    lines,
+    stops,
+    handleStopSelect,
+    handleDirectionSelect,
+    handleLineSelect,
+    handleVehicleSelect,
+    selectedDirection,
+    selectedLine,
+    selectedStop,
+  };
+}
+
+export default function Header({ reFetch, onAddStop }) {
+  const {
+    lines,
+    stops,
+    handleStopSelect,
+    handleDirectionSelect,
+    handleLineSelect,
+    handleVehicleSelect,
+    selectedDirection,
+    selectedLine,
+    selectedStop,
+  } = useMbtaForm();
+
+  const [dialogIsOpen, setDialogIsOpen] = useState(false);
+  const openDialog = () => setDialogIsOpen(true);
+  const closeDialog = () => setDialogIsOpen(false);
+
+  // TODO: finish search
+  // const handleSearch = debounce((e) =>
+  //   searchStops({ search: e.target.value }).then(setSearchResults)
+  // );
 
   const handleSubmit = (e) => {
     e.preventDefault();
