@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React, { useState } from 'react';
+import React, { useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { fetchRoutes, fetchStops /* searchStops */ } from '../fetchData';
@@ -51,14 +51,50 @@ const vehicles = {
   Boat: 4,
 };
 
+function mbtaReducer(state, action) {
+  switch (action.type) {
+    case 'VEHICLE_SELECT':
+      return {
+        ...state,
+        stops: [],
+        selectedLine: null,
+        selectedVehicle: action.vehicle,
+        selectedDirection: null,
+      };
+    case 'LINE_SELECT':
+      return {
+        ...state,
+        stops: [],
+        selectedLine: action.line,
+      };
+    case 'DIRECTION_SELECT':
+      return {
+        ...state,
+        stops: [],
+        selectedDirection: action.direction,
+      };
+    case 'STOP_SELECT':
+      return { ...state, selectedStop: action.stop };
+    case 'FETCHED_ROUTES':
+      return { ...state, lines: action.lines };
+    case 'FETCHED_STOPS':
+      return { ...state, stops: action.stops };
+    default:
+      throw new Error('Unknown action type');
+  }
+}
+
 function useMbtaForm() {
   // const [searchResults, setSearchResults] = useState(null);
-  const [lines, setLines] = useState(null);
-  const [stops, setStops] = useState([]);
-  const [, setSelectedVehicle] = useState();
-  const [selectedLine, setSelectedLine] = useState(null);
-  const [selectedDirection, setSelectedDirection] = useState(null);
-  const [selectedStop, setSelectedStop] = useState(null);
+  const [state, dispatch] = useReducer(mbtaReducer, {
+    lines: null,
+    stops: [],
+    selectedLine: null,
+    selectedStop: null,
+    selectedDirection: null,
+  });
+
+  const { stops, lines, selectedLine, selectedStop, selectedDirection } = state;
 
   console.log('lines', lines);
   console.log('selectedLine', selectedLine);
@@ -66,33 +102,31 @@ function useMbtaForm() {
 
   const handleVehicleSelect = (e) => {
     const vehicle = vehicles[e.target.value];
-    setStops([]);
-    setSelectedLine(null);
-    setSelectedVehicle(vehicle);
-    setSelectedDirection(null);
+    dispatch({ type: 'VEHICLE_SELECT', vehicle });
     fetchRoutes({ type: vehicle })
-      .then((data) => setLines(data.sort((a, b) => (a.id < b.id ? -1 : 1))))
+      .then((data) => {
+        const sortedLines = data.sort((a, b) => (a.id < b.id ? -1 : 1));
+        dispatch({ type: 'FETCHED_ROUTES', lines: sortedLines });
+      })
       .catch(console.error);
   };
 
   const handleLineSelect = (e) => {
     const routeId = e.target.value;
     const newLine = lines.find((l) => l.id === routeId);
-    setStops([]);
-    setSelectedLine(newLine);
+    dispatch({ type: 'LINE_SELECT', line: newLine });
     if (selectedDirection != null) {
       fetchStops({ routeId: newLine.id, selectedDirection })
-        .then((s) => setStops(s))
+        .then((s) => dispatch({ type: 'FETCHED_STOPS', stops: s }))
         .catch(console.error);
     }
   };
 
   const handleDirectionSelect = (e) => {
     const direction = e.target.value;
-    setSelectedDirection(direction);
-    setStops([]);
+    dispatch({ type: 'DIRECTION_SELECT', direction });
     fetchStops({ routeId: selectedLine.id, direction })
-      .then((s) => setStops(s))
+      .then((s) => dispatch({ type: 'FETCHED_STOPS', stops: s }))
       .catch(console.error);
   };
 
@@ -104,7 +138,7 @@ function useMbtaForm() {
       // TODO: Handle this error!
       throw new Error(`Stop not found! ${value}`);
     }
-    setSelectedStop(stop);
+    dispatch({ type: 'STOP_SELECT', stop });
   };
 
   return {
