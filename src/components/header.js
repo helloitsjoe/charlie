@@ -105,7 +105,19 @@ function useMbtaForm() {
     dispatch({ type: 'VEHICLE_SELECT', vehicle });
     fetchRoutes({ type: vehicle })
       .then((data) => {
-        const sortedLines = data.sort((a, b) => (a.id < b.id ? -1 : 1));
+        const sortedLines = data.sort((a, b) => {
+          if (a.short_name && b.short_name) {
+            return a.short_name < b.short_name ? -1 : 1;
+          }
+
+          if (Number.isNaN(Number(a.id))) {
+            const num = a.id.match(/\d+/)[0];
+            console.log('num', num);
+            return Number(num) < Number(b.id) ? -1 : 1;
+          }
+
+          return Number(a.id) < Number(b.id) ? -1 : 1;
+        });
         dispatch({ type: 'FETCHED_ROUTES', lines: sortedLines });
       })
       .catch(console.error);
