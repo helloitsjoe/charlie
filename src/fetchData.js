@@ -57,8 +57,19 @@ const fetchData = ({
         const includedStop = selectIncluded(rawPred, 'stop');
         const includedRoute = selectIncluded(rawPred, 'route');
 
+        const id = i;
+
         if (!includedStop.length || !includedRoute.length) {
-          return routes[i];
+          return {
+            id,
+            morning,
+            direction: '',
+            customName,
+            // for debugging
+            _pastDepartMins: departures.filter((min) => min <= 2),
+            _predictions: rawPred,
+            _filtered: routeData,
+          };
         }
 
         const stopName = includedStop[0].attributes.name;
@@ -86,8 +97,6 @@ const fetchData = ({
           (mins) => mins >= waitStart && mins <= waitStart + waitLength
         );
 
-        const id = i;
-
         return {
           id,
           color,
@@ -98,7 +107,7 @@ const fetchData = ({
           isWalkable,
           customName,
           departMins,
-          // for debugging client side
+          // for debugging
           _pastDepartMins: departures.filter((min) => min <= 2),
           _predictions: rawPred,
           _filtered: routeData,

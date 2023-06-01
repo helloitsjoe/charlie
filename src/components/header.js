@@ -84,6 +84,25 @@ function mbtaReducer(state, action) {
   }
 }
 
+export function sortLines(a, b) {
+  const [first, second] = (() => {
+    if (a.short_name && b.short_name) {
+      return [a.short_name, b.short_name];
+    }
+
+    if (a.short_name) {
+      return [a.short_name, b.id];
+    }
+
+    if (b.short_name) {
+      return [a.id, b.short_name];
+    }
+    return [a.id, b.id];
+  })();
+
+  return first < second ? -1 : 1;
+}
+
 function useMbtaForm() {
   // const [searchResults, setSearchResults] = useState(null);
   const [state, dispatch] = useReducer(mbtaReducer, {
@@ -105,19 +124,7 @@ function useMbtaForm() {
     dispatch({ type: 'VEHICLE_SELECT', vehicle });
     fetchRoutes({ type: vehicle })
       .then((data) => {
-        const sortedLines = data.sort((a, b) => {
-          if (a.short_name && b.short_name) {
-            return a.short_name < b.short_name ? -1 : 1;
-          }
-
-          if (Number.isNaN(Number(a.id))) {
-            const num = a.id.match(/\d+/)[0];
-            console.log('num', num);
-            return Number(num) < Number(b.id) ? -1 : 1;
-          }
-
-          return Number(a.id) < Number(b.id) ? -1 : 1;
-        });
+        const sortedLines = data.sort(sortLines);
         dispatch({ type: 'FETCHED_ROUTES', lines: sortedLines });
       })
       .catch(console.error);
@@ -235,7 +242,7 @@ export default function Header({ reFetch, onAddStop }) {
             <StyledSelect onChange={handleLineSelect}>
               <option />
               {lines?.map((line) => (
-                <option value={line.id}>{line.id}</option>
+                <option value={line.id}>{line.short_name || line.id}</option>
               ))}
             </StyledSelect>
           </StyledLabel>
