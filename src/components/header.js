@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React, { useState } from 'react';
+import React, { useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { fetchRoutes, fetchStops /* searchStops */ } from '../fetchData';
@@ -51,56 +51,101 @@ const vehicles = {
   Boat: 4,
 };
 
-export default function Header({ reFetch, onAddStop }) {
-  const [dialogIsOpen, setDialogIsOpen] = useState(false);
-  const [lines, setLines] = useState(null);
+function mbtaReducer(state, action) {
+  switch (action.type) {
+    case 'VEHICLE_SELECT':
+      return {
+        ...state,
+        stops: [],
+        selectedLine: null,
+        selectedVehicle: action.vehicle,
+        selectedDirection: null,
+      };
+    case 'LINE_SELECT':
+      return {
+        ...state,
+        stops: [],
+        selectedLine: action.line,
+      };
+    case 'DIRECTION_SELECT':
+      return {
+        ...state,
+        stops: [],
+        selectedDirection: action.direction,
+      };
+    case 'STOP_SELECT':
+      return { ...state, selectedStop: action.stop };
+    case 'FETCHED_ROUTES':
+      return { ...state, lines: action.lines };
+    case 'FETCHED_STOPS':
+      return { ...state, stops: action.stops };
+    default:
+      throw new Error('Unknown action type');
+  }
+}
+
+export function sortLines(a, b) {
+  const [first, second] = (() => {
+    if (a.short_name && b.short_name) {
+      return [a.short_name, b.short_name];
+    }
+
+    if (a.short_name) {
+      return [a.short_name, b.id];
+    }
+
+    if (b.short_name) {
+      return [a.id, b.short_name];
+    }
+    return [a.id, b.id];
+  })();
+
+  return first < second ? -1 : 1;
+}
+
+function useMbtaForm() {
   // const [searchResults, setSearchResults] = useState(null);
-  const [, setSelectedVehicle] = useState();
-  const [selectedLine, setSelectedLine] = useState(null);
-  const [selectedDirection, setSelectedDirection] = useState(null);
-  const [selectedStop, setSelectedStop] = useState(null);
-  const [stops, setStops] = useState([]);
+  const [state, dispatch] = useReducer(mbtaReducer, {
+    lines: null,
+    stops: [],
+    selectedLine: null,
+    selectedStop: null,
+    selectedDirection: null,
+  });
+
+  const { stops, lines, selectedLine, selectedStop, selectedDirection } = state;
+
   console.log('lines', lines);
   console.log('selectedLine', selectedLine);
   console.log('stops', stops);
 
-  const openDialog = () => setDialogIsOpen(true);
-  const closeDialog = () => setDialogIsOpen(false);
-
-  // TODO: finish search
-  // const handleSearch = debounce((e) =>
-  //   searchStops({ search: e.target.value }).then(setSearchResults)
-  // );
-
   const handleVehicleSelect = (e) => {
     const vehicle = vehicles[e.target.value];
-    setStops([]);
-    setSelectedLine(null);
-    setSelectedVehicle(vehicle);
-    setSelectedDirection(null);
+    dispatch({ type: 'VEHICLE_SELECT', vehicle });
     fetchRoutes({ type: vehicle })
-      .then((data) => setLines(data.sort((a, b) => (a.id < b.id ? 1 : -1))))
+      .then((data) => {
+        const sortedLines = data.sort(sortLines);
+        dispatch({ type: 'FETCHED_ROUTES', lines: sortedLines });
+      })
       .catch(console.error);
   };
 
   const handleLineSelect = (e) => {
     const routeId = e.target.value;
     const newLine = lines.find((l) => l.id === routeId);
-    setStops([]);
-    setSelectedLine(newLine);
+    dispatch({ type: 'LINE_SELECT', line: newLine });
     if (selectedDirection != null) {
       fetchStops({ routeId: newLine.id, selectedDirection })
-        .then((s) => setStops(s))
+        .then((s) => dispatch({ type: 'FETCHED_STOPS', stops: s }))
         .catch(console.error);
     }
   };
 
   const handleDirectionSelect = (e) => {
     const direction = e.target.value;
-    setSelectedDirection(direction);
-    setStops([]);
+    dispatch({ type: 'DIRECTION_SELECT', direction });
     fetchStops({ routeId: selectedLine.id, direction })
-      .then((s) => setStops(s))
+      .then((s) => dispatch({ type: 'FETCHED_STOPS', stops: s }))
       .catch(console.error);
   };
 
@@ -112,8 +157,43 @@ export default function Header({ reFetch, onAddStop }) {
       // TODO: Handle this error!
       throw new Error(`Stop not found! ${value}`);
     }
-    setSelectedStop(stop);
+    dispatch({ type: 'STOP_SELECT', stop });
   };
+
+  return {
+    lines,
+    stops,
+    handleStopSelect,
+    handleDirectionSelect,
+    handleLineSelect,
+    handleVehicleSelect,
+    selectedDirection,
+    selectedLine,
+    selectedStop,
+  };
+}
+
+export default function Header({ reFetch, onAddStop }) {
+  const {
+    lines,
+    stops,
+    handleStopSelect,
+    handleDirectionSelect,
+    handleLineSelect,
+    handleVehicleSelect,
+    selectedDirection,
+    selectedLine,
+    selectedStop,
+  } = useMbtaForm();
+
+  const [dialogIsOpen, setDialogIsOpen] = useState(false);
+  const openDialog = () => setDialogIsOpen(true);
+  const closeDialog = () => setDialogIsOpen(false);
+
+  // TODO: finish search
+  // const handleSearch = debounce((e) =>
+  //   searchStops({ search: e.target.value }).then(setSearchResults)
+  // );
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -162,7 +242,7 @@ export default function Header({ reFetch, onAddStop }) {
             <StyledSelect onChange={handleLineSelect}>
               <option />
               {lines?.map((line) => (
-                <option value={line.id}>{line.id}</option>
+                <option value={line.id}>{line.short_name || line.id}</option>
               ))}
             </StyledSelect>
           </StyledLabel>
