@@ -4,10 +4,12 @@ import MBTA from 'mbta-client';
 import routesConfig from '../resources/routes.config.json';
 
 const enabledRoutes = Object.values(routesConfig.enabled);
-let mbtaKey;
+let mbtaKey = localStorage.getItem('mbta_api_key');
 try {
-  // eslint-disable-next-line
-  ({ mbtaKey } = require('../resources/credentials.json'));
+  if (!mbtaKey) {
+    // eslint-disable-next-line global-require
+    ({ mbtaKey } = require('../resources/credentials.json'));
+  }
 } catch (err) {
   console.warn('Missing API key, making call without key...');
 }

@@ -5,13 +5,13 @@ import styled from 'styled-components';
 import { fetchRoutes, fetchStops /* searchStops */ } from '../fetchData';
 // import { debounce } from '../utils';
 
-const StyledHeader = styled.div`
+const Header = styled.div`
   text-align: center;
   padding-top: 20px;
   padding-bottom: 10px;
 `;
 
-const StyledButton = styled.button`
+const Button = styled.button`
   font-size: 1rem;
   border-radius: 10px;
   height: 20px;
@@ -21,20 +21,20 @@ const StyledButton = styled.button`
   color: #666;
 `;
 
-const StyledForm = styled.form`
+const Form = styled.form`
   display: flex;
   flex-direction: column;
   width: 80%;
   margin: 2em auto 1em;
 `;
 
-const StyledLabel = styled.label`
+const Label = styled.label`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 `;
 
-const StyledSelect = styled.select`
+const Select = styled.select`
   width: 100%;
 `;
 
@@ -85,26 +85,28 @@ function mbtaReducer(state, action) {
 }
 
 export function sortLines(a, b) {
+  const aId = Number(a.id);
+  const bId = Number(b.id);
+
   const [first, second] = (() => {
     if (a.short_name && b.short_name) {
       return [a.short_name, b.short_name];
     }
 
     if (a.short_name) {
-      return [a.short_name, b.id];
+      return [a.short_name, bId];
     }
 
     if (b.short_name) {
-      return [a.id, b.short_name];
+      return [aId, b.short_name];
     }
-    return [a.id, b.id];
+    return [aId, bId];
   })();
 
   return first < second ? -1 : 1;
 }
 
 function useMbtaForm() {
-  // const [searchResults, setSearchResults] = useState(null);
   const [state, dispatch] = useReducer(mbtaReducer, {
     lines: null,
     stops: [],
@@ -173,7 +175,7 @@ function useMbtaForm() {
   };
 }
 
-export default function Header({ reFetch, onAddStop }) {
+export default function CharlieHeader({ reFetch, onAddStop }) {
   const {
     lines,
     stops,
@@ -195,6 +197,12 @@ export default function Header({ reFetch, onAddStop }) {
   //   searchStops({ search: e.target.value }).then(setSearchResults)
   // );
 
+  const addApiKey = (e) => {
+    e.preventDefault();
+    const { apiKey } = Object.fromEntries(new FormData(e.currentTarget));
+    localStorage.setItem('mbta_api_key', apiKey);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -214,73 +222,87 @@ export default function Header({ reFetch, onAddStop }) {
   };
 
   return (
-    <StyledHeader>
+    <Header>
       <ButtonContainer>
-        <StyledButton onClick={reFetch}>REFRESH</StyledButton>
-        <StyledButton onClick={dialogIsOpen ? closeDialog : openDialog}>
+        <Button onClick={reFetch}>REFRESH</Button>
+        <Button onClick={dialogIsOpen ? closeDialog : openDialog}>
           ADD STOP
-        </StyledButton>
+        </Button>
       </ButtonContainer>
       {dialogIsOpen && (
-        <StyledForm onSubmit={handleSubmit}>
-          {/* <StyledLabel> */}
-          {/*   Search */}
-          {/*   <input onChange={handleSearch} /> */}
-          {/*   {JSON.stringify(searchResults)} */}
-          {/* </StyledLabel> */}
-          <StyledLabel>
-            Select a vehicle type
-            <StyledSelect onChange={handleVehicleSelect}>
-              <option />
-              {Object.keys(vehicles).map((v) => (
-                <option value={v}>{v}</option>
-              ))}
-            </StyledSelect>
-          </StyledLabel>
-          <StyledLabel>
-            Select a line
-            <StyledSelect onChange={handleLineSelect}>
-              <option />
-              {lines?.map((line) => (
-                <option value={line.id}>{line.short_name || line.id}</option>
-              ))}
-            </StyledSelect>
-          </StyledLabel>
-          <StyledLabel>
-            Select a direction
-            <StyledSelect
-              disabled={selectedLine == null}
-              onChange={handleDirectionSelect}
-            >
-              <option />
-              {selectedLine?.direction_names?.map((dir, i) => (
-                <option value={i}>{dir}</option>
-              ))}
-            </StyledSelect>
-          </StyledLabel>
-          <StyledLabel>
-            Select a stop
-            <StyledSelect
-              disabled={selectedDirection == null}
-              onChange={handleStopSelect}
-            >
-              <option />
-              {stops.map((stop) => (
-                <option>{stop.name}</option>
-              ))}
-            </StyledSelect>
-          </StyledLabel>
-          {/* TODO: localStorage */}
-          <div>Note: your changes will not be saved</div>
-          <br />
-          <button type="submit">Submit</button>
-        </StyledForm>
+        <>
+          {!localStorage.getItem('mbta_api_key') && (
+            <Form onSubmit={addApiKey}>
+              <input type="text" name="apiKey" />
+              <Button type="submit">Submit</Button>
+            </Form>
+          )}
+          <Form onSubmit={handleSubmit}>
+            {/* <Label> */}
+            {/*   Search */}
+            {/*   <input onChange={handleSearch} /> */}
+            {/*   {JSON.stringify(searchResults)} */}
+            {/* </Label> */}
+            <Label>
+              Select a vehicle type
+              <Select onChange={handleVehicleSelect}>
+                <option />
+                {Object.keys(vehicles).map((v) => (
+                  <option key={v} value={v}>
+                    {v}
+                  </option>
+                ))}
+              </Select>
+            </Label>
+            <Label>
+              Select a line
+              <Select onChange={handleLineSelect}>
+                <option />
+                {lines?.map((line) => (
+                  <option key={line.id} value={line.id}>
+                    {line.short_name || line.id}
+                  </option>
+                ))}
+              </Select>
+            </Label>
+            <Label>
+              Select a direction
+              <Select
+                disabled={selectedLine == null}
+                onChange={handleDirectionSelect}
+              >
+                <option />
+                {selectedLine?.direction_names?.map((dir, i) => (
+                  <option key={dir} value={i}>
+                    {dir}
+                  </option>
+                ))}
+              </Select>
+            </Label>
+            <Label>
+              Select a stop
+              <Select
+                disabled={selectedDirection == null}
+                onChange={handleStopSelect}
+              >
+                <option />
+                {stops.map((stop) => (
+                  <option>{stop.name}</option>
+                ))}
+              </Select>
+            </Label>
+            {/* TODO: localStorage */}
+            <div>Note: your changes will not be saved</div>
+            <br />
+            <button type="submit">Submit</button>
+          </Form>
+        </>
       )}
-    </StyledHeader>
+    </Header>
   );
 }
 
-Header.propTypes = {
+CharlieHeader.propTypes = {
   reFetch: PropTypes.func.isRequired,
   onAddStop: PropTypes.func.isRequired,
 };
