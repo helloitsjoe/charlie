@@ -85,8 +85,11 @@ function mbtaReducer(state, action) {
 }
 
 export function sortLines(a, b) {
-  const aId = Number(a.id);
-  const bId = Number(b.id);
+  // TODO: Fix sorting
+  // const aId = Number(a.id);
+  // const bId = Number(b.id);
+  const aId = a.id;
+  const bId = b.id;
 
   const [first, second] = (() => {
     if (a.short_name && b.short_name) {

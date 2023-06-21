@@ -1,7 +1,9 @@
 import { sortLines } from '../components/header';
 
+// TODO: Fix sorting
 const routeData = [
   { id: '3' },
+  // { id: '10' },
   { id: '1' },
   { id: 'blue', short_name: 'blue line' },
   { id: 'red' },
@@ -17,6 +19,7 @@ describe('sortLines', () => {
       { id: '1A' },
       { id: '2' },
       { id: '3' },
+      // { id: '10' },
       { id: 'blue', short_name: 'blue line' },
       { id: 'green', short_name: 'green line' },
       { id: 'red' },
