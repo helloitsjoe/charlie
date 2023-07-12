@@ -2,8 +2,8 @@
 import React, { useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { fetchRoutes, fetchStops /* searchStops */ } from '../fetchData';
-// import { debounce } from '../utils';
+import { fetchRoutes, fetchStops, searchStops } from '../fetchData';
+import { debounce } from '../utils';
 
 const Header = styled.div`
   text-align: center;
@@ -51,6 +51,8 @@ const vehicles = {
   Boat: 4,
 };
 
+const searchCache = {};
+
 function mbtaReducer(state, action) {
   switch (action.type) {
     case 'VEHICLE_SELECT':
@@ -79,6 +81,8 @@ function mbtaReducer(state, action) {
       return { ...state, lines: action.lines };
     case 'FETCHED_STOPS':
       return { ...state, stops: action.stops };
+    case 'SEARCHED_STOPS':
+      return { ...state, searchResults: action.stops };
     default:
       throw new Error('Unknown action type');
   }
@@ -116,9 +120,17 @@ function useMbtaForm() {
     selectedLine: null,
     selectedStop: null,
     selectedDirection: null,
+    searchResults: null,
   });
 
-  const { stops, lines, selectedLine, selectedStop, selectedDirection } = state;
+  const {
+    stops,
+    lines,
+    selectedLine,
+    selectedStop,
+    selectedDirection,
+    searchResults,
+  } = state;
 
   console.log('lines', lines);
   console.log('selectedLine', selectedLine);
@@ -165,6 +177,21 @@ function useMbtaForm() {
     dispatch({ type: 'STOP_SELECT', stop });
   };
 
+  const handleSearchFoo = (search) => {
+    if (search.length < 3) {
+      return;
+    }
+
+    if (searchCache[search]) {
+      dispatch({ type: 'SEARCHED_STOPS', stops: searchCache[search] });
+      return;
+    }
+
+    searchStops({ search, include: 'route', filter: 'route' }).then((s) =>
+      dispatch({ type: 'SEARCHED_STOPS', stops: s })
+    );
+  };
+
   return {
     lines,
     stops,
@@ -172,9 +199,11 @@ function useMbtaForm() {
     handleDirectionSelect,
     handleLineSelect,
     handleVehicleSelect,
+    handleSearchFoo,
     selectedDirection,
     selectedLine,
     selectedStop,
+    searchResults,
   };
 }
 
@@ -186,9 +215,11 @@ export default function CharlieHeader({ reFetch, onAddStop }) {
     handleDirectionSelect,
     handleLineSelect,
     handleVehicleSelect,
+    handleSearchFoo,
     selectedDirection,
     selectedLine,
     selectedStop,
+    searchResults,
   } = useMbtaForm();
 
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
@@ -196,9 +227,9 @@ export default function CharlieHeader({ reFetch, onAddStop }) {
   const closeDialog = () => setDialogIsOpen(false);
 
   // TODO: finish search
-  // const handleSearch = debounce((e) =>
-  //   searchStops({ search: e.target.value }).then(setSearchResults)
-  // );
+  const handleSearch = debounce((e) => {
+    handleSearchFoo(e.target.value);
+  });
 
   const addApiKey = (e) => {
     e.preventDefault();
@@ -241,11 +272,20 @@ export default function CharlieHeader({ reFetch, onAddStop }) {
             </Form>
           )}
           <Form onSubmit={handleSubmit}>
-            {/* <Label> */}
-            {/*   Search */}
-            {/*   <input onChange={handleSearch} /> */}
-            {/*   {JSON.stringify(searchResults)} */}
-            {/* </Label> */}
+            <Label>
+              Search by stop name
+              <input onChange={handleSearch} />
+              <ul>
+                {searchResults &&
+                  searchResults
+                    .sort((a, b) => (a.municipality > b.municipality ? 1 : -1))
+                    .map((s) => (
+                      <li>
+                        {s.name}, {s.municipality}
+                      </li>
+                    ))}
+              </ul>
+            </Label>
             <Label>
               Select a vehicle type
               <Select onChange={handleVehicleSelect}>

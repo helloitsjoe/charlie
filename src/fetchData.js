@@ -144,7 +144,16 @@ export const fetchStops = ({
 export const searchStops = ({ search, mbta = new MBTA(mbtaKey) }) => {
   return mbta
     .fetchStopsByName(search)
-    .then((stops) => stops.map((s) => ({ id: s.id, name: s.attributes.name })));
+    .then((stops) =>
+      stops.map(
+        (s) =>
+          console.log('stops', stops) || {
+            id: s.id,
+            name: s.attributes.name,
+            municipality: s.attributes.municipality,
+          }
+      )
+    );
 };
 
 export default fetchData;
