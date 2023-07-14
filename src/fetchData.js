@@ -7,7 +7,7 @@ const enabledRoutes = Object.values(routesConfig.enabled);
 let mbtaKey = localStorage.getItem('mbta_api_key');
 try {
   if (!mbtaKey) {
-    // eslint-disable-next-line global-require
+    // eslint-disable-next-line
     ({ mbtaKey } = require('../resources/credentials.json'));
   }
 } catch (err) {
