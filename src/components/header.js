@@ -234,12 +234,10 @@ export default function CharlieHeader({ reFetch, onAddStop }) {
       </ButtonContainer>
       {dialogIsOpen && (
         <>
-          {!localStorage.getItem('mbta_api_key') && (
-            <Form onSubmit={addApiKey}>
-              <input type="text" name="apiKey" />
-              <Button type="submit">Submit</Button>
-            </Form>
-          )}
+          <Form onSubmit={addApiKey}>
+            <input type="text" name="apiKey" />
+            <Button type="submit">Update key</Button>
+          </Form>
           <Form onSubmit={handleSubmit}>
             {/* <Label> */}
             {/*   Search */}
