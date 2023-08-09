@@ -10,7 +10,7 @@
     "clean": "rm -rf dist && cp -r assets/ dist",
     "build": "yarn clean && webpack --mode production",
     "watch": "webpack --mode development --watch",
-    "dev": "webpack serve",
+    "dev": "webpack serve --mode development",
     "analyze": "webpack --mode production --profile --json > stats.json && webpack-bundle-analyzer ./stats.json"
   },
   "keywords": [],
@@ -40,7 +40,6 @@
     "jest-environment-jsdom": "^29.5.0",
     "jest-simple-config": "^0.4.5",
     "jest-styled-components": "^6.3.3",
-    "node-sass": "^7",
     "prettier": "^2",
     "sass-loader": "^13.2.1",
     "style-loader": "^3.3.2",

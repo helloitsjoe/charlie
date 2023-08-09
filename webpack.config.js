@@ -1,18 +1,30 @@
-const { makeWebpackConfig } = require('webpack-simple');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-const htmlPlugin = new HtmlWebpackPlugin({ template: 'index-template.html' });
+const htmlPlugin = new HtmlWebpackPlugin({ template: "index-template.html" });
 
-const config = makeWebpackConfig({
+const config = {
   plugins: [htmlPlugin],
   output: {
     // filename: '[name].[contenthash:8].js',
-    filename: '[name].js',
+    filename: "[name].js",
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: "babel-loader",
+      },
+      {
+        test: /\.css$/,
+        use: ["style-loader", "css-loader"],
+      },
+    ],
   },
   optimization: {
-    runtimeChunk: 'single',
+    runtimeChunk: "single",
     splitChunks: {
-      chunks: 'all',
+      chunks: "all",
       maxInitialRequests: Infinity,
       minSize: 0,
       cacheGroups: {
@@ -26,7 +38,7 @@ const config = makeWebpackConfig({
             )[1];
 
             // npm package names are URL-safe, but some servers don't like @ symbols
-            return `npm.${packageName.replace('@', '')}`;
+            return `npm.${packageName.replace("@", "")}`;
           },
         },
       },
@@ -38,6 +50,6 @@ const config = makeWebpackConfig({
   //     'react-dom': 'preact/compat',
   //   },
   // },
-});
+};
 
 module.exports = config;
