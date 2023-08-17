@@ -45,13 +45,13 @@ const wait = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 export default function App({ getHourOfDay, fetchData }) {
   const [enabledRoutes, setEnabledRoutes] = useState(
-    Object.values(routeConfig.enabled)
+    Object.values(routeConfig.enabled),
   );
 
   const [state, dispatch] = useReducer(appReducer, {
     status: 'LOADING',
     error: null,
-    routes: enabledRoutes.map(({ morning, stop }) => ({ morning, id: stop })),
+    routes: enabledRoutes.map(({ morning }, i) => ({ morning, id: i })),
   });
 
   const [count, setCount] = useState(0);
@@ -118,7 +118,7 @@ export default function App({ getHourOfDay, fetchData }) {
             <Spacer key={route} text={route} />
           ) : (
             <RouteItem key={route.id} {...route} />
-          )
+          ),
         )
       )}
       {/* <Footer hourOfDay={getHourOfDay()} /> */}

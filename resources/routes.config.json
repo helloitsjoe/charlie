@@ -8,6 +8,7 @@
       "morning": true
     },
     "holyoke": {
+      "customName": "1 to Boston",
       "route": 1,
       "stop": 110,
       "waitStart": 3,
@@ -15,17 +16,25 @@
       "morning": true
     },
     "harvardWatertown": {
-      "customName": "Harvard - 71",
+      "customName": "71 to Watertown",
       "route": 71,
       "stop": "place-harsq",
       "waitStart": 3,
       "waitLength": 6
     },
-    "backBayCR": {
-      "customName": "Back Bay",
-      "stop": "NEC-2276",
-      "direction": 1,
-      "waitStart": 5,
+    "harvardLechmere": {
+      "customName": "69 to Lechmere",
+      "route": 69,
+      "stop": 110,
+      "waitStart": 3,
+      "waitLength": 6,
+      "morning": true
+    },
+    "lechmereHarvard": {
+      "customName": "69 to Harvard",
+      "route": 69,
+      "stop": "place-lech",
+      "waitStart": 3,
       "waitLength": 6
     },
     "copley": {
@@ -41,6 +50,13 @@
     }
   },
   "disabled": {
+    "backBayCR": {
+      "customName": "Back Bay",
+      "stop": "NEC-2276",
+      "direction": 1,
+      "waitStart": 5,
+      "waitLength": 6
+    },
     "backBayOrange": {
       "stop": 70015,
       "waitStart": 5,
