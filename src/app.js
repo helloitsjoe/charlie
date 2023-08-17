@@ -43,9 +43,13 @@ const appReducer = (s, action) => {
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 0));
 
-export default function App({ getHourOfDay, fetchData }) {
+export default function App({
+  getHourOfDay,
+  fetchData,
+  defaultRoutes = routeConfig.enabled,
+}) {
   const [enabledRoutes, setEnabledRoutes] = useState(
-    Object.values(routeConfig.enabled),
+    Object.values(defaultRoutes),
   );
 
   const [state, dispatch] = useReducer(appReducer, {
@@ -114,7 +118,7 @@ export default function App({ getHourOfDay, fetchData }) {
         <Error error={error} />
       ) : (
         getCombinedRoutes(routes).map((route) =>
-          typeof route === 'string' ? (
+          console.log('route', route) || typeof route === 'string' ? (
             <Spacer key={route} text={route} />
           ) : (
             <RouteItem key={route.id} {...route} />
@@ -128,9 +132,11 @@ export default function App({ getHourOfDay, fetchData }) {
 App.propTypes = {
   fetchData: PropTypes.func,
   getHourOfDay: PropTypes.func,
+  defaultRoutes: PropTypes.object, // eslint-disable-line
 };
 
 App.defaultProps = {
   fetchData: fetchDataNative,
   getHourOfDay: () => new Date().getHours(),
+  defaultRoutes: routeConfig.enabled,
 };

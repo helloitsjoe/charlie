@@ -5,6 +5,7 @@ import { mockRoutes, mockRoutesWithError } from './route-test-data';
 
 const testProps = {
   fetchData: jest.fn().mockResolvedValue(mockRoutes),
+  defaultRoutes: mockRoutes,
 };
 
 describe('App', () => {
@@ -74,17 +75,17 @@ describe('App', () => {
     });
   });
 
-  it('renders routes with spacers (Morning)', () => {
+  it('renders routes with spacers (Morning)', async () => {
     const getHourOfDay = () => 7;
     const { queryByText, getByTestId, findAllByTestId } = render(
-      <App {...testProps} getHourOfDay={getHourOfDay} />
+      <App {...testProps} getHourOfDay={getHourOfDay} />,
     );
     return findAllByTestId('stop-name').then((routeItems) => {
       expect(queryByText('Inbound')).toBeTruthy();
       expect(queryByText('Outbound')).toBeTruthy();
       const appText = getByTestId('app').textContent;
       expect(appText.indexOf('Inbound')).toBeLessThan(
-        appText.indexOf('Outbound')
+        appText.indexOf('Outbound'),
       );
       expect(routeItems.length).toBe(mockRoutes.length);
     });
@@ -93,14 +94,14 @@ describe('App', () => {
   it('renders morning routes with spacers (Evening)', () => {
     const getHourOfDay = () => 17;
     const { getByTestId, queryByText, findAllByTestId } = render(
-      <App {...testProps} getHourOfDay={getHourOfDay} />
+      <App {...testProps} getHourOfDay={getHourOfDay} />,
     );
     return findAllByTestId('stop-name').then((routeItems) => {
       expect(queryByText('Inbound')).toBeTruthy();
       expect(queryByText('Outbound')).toBeTruthy();
       const appText = getByTestId('app').textContent;
       expect(appText.indexOf('Outbound')).toBeLessThan(
-        appText.indexOf('Inbound')
+        appText.indexOf('Inbound'),
       );
       expect(routeItems.length).toBe(mockRoutes.length);
     });
