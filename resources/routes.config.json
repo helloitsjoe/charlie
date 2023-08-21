@@ -7,14 +7,6 @@
       "waitLength": 6,
       "morning": true
     },
-    "holyoke": {
-      "customName": "1 to Boston",
-      "route": 1,
-      "stop": 110,
-      "waitStart": 3,
-      "waitLength": 6,
-      "morning": true
-    },
     "harvardWatertown": {
       "customName": "71 to Watertown",
       "route": 71,
@@ -41,11 +33,6 @@
       "stop": 70154,
       "direction": 1,
       "waitStart": 5,
-      "waitLength": 6
-    },
-    "clearway": {
-      "stop": 91,
-      "waitStart": 10,
       "waitLength": 6
     }
   },
