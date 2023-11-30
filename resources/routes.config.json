@@ -1,11 +1,34 @@
 {
   "enabled": {
     "winthrop": {
+      "customName": "71 to Harvard",
       "route": 71,
       "stop": 2056,
       "waitStart": 3,
       "waitLength": 6,
       "morning": true
+    },
+    "harvardIn": {
+      "stop": "70067",
+      "direction": 0,
+      "waitStart": 5,
+      "waitLength": 6,
+      "morning": true
+    },
+    "harvardKendallBus": {
+      "customName": "68 to Kendall",
+      "route": 68,
+      "stop": 110,
+      "waitStart": 3,
+      "waitLength": 6,
+      "morning": true
+    },
+    "kendallHarvardBus": {
+      "customName": "68 to Harvard",
+      "route": 68,
+      "stop": 2231,
+      "waitStart": 3,
+      "waitLength": 6
     },
     "harvardWatertown": {
       "customName": "71 to Watertown",
@@ -29,14 +52,20 @@
       "waitStart": 3,
       "waitLength": 6
     },
-    "copley": {
-      "stop": 70154,
+    "kendallOut": {
+      "stop": "place-knncl",
       "direction": 1,
       "waitStart": 5,
       "waitLength": 6
     }
   },
   "disabled": {
+    "copley": {
+      "stop": 70154,
+      "direction": 1,
+      "waitStart": 5,
+      "waitLength": 6
+    },
     "backBayCR": {
       "customName": "Back Bay",
       "stop": "NEC-2276",

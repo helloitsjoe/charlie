@@ -3,6 +3,11 @@ import { useEffect } from 'react';
 
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+export const getParams = (key) => {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(key) === 'true';
+};
+
 export const usePullRefresh = (trigger) => {
   useEffect(() => {
     let downY;

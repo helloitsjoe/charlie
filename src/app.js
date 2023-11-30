@@ -4,8 +4,9 @@ import React, { useState, useEffect, useReducer, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 // import loadable from '@loadable/component';
+import { createDebug } from 'dom-debug';
 import fetchDataNative from './fetchData';
-import { usePullRefresh } from './utils';
+import { usePullRefresh, getParams } from './utils';
 import Header from './components/header';
 import Error from './components/error';
 // import Footer from './components/footer';
@@ -19,6 +20,8 @@ import routeConfig from '../resources/routes.config.json';
 // Cool that @loadable/component works with preact though!
 // const RouteItem = loadable(() => import('./components/route-item'));
 // const Spacer = loadable(() => import('./components/spacer'));
+
+const debug = createDebug({ enabled: getParams('debug') });
 
 const StyledContainer = styled.div`
   max-width: 380px;
@@ -83,6 +86,8 @@ export default function App({
         })
         .catch((error) => {
           console.error(error.stack);
+          debug(error.message);
+          debug(error.stack);
           dispatch({ type: 'ERROR', payload: error });
         });
     };
