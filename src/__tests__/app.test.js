@@ -20,9 +20,9 @@ describe('App', () => {
   });
 
   it('displays refresh header', () => {
-    const { queryByText } = render(<App {...testProps} />);
+    render(<App {...testProps} />);
     return waitFor(() => {
-      expect(queryByText('REFRESH')).toBeTruthy();
+      expect(s.queryByText('REFRESH')).toBeTruthy();
     });
   });
 
@@ -83,38 +83,28 @@ describe('App', () => {
 
   it('renders routes with spacers (Morning)', async () => {
     const getHourOfDay = () => 7;
-    const { queryByText, findAllByTestId } = render(
-      <App {...testProps} getHourOfDay={getHourOfDay} />,
-    );
-    return findAllByTestId('stop-name').then((routeItems) => {
-      expect(queryByText('Inbound')).toBeTruthy();
-      expect(queryByText('Outbound')).not.toBeTruthy();
-      // const appText = getByTestId('app').textContent;
-      // expect(appText.indexOf('Inbound')).toBeLessThan(
-      //   appText.indexOf('Outbound'),
-      // );
-      expect(routeItems.length).toBe(
-        mockRoutes.filter((r) => r.morning).length,
-      );
-    });
+    render(<App {...testProps} getHourOfDay={getHourOfDay} />);
+    const routeItems = await s.findAllByTestId('stop-name');
+    expect(s.queryByText('Inbound')).toBeTruthy();
+    expect(s.queryByText('Outbound')).not.toBeTruthy();
+    // const appText = getByTestId('app').textContent;
+    // expect(appText.indexOf('Inbound')).toBeLessThan(
+    //   appText.indexOf('Outbound'),
+    // );
+    expect(routeItems.length).toBe(mockRoutes.filter((r) => r.morning).length);
   });
 
-  it('renders morning routes with spacers (Evening)', () => {
+  it('renders morning routes with spacers (Evening)', async () => {
     const getHourOfDay = () => 17;
-    const { queryByText, findAllByTestId } = render(
-      <App {...testProps} getHourOfDay={getHourOfDay} />,
-    );
-    return findAllByTestId('stop-name').then((routeItems) => {
-      expect(queryByText('Inbound')).not.toBeTruthy();
-      expect(queryByText('Outbound')).toBeTruthy();
-      // const appText = getByTestId('app').textContent;
-      // expect(appText.indexOf('Outbound')).toBeLessThan(
-      //   appText.indexOf('Inbound'),
-      // );
-      expect(routeItems.length).toBe(
-        mockRoutes.filter((r) => !r.morning).length,
-      );
-    });
+    render(<App {...testProps} getHourOfDay={getHourOfDay} />);
+    const routeItems = await s.findAllByTestId('stop-name');
+    expect(s.queryByText('Inbound')).not.toBeTruthy();
+    expect(s.queryByText('Outbound')).toBeTruthy();
+    // const appText = getByTestId('app').textContent;
+    // expect(appText.indexOf('Outbound')).toBeLessThan(
+    //   appText.indexOf('Inbound'),
+    // );
+    expect(routeItems.length).toBe(mockRoutes.filter((r) => !r.morning).length);
   });
 
   it('reveals inbound routes in the morning', async () => {
