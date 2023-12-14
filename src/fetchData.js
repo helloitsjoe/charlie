@@ -30,8 +30,8 @@ const fetchData = ({
         direction_id: route.direction,
         sort: 'departure_time',
         include: ['stop', 'route'],
-      })
-    )
+      }),
+    ),
   );
 
   return predictionPromises
@@ -51,7 +51,7 @@ const fetchData = ({
 
         // Filter out other routes for the same stop
         const routeData = rawPred.data.filter(
-          (ea) => !route || ea.relationships.route.data.id === route.toString()
+          (ea) => !route || ea.relationships.route.data.id === route.toString(),
         );
         const pred = { data: routeData };
         // const arrivals = selectArrivals(pred, { convertTo: 'min' });
@@ -96,7 +96,7 @@ const fetchData = ({
           .slice(0, PREDICTIONS_LIMIT);
 
         const isWalkable = departMins.some(
-          (mins) => mins >= waitStart && mins <= waitStart + waitLength
+          (mins) => mins >= waitStart && mins <= waitStart + waitLength,
         );
 
         return {
@@ -137,7 +137,7 @@ export const fetchStops = ({
   return mbta
     .fetchStops({ route: routeId, direction_id: direction })
     .then((stops) =>
-      stops.data.map((s) => ({ id: s.id, name: s.attributes.name }))
+      stops.data.map((s) => ({ id: s.id, name: s.attributes.name })),
     );
 };
 

@@ -1,32 +1,33 @@
-/* eslint-disable function-paren-newline */
-// eslint-disable-next-line import/no-unresolved
 import React, { useState, useEffect, useReducer, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-// import loadable from '@loadable/component';
 import { createDebug } from 'dom-debug';
 import fetchDataNative from './fetchData';
 import { usePullRefresh, getParams } from './utils';
 import Header from './components/header';
 import Error from './components/error';
+import Button from './components/button';
 // import Footer from './components/footer';
 import RouteItem from './components/route-item';
 import Spacer from './components/spacer';
 import routeConfig from '../resources/routes.config.json';
 
 // const enabledRoutes = Object.values(routeConfig.enabled);
-
-// Could lazy load, but it doesn't save much from the initial bundle.
-// Cool that @loadable/component works with preact though!
-// const RouteItem = loadable(() => import('./components/route-item'));
-// const Spacer = loadable(() => import('./components/spacer'));
-
 const debug = createDebug({ enabled: getParams('debug') });
 
 const StyledContainer = styled.div`
   max-width: 380px;
   margin: auto;
   background-color: #191919;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2em;
+  margin: auto;
 `;
 
 const appReducer = (s, action) => {
@@ -51,14 +52,19 @@ export default function App({
   fetchData,
   defaultRoutes = routeConfig.enabled,
 }) {
-  const [enabledRoutes, setEnabledRoutes] = useState(
-    Object.values(defaultRoutes),
+  const [revealAllRoutes, setRevealAllRoutes] = useState(false);
+
+  const isMorning = getHourOfDay() < 12;
+  const revealedRoutes = Object.values(defaultRoutes).filter((r) =>
+    isMorning ? r.morning : !r.morning,
   );
+
+  const [enabledRoutes, setEnabledRoutes] = useState(revealedRoutes);
 
   const [state, dispatch] = useReducer(appReducer, {
     status: 'LOADING',
     error: null,
-    routes: enabledRoutes.map(({ morning }, i) => ({ morning, id: i })),
+    routes: enabledRoutes,
   });
 
   const [count, setCount] = useState(0);
@@ -66,6 +72,11 @@ export default function App({
   const handleAddStop = (newStop) => {
     console.log('newStop', newStop);
     setEnabledRoutes((e) => [...e, newStop]);
+  };
+
+  const handleRevealRoutes = () => {
+    setRevealAllRoutes(true);
+    setEnabledRoutes(Object.values(defaultRoutes));
   };
 
   useEffect(() => {
@@ -109,9 +120,9 @@ export default function App({
     const morning = ['Inbound', ...routes.filter((route) => route.morning)];
     const evening = ['Outbound', ...routes.filter((route) => !route.morning)];
 
-    return getHourOfDay() < 12
-      ? [...morning, ...evening]
-      : [...evening, ...morning];
+    return isMorning
+      ? [...morning, ...(revealAllRoutes ? evening : [])]
+      : [...evening, ...(revealAllRoutes ? morning : [])];
   };
 
   const { routes, status, error } = state;
@@ -123,13 +134,20 @@ export default function App({
         <Error error={error} />
       ) : (
         getCombinedRoutes(routes).map((route) =>
-          console.log('route', route) || typeof route === 'string' ? (
+          typeof route === 'string' ? (
             <Spacer key={route} text={route} />
           ) : (
             <RouteItem key={route.id} {...route} />
           ),
         )
       )}
+      <ButtonWrapper>
+        {!revealAllRoutes && (
+          <Button onClick={handleRevealRoutes}>
+            Get {isMorning ? 'outbound' : 'inbound'} routes
+          </Button>
+        )}
+      </ButtonWrapper>
       {/* <Footer hourOfDay={getHourOfDay()} /> */}
     </StyledContainer>
   );

@@ -3,22 +3,13 @@ import React, { useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { fetchRoutes, fetchStops /* searchStops */ } from '../fetchData';
+import Button from './button';
 // import { debounce } from '../utils';
 
 const Header = styled.div`
   text-align: center;
   padding-top: 20px;
   padding-bottom: 10px;
-`;
-
-const Button = styled.button`
-  font-size: 1rem;
-  border-radius: 10px;
-  height: 20px;
-  line-height: 20px;
-  padding: 0px 20px;
-  margin: 0px;
-  color: #666;
 `;
 
 const Form = styled.form`
