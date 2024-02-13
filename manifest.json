@@ -1,0 +1,15 @@
+{
+  "short_name": "Charlie",
+  "name": "Charlie MBTA App",
+  "icons": [
+    {
+      "src": "assets/favicon.png",
+      "sizes": "114x114",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
